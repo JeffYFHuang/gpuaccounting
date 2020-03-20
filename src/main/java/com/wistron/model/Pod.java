@@ -1,5 +1,8 @@
 package com.wistron.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.*;
 
 /*cmd = 'CREATE TABLE IF NOT EXISTS pods (' \
@@ -20,14 +23,29 @@ public class Pod {
     private Long id;
     @Column(name = "name", columnDefinition = "char(32) NOT NULL")
     private String name;
-    @Column(name = "start_time", columnDefinition = "char(32)")
-    private String startTime;
     @Column(name = "namespace_id", columnDefinition = "int(11) NOT NULL")
     private Long namespaceId;
     @Column(name = "hostname", columnDefinition = "char(32)")
     private String hostname;
     @Column(name = "phase", columnDefinition = "char(16)")
     private String phase;
+    @Column(name = "start_time", columnDefinition = "char(32)")
+    private String startTime;
+
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+            )
+    @JoinColumn(name="pod_id")//, referencedColumnName = "id", insertable = false, updatable = false)    
+    private List<Container> containers = new ArrayList<>();
+
+    public List<Container> getContainers() {
+    	return containers;
+    }
+    
+    public void setContainers (List<Container> containers) {
+    	this.containers = containers;
+    }
 
     public Pod() {
     }

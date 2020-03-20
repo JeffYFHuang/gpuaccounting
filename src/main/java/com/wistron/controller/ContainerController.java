@@ -1,7 +1,10 @@
 package com.wistron.controller;
 
 import com.wistron.model.Container;
+import com.wistron.model.Namespace;
 import com.wistron.repository.ContainerRepository;
+import com.wistron.utils.ResponseEnvelope;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +26,7 @@ public class ContainerController {
     ContainerRepository containerRepository;
 
     @GetMapping("/containers")
-    public ResponseEntity<List<Container>> getAllContainers(@RequestParam(required = false) Long podId) {
+    public ResponseEntity<ResponseEnvelope<List<Container> >> getAllContainers(@RequestParam(required = false) Long podId) {
         try {
             List<Container> containers = new ArrayList<Container>();
             if (podId == null)
@@ -35,7 +38,7 @@ public class ContainerController {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
 
-            return new ResponseEntity<>(containers, HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseEnvelope<List<Container> >(200, "success.", containers), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }

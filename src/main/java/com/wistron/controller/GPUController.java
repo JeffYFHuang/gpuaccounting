@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wistron.model.Container;
 import com.wistron.model.GPU;
 import com.wistron.repository.GPURepository;
+import com.wistron.utils.ResponseEnvelope;
 
 //@CrossOrigin(origins = "http://localhost:8081")
 @RestController
@@ -30,7 +32,7 @@ public class GPUController {
     GPURepository gpuepository;
 
     @GetMapping("/gpus")
-    public ResponseEntity<List<GPU>> getAllGPUs(@RequestParam(required = false) String uuid) {
+    public ResponseEntity<ResponseEnvelope<List<GPU> >> getAllGPUs(@RequestParam(required = false) String uuid) {
         try {
             List<GPU> GPUs = new ArrayList<GPU>();
             if (uuid == null)
@@ -42,7 +44,28 @@ public class GPUController {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
 
-            return new ResponseEntity<>(GPUs, HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseEnvelope<List<GPU> >(200, "success.", GPUs), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/gpus")
+    public ResponseEntity<ResponseEnvelope<List<GPU> >> postAllGPUs(@RequestParam(value = "start", required = false) Long start,
+    																@RequestParam(value = "limit", required = false) Long limit,
+    																@RequestParam(value = "id", required = false) Long gpuId) {
+        try {
+            List<GPU> GPUs = new ArrayList<GPU>();
+            if (gpuId == null)
+                gpuepository.findAll().forEach(GPUs::add);
+            else
+            	GPUs.add(gpuepository.findById(gpuId).get());
+
+            if (GPUs.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+            return new ResponseEntity<>(new ResponseEnvelope<List<GPU> >(200, "success.", GPUs), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }

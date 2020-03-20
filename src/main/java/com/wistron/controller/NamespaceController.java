@@ -3,6 +3,8 @@ package com.wistron.controller;
 import com.wistron.model.GPU;
 import com.wistron.model.Namespace;
 import com.wistron.repository.NamespaceRepository;
+import com.wistron.utils.ResponseEnvelope;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 //@CrossOrigin(origins = "http://localhost:8081")
@@ -24,7 +28,7 @@ public class NamespaceController {
     NamespaceRepository namespaceRepository;
 
     @GetMapping("/namespaces")
-    public ResponseEntity<List<Namespace>> getAllNamespaces(@RequestParam(required = false) String email) {
+    public ResponseEntity<ResponseEnvelope<List<Namespace> >> getAllNamespaces(@RequestParam(required = false) String email) {
         try {
             List<Namespace> namespaces = new ArrayList<Namespace>();
             if (email == null)
@@ -36,7 +40,7 @@ public class NamespaceController {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
 
-            return new ResponseEntity<>(namespaces, HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseEnvelope<List<Namespace> >(200, "success.", namespaces), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -1,7 +1,10 @@
 package com.wistron.controller;
 
+import com.wistron.model.Namespace;
 import com.wistron.model.Pod;
 import com.wistron.repository.PodRepository;
+import com.wistron.utils.ResponseEnvelope;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +26,7 @@ public class PodController {
     PodRepository podrepository;
 
     @GetMapping("/pods")
-    public ResponseEntity<List<Pod>> getAllPods(@RequestParam(required = false) Long namespaceId) {
+    public ResponseEntity<ResponseEnvelope<List<Pod>>> getAllPods(@RequestParam(required = false) Long namespaceId) {
         try {
             List<Pod> pods = new ArrayList<Pod>();
             if (namespaceId == null)
@@ -37,7 +40,7 @@ public class PodController {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
 
-            return new ResponseEntity<>(pods, HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseEnvelope<List<Pod> >(200, "success.", pods), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }

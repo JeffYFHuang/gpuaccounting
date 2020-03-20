@@ -32,6 +32,18 @@ public class Processmetric {
     @Column(name = "query_time", columnDefinition = "char(32) NOT NULL")
     private String queryTime;
 
+    @ManyToOne()
+    @JoinColumn(name="gpumetric_id", referencedColumnName = "id", insertable = false, updatable = false)    
+    private Gpumetric gpumetric;
+
+    public Gpumetric getGpumetric() {
+        return gpumetric;
+    }
+
+    public void setGpumetric(Gpumetric gpumetric) {
+        this.gpumetric = gpumetric;
+    }
+    
     public Processmetric() {
     }
 

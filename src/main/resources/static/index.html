@@ -1,0 +1,116 @@
+
+<html>
+<head>
+  <title>Column Layout</title>
+    <link rel="stylesheet" type="text/css" href="./resources/css/ext-all.css" />
+    <link rel="stylesheet" type="text/css" href="./ux/css/PanelResizer.css" />
+    <link rel="stylesheet" type="text/css" href="grid-examples.css" />
+    <!-- Common Styles for the examples -->
+
+    <link rel="stylesheet" type="text/css" href="./css/animated-dataview.css" />
+    <style type="text/css">
+
+    </style>
+
+    <!-- GC -->
+    <!-- LIBS -->
+    <script type="text/javascript" src="./adapter/ext/ext-base.js"></script>
+    <!-- ENDLIBS -->
+
+    <script type="text/javascript" src="./ext-all.js"></script>
+
+    <script type="text/javascript" src="./ux/ProgressBarPager.js"></script>
+    <script type="text/javascript" src="./ux/PanelResizer.js"></script>
+    <script type="text/javascript" src="./ux/PagingMemoryProxy.js"></script>
+    <script type="text/javascript" src="./ux/DataViewTransition.js"></script>
+
+    <script language="javascript" src="./namespacesDataView.js"></script>
+    <script language="javascript" src="./pods.js"></script>
+    <script language="javascript" src="./containers.js"></script>
+    <script language="javascript" src="./processes.js"></script>
+    <script language="javascript" src="./gpus.js"></script>
+    <script language="javascript" src="./computemetrics.js"></script>
+	<style type="text/css">
+	html, body {
+        font:normal 12px verdana;
+        margin:0;
+        padding:0;
+        border:0 none;
+        overflow:hidden;
+        height:100%;
+    }
+	.x-panel-body p {
+	    margin:5px;
+	}
+    .x-column-layout-ct .x-panel {
+        margin-bottom:5px;
+    }
+    .x-column-layout-ct .x-panel-dd-spacer {
+        margin-bottom:5px;
+    }
+    .settings {
+        background-image:url(../shared/icons/fam/folder_wrench.png) !important;
+    }
+    .nav {
+        background-image:url(../shared/icons/fam/folder_go.png) !important;
+    }
+    </style>
+	<script type="text/javascript">
+
+    Ext.onReady(function(){
+
+       // NOTE: This is an example showing simple state management. During development,
+       // it is generally best to disable state management as dynamically-generated ids
+       // can change across page loads, leading to unpredictable results.  The developer
+       // should ensure that stable state ids are set for stateful components in real apps.
+       Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
+
+       var viewport = new Ext.Viewport({
+            layout:'border',
+            items:[{
+                region:'north',
+                split: true,
+                height: 120,
+                minSize: 100,
+                maxSize: 400,
+                //collapsible: true,
+                layout:'fit',
+                items:[namespacesDataViewPanel]
+            },
+            {
+                region:'west',
+                id:'west-panel',
+                split:true,
+                width: 300, // give east and west regions a width
+                minSize: 250,
+                maxSize: 500,
+                collapsible: true,
+                layout: {
+                    type: 'accordion',
+                    animate: true
+                },
+                items: [podGrid, containerGrid, processGrid]
+            },
+            {
+                region: 'east',
+                split: true,
+                width: 150, // give east and west regions a width
+                minSize: 100,
+                maxSize: 400,
+                margins: '0 5 0 0',
+                layout: 'fit',
+                items:[gpuGrid]
+            },
+            {
+                region:'center',
+                layout:'fit',
+                //autoScroll:true,
+                items:[metricGrid]
+            }]
+        });
+    });
+	</script>
+</head>
+<body>
+  </body>
+</html>

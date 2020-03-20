@@ -1,7 +1,10 @@
 package com.wistron.controller;
 
+import com.wistron.model.Container;
 import com.wistron.model.Process;
 import com.wistron.repository.ProcessRepository;
+import com.wistron.utils.ResponseEnvelope;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +26,7 @@ public class ProcessController {
     ProcessRepository processRepository;
 
     @GetMapping("/processes")
-    public ResponseEntity<List<Process>> getAllProcesses(@RequestParam(required = false) Long containerId) {
+    public ResponseEntity<ResponseEnvelope<List<Process> >> getAllProcesses(@RequestParam(required = false) Long containerId) {
         try {
             List<Process> processes = new ArrayList<Process>();
             if (containerId == null)
@@ -35,7 +38,7 @@ public class ProcessController {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
 
-            return new ResponseEntity<>(processes, HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseEnvelope<List<Process> >(200, "success.", processes), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -1,5 +1,8 @@
 package com.wistron.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.*;
 
 /*cmd = 'CREATE TABLE IF NOT EXISTS containers (' \
@@ -40,6 +43,21 @@ public class Container {
     private Integer requestsNvidiaComGpu;
     @Column(name = "nspid", columnDefinition = "BIGINT(11) NOT NULL")
     private Long nspid;
+
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+            )
+    @JoinColumn(name="container_id")//, referencedColumnName = "id", insertable = false, updatable = false)    
+    private List<Process> processes = new ArrayList<>();
+
+    public List<Process> getProcesses() {
+    	return processes;
+    }
+    
+    public void setProcesses (List<Process> processes) {
+    	this.processes = processes;
+    }
 
     public Container() {
     }

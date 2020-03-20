@@ -1,5 +1,8 @@
 package com.wistron.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.*;
 
 /*cmd = 'CREATE TABLE IF NOT EXISTS namespaces (' \
@@ -37,6 +40,36 @@ public class Namespace {
     private String requestsMemory;
     @Column(name = "requests_nvidia_com_gpu", columnDefinition = "int(4)")
     private Integer requestsNvidiaComGpu;
+
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+            )
+    @JoinColumn(name="namespace_id")//, referencedColumnName = "id", insertable = false, updatable = false)    
+    private List<Pod> pods = new ArrayList<>();
+
+    public List<Pod> getPods() {
+    	return pods;
+    }
+    
+    public void getPods(List<Pod> pods) {
+    	this.pods = pods;
+    }
+
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+            )
+    @JoinColumn(name="namespace_id")//, referencedColumnName = "id", insertable = false, updatable = false)    
+    private List<Namespaceusedresourcequota> namespaceusedresourcequotas = new ArrayList<>();
+
+    public List<Namespaceusedresourcequota> getNamespaceusedresourcequotas() {
+    	return namespaceusedresourcequotas;
+    }
+    
+    public void setNamespaceusedresourcequotas (List<Namespaceusedresourcequota> Namespaceusedresourcequotas) {
+    	this.namespaceusedresourcequotas = Namespaceusedresourcequotas;
+    }
 
     public Namespace() {
     }
