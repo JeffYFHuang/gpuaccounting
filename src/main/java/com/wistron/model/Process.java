@@ -31,6 +31,8 @@ public class Process {
     private String fullCommand;
     @Column(name = "start_time", columnDefinition = "char(32) NOT NULL")
     private String startTime;
+    @Column(name = "query_time", columnDefinition = "char(32)")
+    private String queryTime;
 
     public Process() {
     }
@@ -89,6 +91,14 @@ public class Process {
 
     public void setStartTime(String startTime) {
         this.startTime = startTime;
+    }
+
+    public String getQueryTime() {
+        return queryTime;
+    }
+
+    public void setQueryTime(String queryTime) {
+        this.queryTime = queryTime;
     }
 
     @Override

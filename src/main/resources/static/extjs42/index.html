@@ -1,0 +1,136 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+        <title>Data Binding Example - Implemented with classes</title>
+        <link rel="stylesheet" type="text/css" href="./resources/css/ext-all.css" />
+        <link rel="stylesheet" type="text/css" href="./shared/example.css" />
+        <link rel="stylesheet" type="text/css" href="./resources/css/animated-dataview.css" />
+
+        <script type="text/javascript" src="./bootstrap.js"></script>
+
+	    <script language="javascript" src="./namespaces.js"></script>
+	    <script language="javascript" src="./pods.js"></script>
+	    <script language="javascript" src="./containers.js"></script>
+	    <script language="javascript" src="./processes.js"></script>
+	    <script language="javascript" src="./gpus.js"></script>
+	    <script language="javascript" src="./computemetrics.js"></script>
+	<script type="text/javascript">
+	Ext.require([
+	    'Ext.grid.*',
+	    'Ext.data.*',
+	    'Ext.panel.*',
+	    'Ext.layout.container.Border'
+	]);
+
+    Ext.onReady(function(){
+
+        var namespaceGrid = new App.namespaceGrid({
+            selType: 'rowmodel',
+            listeners: {
+	            select: function(RowModel, record, index, eOpts){
+	            	alert(record.get('id'));
+	            }
+            }
+        });
+        
+        var podGrid = new App.podGrid({
+            selType: 'rowmodel',
+            listeners: {
+	            select: function(RowModel, record, index, eOpts){
+	            	alert(record.get('id'));
+	            }
+            }
+        });
+        
+        var containerGrid = new App.containerGrid({
+            selType: 'rowmodel',
+            listeners: {
+	            select: function(RowModel, record, index, eOpts){
+	            	alert(record.get('id'));
+	            }
+            }
+        });
+        
+        var processGrid = new App.processGrid({
+            selType: 'rowmodel',
+            listeners: {
+	            select: function(RowModel, record, index, eOpts){
+	            	alert(record.get('id'));
+	            }
+            }
+        });
+        
+        var metricGrid = new App.metricGrid({
+            selType: 'rowmodel',
+            listeners: {
+	            select: function(RowModel, record, index, eOpts){
+	            	alert(record.get('id'));
+	            }
+            }
+        });
+        
+        var gpuGrid = new App.gpuGrid({
+            selType: 'rowmodel',
+            listeners: {
+	            select: function(RowModel, record, index, eOpts){
+	            	alert(record.get('id'));
+	            }
+            }
+        });
+
+       var viewport = new Ext.Viewport({
+            layout:'border',
+            items:[{
+                region:'north',
+                split: true,
+                height: 80,
+                minSize: 30,
+                maxSize: 400,
+                //collapsible: true,
+                layout:'fit',
+                items:[namespaceGrid]
+            },
+            {
+                region:'west',
+                id:'west-panel',
+                split:true,
+                width: 250, // give east and west regions a width
+                minSize: 250,
+                maxSize: 500,
+                //collapsible: true,
+                autoScroll:true,
+                layout: {
+                    type: 'vbox',
+                    animate: true
+                },
+                items: [podGrid, containerGrid, processGrid]
+            },
+            {
+                region: 'east',
+                split: true,
+                width: 150, // give east and west regions a width
+                minSize: 100,
+                maxSize: 400,
+                margins: '0 5 0 0',
+                layout: 'fit',
+                items:[gpuGrid]
+            },
+            {
+                region:'center',
+                layout:'fit',
+                //autoScroll:true,
+                items:[metricGrid]
+            }]
+        });
+    });
+	</script>
+    </head>
+    <body>
+        <h1>Data Binding Example - Implemented with classes</h1>
+        <p>This example expands upon the <a href="binding.html">Binding example</a>. It shows how to implement the same functionality but in a more organized and object-oriented fashion</p>
+        <p>Note that the js is not minified so it is readable. See <a href="binding-with-classes.js">binding-with-classes.js</a>.</p>
+        <div id="binding-example"></div>
+    </body>
+</html>

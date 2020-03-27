@@ -17,7 +17,9 @@
 	    {name: 'limitsNvidiaComGpu', type: 'int', mapping:'limitsNvidiaComGpu'},
 	    {name: 'requestsCpu', type: 'int', mapping:'requestsCpu'},
 	    {name: 'requestsMemory', mapping:'requestsMemory'},
-	    {name: 'requestsNvidiaComGpu', type: 'int', mapping:'requestsNvidiaComGpu'}
+	    {name: 'requestsNvidiaComGpu', type: 'int', mapping:'requestsNvidiaComGpu'},
+	    {name: 'pods', mapping:'pods'},
+	    {name: 'namespaceusedresourcequotas', mapping:'namespaceusedresourcequotas'}
 	]);
 	
 	var ds = new Ext.data.Store({
@@ -34,8 +36,8 @@
             '<ul>',
                 '<tpl for=".">',
                     '<li class="phone">',
-                        '<img width="40" height="40" src="./images/user.jpg" />',
-                        '<strong>{name}({id})</strong>',
+                        '<img width="20" height="20" src="./images/user.jpg" />',
+                        '<strong>{name}</strong>',
                     '</li>',
                 '</tpl>',
             '</ul>'
@@ -47,7 +49,15 @@
         overClass   : 'phone-hover',
         singleSelect: true,
         //multiSelect : true,
-        autoScroll  : true
+        autoScroll  : true,
+        listeners:{  
+ 	      click:function(grid, rowIndex){  
+ 	           var record = grid.getStore().getAt(rowIndex);
+ 	           var id = record.get('id');
+ 	           pod_ds.removeAll();
+ 	           pod_ds.load({params:{start:0, limit:20, id:id}});
+ 	       }  
+         }
     });
 
     var namespacesDataViewPanel = new Ext.Panel({

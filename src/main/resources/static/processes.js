@@ -58,7 +58,8 @@ Build date: 2013-04-03 15:07:25
 	    {name: 'containerId', type: 'int', mapping:'containerId'},
 	    {name: 'command', mapping:'command'},
 	    {name: 'fullCommand', mapping:'fullCommand'},
-	    {name: 'startTime', mapping:'startTime'}
+	    {name: 'startTime', mapping:'startTime'},
+	    {name: 'queryTime', mapping:'queryTime'}
 	]);
 	
 	var process_ds = new Ext.data.Store({
@@ -76,15 +77,17 @@ Build date: 2013-04-03 15:07:25
         	{id:'container.id',header: "container.id", sortable: true, dataIndex: 'containerId'},
             {id:'pid',header: "pid", sortable: true, dataIndex: 'pid'},
             {id:'startTime',header: "startTime", sortable: true, dataIndex: 'startTime'},
+            {id:'queryTime',header: "queryTime", sortable: true, dataIndex: 'queryTime'},
             {id:'fullCommand',header: "fullCommand", sortable: true, dataIndex: 'fullCommand'},
             {id:'nspid',header: "nspid", sortable: true, dataIndex: 'nspid'}
         ],
         stripeRows: true,
-        //autoExpandColumn: 'name',
-        height:250,
+        //autoExpandColumn: 'fullCommand',
+        //height:250,
         //width:"50%",
         frame:true,
         title:'processes',
+        flex:3.5,
 
         //plugins: new Ext.ux.PanelResizer({
         //    minHeight: 100
@@ -104,7 +107,11 @@ Build date: 2013-04-03 15:07:25
 	       rowclick:function(grid, rowIndex){  
 	           var record = grid.getStore().getAt(rowIndex);
 	           var id = record.get('id');
-	           metric_ds.load({params:{start:0, limit:20, id:id}});
+	           metric_ds.baseParams = {
+	        	   processId:id
+	           };
+	           metric_ds.removeAll();
+	           metric_ds.load({params:{start:0, limit:20}});
 	       }  
          }
     });

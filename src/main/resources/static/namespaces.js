@@ -101,7 +101,18 @@ Build date: 2013-04-03 15:07:25
             displayInfo: true
 
             //plugins: new Ext.ux.ProgressBarPager()
-        })
+        }),
+        listeners:{  
+ 	       rowdblclick : function(grid, rowIndex){  
+ 	           alert("rowdblclick");
+ 	       },
+ 	       rowclick:function(grid, rowIndex){  
+ 	           var record = grid.getStore().getAt(rowIndex);
+ 	           var id = record.get('id');
+ 	           pod_ds.removeAll();
+ 	           pod_ds.load({params:{start:0, limit:20, id:id}});
+ 	       }  
+         }
     });
 
     //namespaceGrid.render('grid-example');

@@ -1,0 +1,42 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+        <title>Data Binding Example - Implemented with classes</title>
+        <link rel="stylesheet" type="text/css" href="./resources/css/ext-all.css" />
+        <link rel="stylesheet" type="text/css" href="./shared/example.css" />
+
+        <script type="text/javascript" src="./bootstrap.js"></script>
+        
+        <script type="text/javascript" src="./namespaces.js"></script>
+        <script language="javascript" src="./containers.js"></script>
+        <script type="text/javascript" src="./computemetrics.js"></script>
+        <script type="text/javascript">
+	Ext.require([
+	    'Ext.grid.*',
+	    'Ext.data.*',
+	    'Ext.panel.*',
+	    'Ext.layout.container.Border'
+	]);
+
+    Ext.onReady(function(){
+        var demoGrid = new App.containerGrid({
+            renderTo: 'binding-example',
+            selType: 'rowmodel',
+            listeners: {
+	            select: function(RowModel, record, index, eOpts){
+	            	alert(record.get('id'));
+	            }
+            }
+        });
+    });
+    </script>
+    </head>
+    <body>
+        <h1>Data Binding Example - Implemented with classes</h1>
+        <p>This example expands upon the <a href="binding.html">Binding example</a>. It shows how to implement the same functionality but in a more organized and object-oriented fashion</p>
+        <p>Note that the js is not minified so it is readable. See <a href="binding-with-classes.js">binding-with-classes.js</a>.</p>
+        <div id="binding-example"></div>
+    </body>
+</html>

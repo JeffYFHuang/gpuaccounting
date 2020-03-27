@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,9 +35,30 @@ public class ProcessController {
             else
                 processRepository.findProcessesByContainerId(containerId).forEach(processes::add);
 
-            if (processes.isEmpty()) {
+            /*if (processes.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
+            }*/
+
+            return new ResponseEntity<>(new ResponseEnvelope<List<Process> >(200, "success.", processes), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    @PostMapping("/processes")
+    public ResponseEntity<ResponseEnvelope<List<Process> >> postAllProcesses(@RequestParam(value = "start", required = false) Long start,
+			@RequestParam(value = "limit", required = false) Long limit,
+			@RequestParam(value = "containerId", required = false) Long containerId) {
+        try {
+            List<Process> processes = new ArrayList<Process>();
+            if (containerId == null)
+                processRepository.findAll().forEach(processes::add);
+            else
+                processRepository.findProcessesByContainerId(containerId).forEach(processes::add);
+
+            /*if (processes.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }*/
 
             return new ResponseEntity<>(new ResponseEnvelope<List<Process> >(200, "success.", processes), HttpStatus.OK);
         } catch (Exception e) {

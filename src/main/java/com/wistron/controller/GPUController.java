@@ -32,28 +32,30 @@ public class GPUController {
     GPURepository gpuepository;
 
     @GetMapping("/gpus")
-    public ResponseEntity<ResponseEnvelope<List<GPU> >> getAllGPUs(@RequestParam(required = false) String uuid) {
-        try {
-            List<GPU> GPUs = new ArrayList<GPU>();
-            if (uuid == null)
-                gpuepository.findAll().forEach(GPUs::add);
-            else
-                gpuepository.findGpuByUuid(uuid).forEach(GPUs::add);
-
-            if (GPUs.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-
-            return new ResponseEntity<>(new ResponseEnvelope<List<GPU> >(200, "success.", GPUs), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<ResponseEnvelope<List<GPU> >> getAllGPUs(@RequestParam(value = "start", required = false) Long start,
+			@RequestParam(value = "limit", required = false) Long limit,
+			@RequestParam(value = "gpuId", required = false) Long gpuId) {
+			try {
+				List<GPU> GPUs = new ArrayList<GPU>();
+				if (gpuId == null)
+					gpuepository.findAll().forEach(GPUs::add);
+				else
+					GPUs.add(gpuepository.findById(gpuId).get());
+				
+				/*if (GPUs.isEmpty()) {
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+				}*/
+				
+				return new ResponseEntity<>(new ResponseEnvelope<List<GPU> >(200, "success.", GPUs), HttpStatus.OK);
+			} catch (Exception e) {
+				return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
     }
 
     @PostMapping("/gpus")
     public ResponseEntity<ResponseEnvelope<List<GPU> >> postAllGPUs(@RequestParam(value = "start", required = false) Long start,
     																@RequestParam(value = "limit", required = false) Long limit,
-    																@RequestParam(value = "id", required = false) Long gpuId) {
+    																@RequestParam(value = "gpuId", required = false) Long gpuId) {
         try {
             List<GPU> GPUs = new ArrayList<GPU>();
             if (gpuId == null)
@@ -61,9 +63,9 @@ public class GPUController {
             else
             	GPUs.add(gpuepository.findById(gpuId).get());
 
-            if (GPUs.isEmpty()) {
+            /*if (GPUs.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
+            }*/
 
             return new ResponseEntity<>(new ResponseEnvelope<List<GPU> >(200, "success.", GPUs), HttpStatus.OK);
         } catch (Exception e) {

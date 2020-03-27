@@ -41,6 +41,7 @@ Build date: 2013-04-03 15:07:25
         return val;
     }
 
+    var processId = null;
     // create the data store
     var metric_proxy = new Ext.data.HttpProxy({
     	url:'/processmetrics'
@@ -48,9 +49,9 @@ Build date: 2013-04-03 15:07:25
 
 // {"id":1,"processId":1,"gpumetricId":15,"gpuMemoryUsage":31089,"cpuPercent":0.0,"cpuMemoryUsage":2979635200,"queryTime":"2020-03-17T08:20:00.855911","gpumetric":{"id":15,"gpuId":15,"temperatureGpu":37,"utilizationGpu":0,"powerDraw":70,"memoryUsed":31100,"queryTime":"2020-03-17T08:20:00.855911"}}
 	var metric_reader = new Ext.data.JsonReader({
-	  totalProperty: 'totalCount',
+	  totalProperty: 'totalElements',
 	  successProperty: 'success',
-	  root: 'data'
+	  root: 'content'
 	}, [
 	    {name: 'id', type: 'int', mapping:'id'},
 	    {name: 'processId', type: 'int', mapping:'processId'},
@@ -68,8 +69,8 @@ Build date: 2013-04-03 15:07:25
 	var metric_ds = new Ext.data.Store({
 	  autoLoad: true,
 	  proxy: metric_proxy,
-	  reader: metric_reader,
-	  params:{start:0, limit:20}
+	  reader: metric_reader
+	  //params:{start:0, limit:20}
 	  //remoteSort: true
 	});    
 
@@ -77,7 +78,7 @@ Build date: 2013-04-03 15:07:25
     var metricGrid = new Ext.grid.GridPanel({
         store: metric_ds,
         columns: [
-        	{id:'id',header: "id", sortable: true, width: 30, dataIndex: 'id'},
+        	{id:'id',header: "id", sortable: true, width: 50, dataIndex: 'id'},
             {id:'cpu.percent',header: "cpu.percent", sortable: true, dataIndex: 'cpu.percent'},
             {id:'cpu.memory.usage',header: "cpu.memory.usage", sortable: true, dataIndex: 'cpu.memory.usage'},
             {id:'utilization.gpu',header: "utilization.gpu", sortable: true, dataIndex: 'utilization.gpu'},
@@ -90,10 +91,11 @@ Build date: 2013-04-03 15:07:25
         ],
         stripeRows: true,
         //autoExpandColumn: 'queryTime',
-        height:250,
+        //height:250,
         //width:"50%",
         frame:true,
         title:'metrices',
+        flex:7,
 
         //plugins: new Ext.ux.PanelResizer({
         //    minHeight: 100
@@ -120,5 +122,5 @@ Build date: 2013-04-03 15:07:25
 
     //namespaceGrid.render('grid-example');
 
-    metric_ds.load({params:{start:0, limit:20}});
+    //metric_ds.load({params:{start:0, limit:20}});
 //});

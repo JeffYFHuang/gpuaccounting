@@ -57,7 +57,8 @@ Build date: 2013-04-03 15:07:25
 	    {name: 'namespaceId', type: 'int', mapping:'namespaceId'},
 	    {name: 'hostname', mapping:'hostname'},
 	    {name: 'phase', mapping:'phase'},
-	    {name: 'startTime', mapping:'startTime'}
+	    {name: 'startTime', mapping:'startTime'},
+	    {name: 'queryTime', mapping:'queryTime'}
 	]);
 	
 	var pod_ds = new Ext.data.Store({
@@ -76,14 +77,16 @@ Build date: 2013-04-03 15:07:25
             {id:'name',header: "name", sortable: true, dataIndex: 'name'},
             //{id:'phase',header: "phase", sortable: true, dataIndex: 'phase'},
             {id:'startTime',header: "startTime", sortable: true, dataIndex: 'startTime'},
+            {id:'queryTime',header: "queryTime", sortable: true, dataIndex: 'queryTime'},
             {id:'hostname',header: "hostname", sortable: true, dataIndex: 'hostname'}
         ],
         stripeRows: true,
         //autoExpandColumn: 'name',
-        height:280,
+        //height:250,
         //width:"50%",
         frame:true,
         title:'Pods',
+        flex: 3.5,
 
        // plugins: new Ext.ux.PanelResizer({
        //     minHeight: 100
@@ -95,7 +98,18 @@ Build date: 2013-04-03 15:07:25
             displayInfo: true
 
             //plugins: new Ext.ux.ProgressBarPager()
-        })
+        }),
+        listeners:{  
+ 	       rowdblclick : function(grid, rowIndex){  
+ 	           alert("rowdblclick");
+ 	       },
+ 	       rowclick:function(grid, rowIndex){  
+ 	           var record = grid.getStore().getAt(rowIndex);
+ 	           var id = record.get('id');
+ 	           container_ds.removeAll();
+ 	           container_ds.load({params:{start:0, limit:20, id:id}});
+ 	       }  
+        }
     });
 
     //namespaceGrid.render('grid-example');

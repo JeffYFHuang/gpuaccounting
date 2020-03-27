@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Column Layout</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
     <link rel="stylesheet" type="text/css" href="./resources/css/ext-all.css" />
     <link rel="stylesheet" type="text/css" href="./ux/css/PanelResizer.css" />
     <link rel="stylesheet" type="text/css" href="grid-examples.css" />
@@ -70,8 +71,8 @@
             items:[{
                 region:'north',
                 split: true,
-                height: 120,
-                minSize: 100,
+                height: 80,
+                minSize: 30,
                 maxSize: 400,
                 //collapsible: true,
                 layout:'fit',
@@ -81,12 +82,13 @@
                 region:'west',
                 id:'west-panel',
                 split:true,
-                width: 300, // give east and west regions a width
+                width: 250, // give east and west regions a width
                 minSize: 250,
                 maxSize: 500,
-                collapsible: true,
+                //collapsible: true,
+                autoScroll:true,
                 layout: {
-                    type: 'accordion',
+                    type: 'vbox',
                     animate: true
                 },
                 items: [podGrid, containerGrid, processGrid]

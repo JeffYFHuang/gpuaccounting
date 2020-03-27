@@ -8,6 +8,10 @@ import com.wistron.repository.ProcessmetricRepository;
 import com.wistron.utils.ResponseEnvelope;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,42 +32,139 @@ public class ProcessmetricController {
     @Autowired
     ProcessmetricRepository processmetricRepository;
 
-    @GetMapping("/processmetrics")
-    public ResponseEntity<ResponseEnvelope<List<Processmetric> >> getAllProcessMetrics(@RequestParam(required = false) Long processId) {
-        try {
-            List<Processmetric> processmetrics = new ArrayList<Processmetric>();
-            if (processId == null)
-                processmetricRepository.findAll().forEach(processmetrics::add);
-            else
-                processmetricRepository.findProcessesmetricByProcessId(processId).forEach(processmetrics::add);
-
-            if (processmetrics.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @GetMapping("/processmetrics_42")
+    public ResponseEntity<Page<Processmetric>> getAllProcessMetrics_42(
+    		@RequestParam(value = "page", required = false) Long page,
+			@RequestParam(value = "start", required = false) Long start,
+			@RequestParam(value = "limit", required = false) Long limit,
+			@RequestParam(value = "processId", required = false) Long processId,
+			@RequestParam(value = "startDateTime", required = false) String startDateTime,
+			@RequestParam(value = "endDateTime", required = false) String endDateTime) {
+    	try {
+            Pageable paging = PageRequest.of(start.intValue()/limit.intValue(), limit.intValue());
+    		if (page != null)
+    			paging = PageRequest.of(page.intValue() - 1, limit.intValue());
+    		System.out.println(page.intValue() + startDateTime + endDateTime);
+            Page<Processmetric> processmetrics = null;
+            if (processId == null) {
+            	if (startDateTime == null & startDateTime == null)
+                	processmetrics = processmetricRepository.findAll(paging);
+            	else
+            		processmetrics = processmetricRepository.findAll(startDateTime, endDateTime, paging);
             }
+            else
+            	if (startDateTime == null & startDateTime == null)
+            		processmetrics = processmetricRepository.findProcessesmetricByProcessId(processId, paging);
+            	else
+            		processmetrics = processmetricRepository.findProcessesmetricByProcessId(processId, startDateTime, endDateTime, paging);
 
-            return new ResponseEntity<>(new ResponseEnvelope<List<Processmetric> >(200, "success.", processmetrics), HttpStatus.OK);
+            /*if (processmetrics.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }*/
+
+            return new ResponseEntity<>(processmetrics, HttpStatus.OK); 
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/processmetrics_42")
+    public ResponseEntity<Page<Processmetric>> postAllProcessMetrics_42(@RequestParam(value = "page", required = false) Long page,
+    																					@RequestParam(value = "start", required = false) Long start,
+    																					@RequestParam(value = "limit", required = false) Long limit,
+    																					@RequestParam(value = "processId", required = false) Long processId,
+    																					@RequestParam(value = "startDateTime", required = false) String startDateTime,
+    																					@RequestParam(value = "endDateTime", required = false) String endDateTime) {
+    	try {
+            Pageable paging = PageRequest.of(start.intValue()/limit.intValue(), limit.intValue());
+    		if (page != null)
+    			paging = PageRequest.of(page.intValue() - 1, limit.intValue());
+    		System.out.println(page.intValue());
+            Page<Processmetric> processmetrics = null;
+            if (processId == null) {
+            	if (startDateTime == null & startDateTime == null)
+                	processmetrics = processmetricRepository.findAll(paging);
+            	else
+            		processmetrics = processmetricRepository.findAll(startDateTime, endDateTime, paging);
+            }
+            else
+            	if (startDateTime == null & startDateTime == null)
+            		processmetrics = processmetricRepository.findProcessesmetricByProcessId(processId, paging);
+            	else
+            		processmetrics = processmetricRepository.findProcessesmetricByProcessId(processId, startDateTime, endDateTime, paging);
+
+            /*if (processmetrics.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }*/
+
+            return new ResponseEntity<>(processmetrics, HttpStatus.OK); 
+            } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/processmetrics")
+    public ResponseEntity<Page<Processmetric>> getAllProcessMetrics(
+    		@RequestParam(value = "page", required = false) Long page,
+			@RequestParam(value = "start", required = false) Long start,
+			@RequestParam(value = "limit", required = false) Long limit,
+			@RequestParam(value = "processId", required = false) Long processId,
+			@RequestParam(value = "startDateTime", required = false) String startDateTime,
+			@RequestParam(value = "endDateTime", required = false) String endDateTime) {
+    	try {
+            Pageable paging = PageRequest.of(0, 20);
+            Page<Processmetric> processmetrics = null;
+            if (processId == null) {
+            	if (startDateTime == null & startDateTime == null)
+                	processmetrics = processmetricRepository.findAll(paging);
+            	else
+            		processmetrics = processmetricRepository.findAll(startDateTime, endDateTime, paging);
+            }
+            else
+            	if (startDateTime == null & startDateTime == null)
+            		processmetrics = processmetricRepository.findProcessesmetricByProcessId(processId, paging);
+            	else
+            		processmetrics = processmetricRepository.findProcessesmetricByProcessId(processId, startDateTime, endDateTime, paging);
+
+            /*if (processmetrics.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }*/
+
+            return new ResponseEntity<>(processmetrics, HttpStatus.OK); 
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("/processmetrics")
-    public ResponseEntity<ResponseEnvelope<List<Processmetric> >> postAllProcessMetrics(@RequestParam(value = "start", required = false) Long start,
-    																					@RequestParam(value = "limit", required = false) Long limit,
-    																					@RequestParam(value = "id", required = false) Long processId) {
-        try {
-            List<Processmetric> processmetrics = new ArrayList<Processmetric>();
-            if (processId == null)
-                processmetricRepository.findAll().forEach(processmetrics::add);
-            else
-                processmetricRepository.findProcessesmetricByProcessId(processId).forEach(processmetrics::add);
-
-            if (processmetrics.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<Page<Processmetric>> postAllProcessMetrics(
+    		@RequestParam(value = "page", required = false) Long page,
+			@RequestParam(value = "start", required = false) Long start,
+			@RequestParam(value = "limit", required = false) Long limit,
+			@RequestParam(value = "processId", required = false) Long processId,
+			@RequestParam(value = "startDateTime", required = false) String startDateTime,
+			@RequestParam(value = "endDateTime", required = false) String endDateTime) {
+    	try {
+            Pageable paging = PageRequest.of(start.intValue()/limit.intValue(), limit.intValue());
+            Page<Processmetric> processmetrics = null;
+            if (processId == null) {
+            	if (startDateTime == null & startDateTime == null)
+                	processmetrics = processmetricRepository.findAll(paging);
+            	else
+            		processmetrics = processmetricRepository.findAll(startDateTime, endDateTime, paging);
             }
+            else
+            	if (startDateTime == null & startDateTime == null)
+            		processmetrics = processmetricRepository.findProcessesmetricByProcessId(processId, paging);
+            	else
+            		processmetrics = processmetricRepository.findProcessesmetricByProcessId(processId, startDateTime, endDateTime, paging);
 
-            return new ResponseEntity<>(new ResponseEnvelope<List<Processmetric> >(200, "success.", processmetrics), HttpStatus.OK);
-        } catch (Exception e) {
+            /*if (processmetrics.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }*/
+
+            return new ResponseEntity<>(processmetrics, HttpStatus.OK); 
+            } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

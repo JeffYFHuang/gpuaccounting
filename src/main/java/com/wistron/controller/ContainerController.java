@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,9 +35,30 @@ public class ContainerController {
             else
                 containerRepository.findContainersByPodId(podId).forEach(containers::add);
 
-            if (containers.isEmpty()) {
+            /*if (containers.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
+            }*/
+
+            return new ResponseEntity<>(new ResponseEnvelope<List<Container> >(200, "success.", containers), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/containers")
+    public ResponseEntity<ResponseEnvelope<List<Container> >> postAllContainers(@RequestParam(value = "start", required = false) Long start,
+			@RequestParam(value = "limit", required = false) Long limit,
+			@RequestParam(value = "podId", required = false) Long podId) {
+        try {
+            List<Container> containers = new ArrayList<Container>();
+            if (podId == null)
+                containerRepository.findAll().forEach(containers::add);
+            else
+                containerRepository.findContainersByPodId(podId).forEach(containers::add);
+
+            /*if (containers.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }*/
 
             return new ResponseEntity<>(new ResponseEnvelope<List<Container> >(200, "success.", containers), HttpStatus.OK);
         } catch (Exception e) {

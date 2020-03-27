@@ -88,10 +88,11 @@ Build date: 2013-04-03 15:07:25
         ],
         stripeRows: true,
         //autoExpandColumn: 'name',
-        height:250,
+        //height:250,
         //width:"50%",
         frame:true,
         title:'Containers',
+        flex: 3,
 
         //plugins: new Ext.ux.PanelResizer({
         //    minHeight: 100
@@ -103,7 +104,18 @@ Build date: 2013-04-03 15:07:25
             displayInfo: true
 
             //plugins: new Ext.ux.ProgressBarPager()
-        })
+        }),
+        listeners:{  
+ 	       rowdblclick : function(grid, rowIndex){  
+ 	           alert("rowdblclick");
+ 	       },
+ 	       rowclick:function(grid, rowIndex){  
+ 	           var record = grid.getStore().getAt(rowIndex);
+ 	           var id = record.get('id');
+ 	           process_ds.removeAll();
+ 	           process_ds.load({params:{start:0, limit:20, id:id}});
+ 	       }  
+        }
     });
 
     //namespaceGrid.render('grid-example');

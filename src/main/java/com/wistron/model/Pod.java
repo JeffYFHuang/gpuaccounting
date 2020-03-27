@@ -31,6 +31,8 @@ public class Pod {
     private String phase;
     @Column(name = "start_time", columnDefinition = "char(32)")
     private String startTime;
+    @Column(name = "query_time", columnDefinition = "char(32)")
+    private String queryTime;
 
     @OneToMany(
             cascade = CascadeType.ALL,
@@ -45,6 +47,23 @@ public class Pod {
     
     public void setContainers (List<Container> containers) {
     	this.containers = containers;
+    }
+
+    @OneToMany
+        @JoinTable(
+            name="containergpus",
+            joinColumns = @JoinColumn(name="pod_id"),
+            inverseJoinColumns = @JoinColumn( name="gpu_id")
+        )
+    
+    private List<GPU> gpus = new ArrayList<>();
+
+    public List<GPU> getGpus() {
+    	return gpus;
+    }
+    
+    public void setGpus(List<GPU> gpus) {
+    	this.gpus = gpus;
     }
 
     public Pod() {
@@ -96,6 +115,14 @@ public class Pod {
 
     public void setStartTime(String startTime) {
         this.startTime = startTime;
+    }
+
+    public String getQueryTime() {
+        return queryTime;
+    }
+
+    public void setQueryTime(String queryTime) {
+        this.queryTime = queryTime;
     }
 
     @Override

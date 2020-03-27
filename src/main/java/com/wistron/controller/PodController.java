@@ -2,6 +2,7 @@ package com.wistron.controller;
 
 import com.wistron.model.Namespace;
 import com.wistron.model.Pod;
+import com.wistron.model.Processmetric;
 import com.wistron.repository.PodRepository;
 import com.wistron.utils.ResponseEnvelope;
 
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +29,29 @@ public class PodController {
 
     @GetMapping("/pods")
     public ResponseEntity<ResponseEnvelope<List<Pod>>> getAllPods(@RequestParam(required = false) Long namespaceId) {
+        try {
+            List<Pod> pods = new ArrayList<Pod>();
+            if (namespaceId == null)
+                podrepository.findAll().forEach(pods::add);
+            else {
+
+                podrepository.findByNamespaceIdEquals(namespaceId).forEach(pods::add);
+            }
+
+            if (pods.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+            return new ResponseEntity<>(new ResponseEnvelope<List<Pod> >(200, "success.", pods), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/pods")
+    public ResponseEntity<ResponseEnvelope<List<Pod> >> postAllPods(@RequestParam(value = "start", required = false) Long start,
+    																					@RequestParam(value = "limit", required = false) Long limit,
+    																					@RequestParam(value = "namespaceId", required = false) Long namespaceId) {
         try {
             List<Pod> pods = new ArrayList<Pod>();
             if (namespaceId == null)
