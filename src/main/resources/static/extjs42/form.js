@@ -69,6 +69,17 @@
         '.' + (date.getMilliseconds()).toFixed(6).slice(2, 8);
     }
 
+    //03/30/202011:11:21CST
+    function toCSTString(date) {
+    	return pad(date.getMonth() + 1) +  
+    	'/' + pad(date.getDate()) + 
+    	'/' + date.getFullYear() +
+        '' + pad(date.getHours()) +
+        ':' + pad(date.getMinutes()) +
+        ':' + pad(date.getSeconds()) +
+        'CST';
+    }
+
     function onButtonClick(btn){
         values = formPanel.getForm().getValues();
         startDt = toTimestamp(values['startdt'], values['startt']);
@@ -84,8 +95,21 @@
         	return;
         }
 
+    	pod_ds.proxy.extraParams.startDateTime = toCSTString(startDt);
+    	pod_ds.proxy.extraParams.endDateTime = toCSTString(endDt);
+
+    	container_ds.proxy.extraParams.startDateTime = toCSTString(startDt);
+    	container_ds.proxy.extraParams.endDateTime = toCSTString(endDt);
+
+    	process_ds.proxy.extraParams.startDateTime = toLocaleString(startDt);
+    	process_ds.proxy.extraParams.endDateTime = toLocaleString(endDt);
+    	
     	metric_ds.proxy.extraParams.startDateTime = toLocaleString(startDt);
     	metric_ds.proxy.extraParams.endDateTime = toLocaleString(endDt);
+
+    	pod_ds.load();
+    	container_ds.load();
+    	process_ds.load();
     	metric_ds.load();
     	/*{
 			startDateTime: toLocaleString(startDt),//.toLocaleString('zh-TW', {timeZone: 'Asia/Taipei'}),

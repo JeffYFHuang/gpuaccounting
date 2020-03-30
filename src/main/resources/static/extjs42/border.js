@@ -50,6 +50,7 @@ Ext.onReady(function() {
 	           var id = record.get('id');
  	           process_ds.removeAll();
  	           process_ds.load({params:{start:0, limit:20, containerId:id}});
+ 	           gpu_ds.loadData(record.get('gpus'));
             }
         }
     });
@@ -62,6 +63,7 @@ Ext.onReady(function() {
             	metric_ds.proxy.extraParams.processId = record.get('id');
 				//metric_ds.removeAll();
 				metric_ds.reload({page: 1});
+				gpu_ds.loadData(record.get('gpus'));
             }
         }
     });

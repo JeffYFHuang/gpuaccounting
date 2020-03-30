@@ -1,5 +1,8 @@
 package com.wistron.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.*;
 
 /*cmd = 'CREATE TABLE IF NOT EXISTS processes (' \
@@ -33,6 +36,18 @@ public class Process {
     private String startTime;
     @Column(name = "query_time", columnDefinition = "char(32)")
     private String queryTime;
+
+    @ManyToOne()
+    @JoinColumn(name="container_id", referencedColumnName = "id", insertable = false, updatable = false)    
+    private Container container;
+
+    public Container getContainer() {
+        return container;
+    }
+
+    public void setContainer(Container container) {
+        this.container = container;
+    }
 
     public Process() {
     }

@@ -2,6 +2,7 @@ package com.wistron.controller;
 
 import com.wistron.model.Container;
 import com.wistron.model.Namespace;
+import com.wistron.model.Pod;
 import com.wistron.repository.ContainerRepository;
 import com.wistron.utils.ResponseEnvelope;
 
@@ -27,13 +28,25 @@ public class ContainerController {
     ContainerRepository containerRepository;
 
     @GetMapping("/containers")
-    public ResponseEntity<ResponseEnvelope<List<Container> >> getAllContainers(@RequestParam(required = false) Long podId) {
+    public ResponseEntity<ResponseEnvelope<List<Container> >> getAllContainers(
+    		@RequestParam(required = false) Long podId,
+    		@RequestParam(value = "start", required = false) Long start,
+			@RequestParam(value = "limit", required = false) Long limit,
+			@RequestParam(value = "startDateTime", required = false) String startDateTime,
+			@RequestParam(value = "endDateTime", required = false) String endDateTime) {
         try {
-            List<Container> containers = new ArrayList<Container>();
-            if (podId == null)
-                containerRepository.findAll().forEach(containers::add);
+        	List<Container> containers = new ArrayList<Container>();
+            if (podId == null) {
+            	if (startDateTime == null & startDateTime == null)
+            		containerRepository.findAll().forEach(containers::add);
+            	else
+            		containerRepository.findAll(startDateTime, endDateTime).forEach(containers::add);
+            }
             else
-                containerRepository.findContainersByPodId(podId).forEach(containers::add);
+            	if (startDateTime == null & startDateTime == null)
+            		containerRepository.findContainersByPodId(podId).forEach(containers::add);
+            	else
+            		containerRepository.findContainersByPodId(podId, startDateTime, endDateTime).forEach(containers::add);
 
             /*if (containers.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -46,15 +59,25 @@ public class ContainerController {
     }
 
     @PostMapping("/containers")
-    public ResponseEntity<ResponseEnvelope<List<Container> >> postAllContainers(@RequestParam(value = "start", required = false) Long start,
+    public ResponseEntity<ResponseEnvelope<List<Container> >> postAllContainers(
+    		@RequestParam(required = false) Long podId,
+    		@RequestParam(value = "start", required = false) Long start,
 			@RequestParam(value = "limit", required = false) Long limit,
-			@RequestParam(value = "podId", required = false) Long podId) {
+			@RequestParam(value = "startDateTime", required = false) String startDateTime,
+			@RequestParam(value = "endDateTime", required = false) String endDateTime) {
         try {
-            List<Container> containers = new ArrayList<Container>();
-            if (podId == null)
-                containerRepository.findAll().forEach(containers::add);
+        	List<Container> containers = new ArrayList<Container>();
+            if (podId == null) {
+            	if (startDateTime == null & startDateTime == null)
+            		containerRepository.findAll().forEach(containers::add);
+            	else
+            		containerRepository.findAll(startDateTime, endDateTime).forEach(containers::add);
+            }
             else
-                containerRepository.findContainersByPodId(podId).forEach(containers::add);
+            	if (startDateTime == null & startDateTime == null)
+            		containerRepository.findContainersByPodId(podId).forEach(containers::add);
+            	else
+            		containerRepository.findContainersByPodId(podId, startDateTime, endDateTime).forEach(containers::add);
 
             /*if (containers.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);

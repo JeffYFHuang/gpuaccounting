@@ -27,13 +27,25 @@ public class ProcessController {
     ProcessRepository processRepository;
 
     @GetMapping("/processes")
-    public ResponseEntity<ResponseEnvelope<List<Process> >> getAllProcesses(@RequestParam(required = false) Long containerId) {
+    public ResponseEntity<ResponseEnvelope<List<Process> >> getAllProcesses(
+    		@RequestParam(required = false) Long containerId,
+    		@RequestParam(value = "start", required = false) Long start,
+			@RequestParam(value = "limit", required = false) Long limit,
+			@RequestParam(value = "startDateTime", required = false) String startDateTime,
+			@RequestParam(value = "endDateTime", required = false) String endDateTime) {
         try {
             List<Process> processes = new ArrayList<Process>();
-            if (containerId == null)
-                processRepository.findAll().forEach(processes::add);
+            if (containerId == null) {
+            	if (startDateTime == null & startDateTime == null)
+            		processRepository.findAll().forEach(processes::add);
+            	else
+            		processRepository.findAll(startDateTime, endDateTime).forEach(processes::add);
+            }
             else
-                processRepository.findProcessesByContainerId(containerId).forEach(processes::add);
+            	if (startDateTime == null & startDateTime == null)
+            		processRepository.findProcessesByContainerId(containerId).forEach(processes::add);
+            	else
+            		processRepository.findProcessesByContainerId(containerId, startDateTime, endDateTime).forEach(processes::add);
 
             /*if (processes.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -46,15 +58,25 @@ public class ProcessController {
     }
     
     @PostMapping("/processes")
-    public ResponseEntity<ResponseEnvelope<List<Process> >> postAllProcesses(@RequestParam(value = "start", required = false) Long start,
+    public ResponseEntity<ResponseEnvelope<List<Process> >> postAllProcesses(
+    		@RequestParam(required = false) Long containerId,
+    		@RequestParam(value = "start", required = false) Long start,
 			@RequestParam(value = "limit", required = false) Long limit,
-			@RequestParam(value = "containerId", required = false) Long containerId) {
+			@RequestParam(value = "startDateTime", required = false) String startDateTime,
+			@RequestParam(value = "endDateTime", required = false) String endDateTime) {
         try {
             List<Process> processes = new ArrayList<Process>();
-            if (containerId == null)
-                processRepository.findAll().forEach(processes::add);
+            if (containerId == null) {
+            	if (startDateTime == null & startDateTime == null)
+            		processRepository.findAll().forEach(processes::add);
+            	else
+            		processRepository.findAll(startDateTime, endDateTime).forEach(processes::add);
+            }
             else
-                processRepository.findProcessesByContainerId(containerId).forEach(processes::add);
+            	if (startDateTime == null & startDateTime == null)
+            		processRepository.findProcessesByContainerId(containerId).forEach(processes::add);
+            	else
+            		processRepository.findProcessesByContainerId(containerId, startDateTime, endDateTime).forEach(processes::add);
 
             /*if (processes.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);

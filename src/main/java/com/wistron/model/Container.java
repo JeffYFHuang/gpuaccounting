@@ -43,7 +43,9 @@ public class Container {
     private Integer requestsNvidiaComGpu;
     @Column(name = "nspid", columnDefinition = "BIGINT(11) NOT NULL")
     private Long nspid;
-
+    @Column(name = "query_time", columnDefinition = "char(32)")
+    private String queryTime;
+/*
     @OneToMany(
             cascade = CascadeType.ALL,
             orphanRemoval = true
@@ -57,6 +59,19 @@ public class Container {
     
     public void setProcesses (List<Process> processes) {
     	this.processes = processes;
+    }
+*/
+    @OneToMany
+    @JoinTable(
+        name="containergpus",
+        joinColumns = @JoinColumn(name="container_id"),
+        inverseJoinColumns = @JoinColumn( name="gpu_id")
+    )
+
+    private List<GPU> gpus = new ArrayList<>();
+
+    public List<GPU> getGpus() {
+    	return gpus;
     }
 
     public Container() {
@@ -140,6 +155,14 @@ public class Container {
 
     public void setNspid(Long nspid) {
         this.nspid = nspid;
+    }
+
+    public String getQueryTime() {
+        return queryTime;
+    }
+
+    public void setQueryTime(String queryTime) {
+        this.queryTime = queryTime;
     }
 
     @Override

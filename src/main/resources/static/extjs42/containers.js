@@ -10,7 +10,9 @@
 		    {name: 'requestsCpu', type: 'int', mapping:'requestsCpu'},
 		    {name: 'requestsMemory', mapping:'requestsMemory'},
 		    {name: 'requestsNvidiaComGpu', type: 'int', mapping:'requestsNvidiaComGpu'},
-		    {name: 'nspid', type: 'int', mapping:'nspid'}
+		    {name: 'nspid', type: 'int', mapping:'nspid'},
+		    {name: 'queryTime', mapping:'queryTime'},
+		    {name: 'gpus', mapping:'gpus'}
 		    ]
 	});
 
@@ -52,7 +54,8 @@
                 {id:'c.limitsNvidiaComGpu',text: "limits.nvidia.com/gpu", sortable: true, dataIndex: 'limitsNvidiaComGpu'},
                 {id:'c.requestsCpu',text: "requests.cpu", sortable: true, dataIndex: 'requestsCpu'},
                 {id:'c.requestsMemory',text: "requests.memory", sortable: true, dataIndex: 'requestsMemory'},
-                {id:'c.requestsNvidiaComGpu',text: "requests.nvidia.com/gpu", sortable: true, dataIndex: 'requestsNvidiaComGpu'}
+                {id:'c.requestsNvidiaComGpu',text: "requests.nvidia.com/gpu", sortable: true, dataIndex: 'requestsNvidiaComGpu'},
+                {id:'c.queryTime',text: "queryTime", sortable: true, dataIndex: 'queryTime'}
             ];
             // Note the use of a storeId, this will register thisStore
             // with the StoreManager and allow us to retrieve it very easily.

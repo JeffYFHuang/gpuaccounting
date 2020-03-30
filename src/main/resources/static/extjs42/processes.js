@@ -10,7 +10,8 @@ Ext.define('Process', {
 		    {name: 'command', mapping:'command'},
 		    {name: 'fullCommand', mapping:'fullCommand'},
 		    {name: 'startTime', mapping:'startTime'},
-		    {name: 'queryTime', mapping:'queryTime'}
+		    {name: 'queryTime', mapping:'queryTime'},
+		    {name: 'gpus', mapping:'container.gpus'}
 		    ]
 	});
 
