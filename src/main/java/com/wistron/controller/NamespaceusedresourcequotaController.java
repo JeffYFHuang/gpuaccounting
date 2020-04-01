@@ -23,13 +23,26 @@ public class NamespaceusedresourcequotaController {
     NamespaceusedresourcequotaRepository namespaceusedresourcequotaRepository;
 
     @GetMapping("/namespaceusedresourcequotas")
-    public ResponseEntity<List<Namespaceusedresourcequota>> getAllNamespaceusedresourcequotas(@RequestParam(required = false) Long namespaceId) {
+    public ResponseEntity<List<Namespaceusedresourcequota>> getAllNamespaceusedresourcequotas(
+    		@RequestParam(required = false) Long namespaceId,
+			@RequestParam(value = "start", required = false) Long start,
+			@RequestParam(value = "limit", required = false) Long limit,
+			@RequestParam(value = "startDateTime", required = false) String startDateTime,
+			@RequestParam(value = "endDateTime", required = false) String endDateTime) {
         try {
             List<Namespaceusedresourcequota> namespaceusedresourcequotas = new ArrayList<Namespaceusedresourcequota>();
-            if (namespaceId == null)
-                namespaceusedresourcequotaRepository.findAll().forEach(namespaceusedresourcequotas::add);
+
+            if (namespaceId == null) {
+            	if (startDateTime == null & startDateTime == null)
+            		namespaceusedresourcequotaRepository.findAll().forEach(namespaceusedresourcequotas::add);
+            	else
+            		namespaceusedresourcequotaRepository.findAll(startDateTime, endDateTime).forEach(namespaceusedresourcequotas::add);
+            }
             else
-                namespaceusedresourcequotaRepository.findNamespaceusedresourcequotasByNamespaceId(namespaceId).forEach(namespaceusedresourcequotas::add);
+            	if (startDateTime == null & startDateTime == null)
+            		namespaceusedresourcequotaRepository.findNamespaceusedresourcequotasByNamespaceId(namespaceId).forEach(namespaceusedresourcequotas::add);
+            	else
+            		namespaceusedresourcequotaRepository.findNamespaceusedresourcequotasByNamespaceId(namespaceId, startDateTime, endDateTime).forEach(namespaceusedresourcequotas::add);
 
             if (namespaceusedresourcequotas.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);

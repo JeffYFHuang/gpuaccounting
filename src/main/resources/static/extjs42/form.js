@@ -120,7 +120,7 @@
     var formPanel = Ext.create('Ext.form.Panel', {
         frame: true,
         //bodyPadding: '5 5 0',
-        width: 660,
+        width: '100%',
         fieldDefaults: {
             labelWidth: 80,
             msgTarget: 'side',
@@ -129,7 +129,11 @@
         defaults: {
             width: 200
         },
-        layout: 'hbox',
+        layout: {
+        	type: 'hbox',
+        	align: 'center',
+        	pack: 'center'
+        },
         defaultType: 'datefield',
         items: [{
             fieldLabel: 'Start Date',

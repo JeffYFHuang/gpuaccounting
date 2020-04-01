@@ -35,6 +35,8 @@ public class Namespaceusedresourcequota {
     private String requestsMemory;
     @Column(name = "requests_nvidia_com_gpu", columnDefinition = "int(4)")
     private Integer requestsNvidiaComGpu;
+    @Column(name = "start_time", columnDefinition = "char(32)")
+    private String startTime;
     @Column(name = "query_time", columnDefinition = "char(32) NOT NULL")
     private String queryTime;
 
@@ -103,6 +105,14 @@ public class Namespaceusedresourcequota {
 
     public Integer getRequestsNvidiaComGpu() {
         return requestsNvidiaComGpu;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
     }
 
     public void setQueryTime(String queryTime) {

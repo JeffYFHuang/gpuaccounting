@@ -39,16 +39,44 @@
         // This will associate an string representation of a class
         // (called an xtype) with the Component Manager
         // It allows you to support lazy instantiation of your components
-        alias: 'widget.namespacegrid',
-
+        alias: 'widget.namespaceGrid',
+        height: this.height,
+        stripeRows: true,
+        columnLines: true,
         // override
+        /**
+         * Custom function used for column renderer
+         * @param {Object} val
+         */
+        change: function(val) {
+            if (val > 0) {
+                return '<span style="color:green;">' + val + '</span>';
+            } else if (val < 0) {
+                return '<span style="color:red;">' + val + '</span>';
+            }
+            return val;
+        },
+
+        /**
+         * Custom function used for column renderer
+         * @param {Object} val
+         */
+        pctChange: function(val) {
+            if (val > 0) {
+                return '<span style="color:green;">' + val + '%</span>';
+            } else if (val < 0) {
+                return '<span style="color:red;">' + val + '%</span>';
+            }
+            return val;
+        },
+
         initComponent : function() {
             // Pass in a column model definition
             // Note that the DetailPageURL was defined in the record definition but is not used
             // here. That is okay.
             this.columns = [
             	{id:'namespace.id',text: "id", sortable: true, width: 70, dataIndex: 'id'},
-                {id:'namespace.Name',text: "name", sortable: true, dataIndex: 'name'},
+                {id:'namespace.Name',text: "name", sortable: true, flex: 1, dataIndex: 'name'},
                 //{id:'owner',header: "owner", sortable: true, dataIndex: 'owner'},
                 {id:'namespace.limitsCpu',text: "limits.cpu", sortable: true, dataIndex: 'limitsCpu'},
                 {id:'namespace.limitsMemory',text: "limits.memory", sortable: true, dataIndex: 'limitsMemory'},
@@ -69,6 +97,6 @@
                 //plugins: new Ext.ux.ProgressBarPager()
             });
 
-            this.callParent();
+            this.callParent(arguments);
         }
     });

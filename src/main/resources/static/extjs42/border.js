@@ -91,14 +91,14 @@ Ext.onReady(function() {
 		var record = gpuGrid.getSelectedRecord();
 		if (!record) return;
 
-    	var records2del = [];
+    	var records2 = [];
     	store.each(function(r) {
     	    if (r.get('gpu.id') == record.get('id')) {
-    	        records2del.push(r);
+    	        records2.push(r);
     	    }
     	}, this);
 
-    	store.loadData(records2del);
+    	store.loadData(records2);
     	if (records2del.length)
     		metric_chart_win.show();
     	else

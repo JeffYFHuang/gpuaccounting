@@ -28,39 +28,69 @@
 		  //remoteSort: true
 	});
 
+	
     Ext.define('App.gpuGrid', {
         extend: 'Ext.grid.Panel',
         // This will associate an string representation of a class
         // (called an xtype) with the Component Manager
         // It allows you to support lazy instantiation of your components
         alias: 'widget.gpugrid',
-
+        height: this.height,
+        stripeRows: true,
+        columnLines: true,
         // override
+
+        /**
+         * Custom function used for column renderer
+         * @param {Object} val
+         */
+        change: function(val) {
+            if (val > 0) {
+                return '<span style="color:green;">' + val + '</span>';
+            } else if (val < 0) {
+                return '<span style="color:red;">' + val + '</span>';
+            }
+            return val;
+        },
+
+        /**
+         * Custom function used for column renderer
+         * @param {Object} val
+         */
+        pctChange: function(val) {
+            if (val > 0) {
+                return '<span style="color:green;">' + val + '%</span>';
+            } else if (val < 0) {
+                return '<span style="color:red;">' + val + '%</span>';
+            }
+            return val;
+        },
+
         initComponent : function() {
             // Pass in a column model definition
             // Note that the DetailPageURL was defined in the record definition but is not used
             // here. That is okay.
             this.columns = [
             	{id:'gpu.id',text: "id", sortable: true, width: 30, dataIndex: 'id'},
-                {id:'gpu.hostname',text: "hostname", sortable: true, width: 100, dataIndex: 'hostname'},
+                {id:'gpu.hostname',text: "hostname", sortable: true, flex: 0.5, dataIndex: 'hostname'},
                 {id:'gpu.memory.total',text: "memory.total", sortable: true, width: 100, dataIndex: 'memory.total'},
                 {id:'gpu.enforced.power.limit',text: "enforced.power.limit", sortable: true, width: 100, dataIndex: 'enforced.power.limit'},
-                {id:'gpu.uuid',text: "uuid", sortable: true, width: 150, dataIndex: 'uuid'},
+                {id:'gpu.uuid',text: "uuid", sortable: true, flex: 0.5, dataIndex: 'uuid'},
                 {id:'gpu.name',text: "name", sortable: true, width: 150, dataIndex: 'name'}
             ];
             // Note the use of a storeId, this will register thisStore
             // with the StoreManager and allow us to retrieve it very easily.
             this.store = gpu_ds;
             // finally call the superclasses implementation
-            this.bbar = new Ext.PagingToolbar({
+            /*this.bbar = new Ext.PagingToolbar({
                 pageSize: 20,
                 store: gpu_ds,
                 displayInfo: true
 
                 //plugins: new Ext.ux.ProgressBarPager()
-            });
+            });*/
 
-            this.callParent();
+            this.callParent(arguments);
         }
     });
 //});
