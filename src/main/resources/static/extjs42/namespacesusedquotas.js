@@ -117,6 +117,8 @@
 			            	cpuhours = cpuhours + r.data.requestsCpu * hours;
 			            	memoryhours = memoryhours + requestsMemory * hours;
 
+			            	startTime = new Date(toDate(startTime));
+			            	queryTime = new Date(toDate(queryTime));
 			            	var rowIndex = store.indexOf(records[i]);
 		                    data.push({
 		                    	rowId: rowIndex,
@@ -127,7 +129,7 @@
 		            		    requestsCpu: r.data.requestsCpu,
 		            		    requestsMemory: requestsMemory,
 		            		    requestsNvidiaComGpu: r.data.requestsNvidiaComGpu,
-		            		    time: startTime});
+		            		    time: startTime.getTime()/1000});
 
 		                    data.push({
 		                    	rowId: rowIndex,
@@ -138,7 +140,7 @@
 		            		    requestsCpu: r.data.requestsCpu,
 		            		    requestsMemory: requestsMemory,
 		            		    requestsNvidiaComGpu: r.data.requestsNvidiaComGpu,
-		            		    time: queryTime});
+		            		    time: queryTime.getTime()/1000});
 		                    
 		                    i = i + 1;
 		                    //alert(parseInt(r.data.requestsMemory));

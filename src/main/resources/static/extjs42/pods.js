@@ -42,7 +42,7 @@
             // here. That is okay.
             this.columns = [
             	{id:'pod.id',text: "id", sortable: true, width: 30, dataIndex: 'id'},
-            	//{id:'pod.namespace.id',text: "namespace.id", sortable: true, dataIndex: 'namespaceId'},
+            	{id:'pod.namespace.id',text: "namespace.id", sortable: true, dataIndex: 'namespaceId'},
                 {id:'pod.name',text: "name", sortable: true, dataIndex: 'name'},
                 //{id:'phase',text: "phase", sortable: true, dataIndex: 'phase'},
                 {id:'pod.startTime',text: "startTime", sortable: true, dataIndex: 'startTime'},

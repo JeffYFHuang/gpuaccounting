@@ -17,6 +17,8 @@ public class Containergpu {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", columnDefinition = "int(11) NOT NULL AUTO_INCREMENT")
     private Long id;
+    @Column(name = "namespace_id", unique=false, columnDefinition = "int(11) NOT NULL")
+    private Long namespaceId;
     @Column(name = "pod_id", unique=false, columnDefinition = "int(11) NOT NULL")
     private Long podId;
     @Column(name = "container_id", columnDefinition = "int(11) NOT NULL")

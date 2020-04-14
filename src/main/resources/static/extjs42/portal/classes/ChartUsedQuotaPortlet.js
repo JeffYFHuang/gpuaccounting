@@ -8,7 +8,7 @@ var chartusedquota_ds = Ext.create('Ext.data.JsonStore', {
             		    {name: 'requestsCpu', type: 'int', mapping:'requestsCpu'},
             		    {name: 'requestsMemory', mapping:'requestsMemory'},
             		    {name: 'requestsNvidiaComGpu', type: 'int', mapping:'requestsNvidiaComGpu'},
-            		    {name: 'time', type: 'datetime', mapping:'time'}
+            		    {name: 'time', type: 'time', mapping:'time'}
             		    ]
                 });
 
@@ -90,10 +90,10 @@ Ext.define('Ext.app.ChartUsedQuotaPortlet', {
                     },
                     minimum: 0
                 }, {
-                    type: 'Category',
+                    type: 'Numeric',
                     position: 'bottom',
                     fields: ['time'],
-                    title: 'Time'
+                    title: 'Time(ms)'
                 }],
                 series: [{
                     type: 'line',
@@ -111,13 +111,13 @@ Ext.define('Ext.app.ChartUsedQuotaPortlet', {
                     },  
                     tips: {
                         trackMouse: true,
-                        width: 160,
+                        width: 200,
                         height: 20,
                         layout: 'fit',
                         renderer: function(klass, item) {  
                             var storeItem = item.storeItem;
 
-                            this.setTitle(storeItem.get('time'));
+                            this.setTitle(new Date(storeItem.get('time')*1000));
                             Ext.ComponentQuery.query('#namespaceUsedQuotaGrid')[0].getSelectionModel().select(storeItem.get('rowId'));
                         }
                     }
@@ -138,7 +138,7 @@ Ext.define('Ext.app.ChartUsedQuotaPortlet', {
                     },  
                     tips: {
                         trackMouse: true,
-                        width: 160,
+                        width: 200,
                         height: 20,
                         layout: 'fit',
                         /*items: {
@@ -162,7 +162,7 @@ Ext.define('Ext.app.ChartUsedQuotaPortlet', {
                                     requests: storeItem.get('requestsNvidiaComGpu')
                                 }];
 							*/
-                            this.setTitle(storeItem.get('time'));
+                            this.setTitle(new Date(storeItem.get('time')*1000));
                             //gridStore.loadData(data);
                             //quotagrid.setSize(200, 100);
                             Ext.ComponentQuery.query('#namespaceUsedQuotaGrid')[0].getSelectionModel().select(storeItem.get('rowId'));
@@ -184,13 +184,13 @@ Ext.define('Ext.app.ChartUsedQuotaPortlet', {
                     },  
                     tips: {
                         trackMouse: true,
-                        width: 160,
+                        width: 200,
                         height: 20,
                         layout: 'fit',
                         renderer: function(klass, item) {  
                             var storeItem = item.storeItem;
 
-                            this.setTitle(storeItem.get('time'));
+                            this.setTitle(new Date(storeItem.get('time')*1000));
                             Ext.ComponentQuery.query('#namespaceUsedQuotaGrid')[0].getSelectionModel().select(storeItem.get('rowId'));
                         }
                     }
