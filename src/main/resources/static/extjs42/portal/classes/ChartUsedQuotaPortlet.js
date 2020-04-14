@@ -1,6 +1,6 @@
 var chartusedquota_ds = Ext.create('Ext.data.JsonStore', {
                     fields: [
-                    	//{name: 'id', type: 'int', mapping:'id'},
+                    	{name: 'rowId', type: 'int', mapping:'rowId'},
             		    {name: 'namespaceId', type: 'int', mapping:'namespaceId'},
             		    {name: 'limitsCpu', type: 'int', mapping:'limitsCpu'},
             		    {name: 'limitsMemory', mapping:'limitsMemory'},
@@ -11,6 +11,30 @@ var chartusedquota_ds = Ext.create('Ext.data.JsonStore', {
             		    {name: 'time', type: 'datetime', mapping:'time'}
             		    ]
                 });
+
+var gridStore = Ext.create('Ext.data.JsonStore', {
+    fields: ['name', 'limits', 'requests']
+});
+
+var quotagrid = Ext.create('Ext.grid.Panel', {
+    store: gridStore,
+    height: 100,
+    width: 200,
+    columns: [
+        {
+            text   : 'name',
+            dataIndex: 'name'
+        },
+        {
+            text   : 'limits',
+            dataIndex: 'limits'
+        },
+        {
+            text   : 'requests',
+            dataIndex: 'requests'
+        }
+    ]
+});
 
 Ext.define('Ext.app.ChartUsedQuotaPortlet', {
 
@@ -29,15 +53,14 @@ Ext.define('Ext.app.ChartUsedQuotaPortlet', {
 
         Ext.apply(this, {
             layout: 'fit',
-            height: 250,
+            height: 300,
             items: {
                 xtype: 'chart',
                 animate: false,
                 shadow: false,
-                //store: namespaceusedquota_ds,
                 store: chartusedquota_ds,
                 legend: {
-                    position: 'bottom'
+                    position: 'right'
                 },
                 axes: [{
                     type: 'Numeric',
@@ -66,11 +89,16 @@ Ext.define('Ext.app.ChartUsedQuotaPortlet', {
                         font: '11px Arial'
                     },
                     minimum: 0
+                }, {
+                    type: 'Category',
+                    position: 'bottom',
+                    fields: ['time'],
+                    title: 'Time'
                 }],
                 series: [{
                     type: 'line',
                     lineWidth: 1,
-                    showMarkers: false,
+                    showMarkers: true,
                     smooth: true,
                     fill: true,
                     axis: 'left',
@@ -80,11 +108,23 @@ Ext.define('Ext.app.ChartUsedQuotaPortlet', {
                         'stroke-width': 1,
                         stroke: 'rgb(148, 174, 10)'
 
+                    },  
+                    tips: {
+                        trackMouse: true,
+                        width: 160,
+                        height: 20,
+                        layout: 'fit',
+                        renderer: function(klass, item) {  
+                            var storeItem = item.storeItem;
+
+                            this.setTitle(storeItem.get('time'));
+                            Ext.ComponentQuery.query('#namespaceUsedQuotaGrid')[0].getSelectionModel().select(storeItem.get('rowId'));
+                        }
                     }
                 }, {
                     type: 'line',
                     lineWidth: 1,
-                    showMarkers: false,
+                    showMarkers: true,
                     smooth: true,
                     fill: true,
                     fillOpacity: 0.5,
@@ -95,11 +135,43 @@ Ext.define('Ext.app.ChartUsedQuotaPortlet', {
                         'stroke-width': 1,
                          stroke: 'rgb(17, 95, 166)'
 
+                    },  
+                    tips: {
+                        trackMouse: true,
+                        width: 160,
+                        height: 20,
+                        layout: 'fit',
+                        /*items: {
+                            xtype: 'container',
+                            layout: 'fit',
+                            items: [quotagrid]
+                        },*/
+                        renderer: function(klass, item) {  
+                            var storeItem = item.storeItem;
+                            /*    data = [{
+                                    name: 'Cpu',
+                                    limits: storeItem.get('limitsCpu'),
+                                    requests: storeItem.get('requestsCpu')
+                                }, {
+                                    name: 'Memory',
+                                    limits: storeItem.get('limitsMemory'),
+                                    requests: storeItem.get('requestsMemory')
+                                }, {
+                                    name: 'GPU',
+                                    limits: storeItem.get('requestsNvidiaComGpu'),
+                                    requests: storeItem.get('requestsNvidiaComGpu')
+                                }];
+							*/
+                            this.setTitle(storeItem.get('time'));
+                            //gridStore.loadData(data);
+                            //quotagrid.setSize(200, 100);
+                            Ext.ComponentQuery.query('#namespaceUsedQuotaGrid')[0].getSelectionModel().select(storeItem.get('rowId'));
+                        }
                     }
                 },{
                     type: 'line',
                     lineWidth: 1,
-                    showMarkers: false,
+                    showMarkers: true,
                     smooth: true,
                     fill: true,
                     fillOpacity: 0.5,
@@ -109,6 +181,18 @@ Ext.define('Ext.app.ChartUsedQuotaPortlet', {
                     style: {
                         'stroke-width': 1,
                          stroke: 'rgb(17, 95, 166)'
+                    },  
+                    tips: {
+                        trackMouse: true,
+                        width: 160,
+                        height: 20,
+                        layout: 'fit',
+                        renderer: function(klass, item) {  
+                            var storeItem = item.storeItem;
+
+                            this.setTitle(storeItem.get('time'));
+                            Ext.ComponentQuery.query('#namespaceUsedQuotaGrid')[0].getSelectionModel().select(storeItem.get('rowId'));
+                        }
                     }
                 }]
             }

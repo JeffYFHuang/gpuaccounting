@@ -127,12 +127,12 @@
             autoFitErrors: false
         },
         defaults: {
-            width: 200
+            width: 220
         },
         layout: {
         	type: 'hbox',
-        	align: 'center',
-        	pack: 'center'
+        	align: 'left',
+        	pack: 'left'
         },
         defaultType: 'datefield',
         items: [{
@@ -149,7 +149,7 @@
             value: '00:00',
             maxValue: '24:00',
             increment: 15,
-            width: 80
+            width: 90
         }, {
             fieldLabel: 'End Date',
             name: 'enddt',
@@ -164,7 +164,7 @@
             value: '00:00',
             maxValue: '24:00',
             increment: 15,
-            width: 80
+            width: 90
         }, {
         	xtype: 'button',
         	text: 'Apply',

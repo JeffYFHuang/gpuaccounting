@@ -70,6 +70,7 @@ Ext.onReady(function() {
     
     var metricGrid = new App.metricGrid({
     	flex: 3,
+    	itemId: 'metricGrid',
         selType: 'rowmodel'/*,
         listeners: {
             select: function(RowModel, record, index, eOpts){
@@ -99,7 +100,7 @@ Ext.onReady(function() {
     	}, this);
 
     	store.loadData(records2);
-    	if (records2del.length)
+    	if (records2.length)
     		metric_chart_win.show();
     	else
     		metric_chart_win.hide();

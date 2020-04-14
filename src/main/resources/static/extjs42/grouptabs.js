@@ -94,14 +94,15 @@ Ext.onReady(function () {
                             }
                         }, {
                             title: 'Used Quota',
-                            height: '250',
+                            height: '200',
                             items: {
+                            	itemId: 'namespaceUsedQuotaGrid',
                                 xtype: 'namespaceUsedQuotaGrid'
                             }
                         }]
                     }]
                 }]
-            }, {
+            }/*, {
                 expanded: true,
                 items: [{
                     title: 'Configuration',
@@ -159,7 +160,7 @@ Ext.onReady(function () {
                     html: '<h1>The third tab group only has a single entry.<br>This is to test the tab being tagged with both "first" and "last" classes to ensure rounded corners are applied top and bottom</h1>',
                     border: false
                 }
-            }]
+            }*/]
         }]
     });
 });

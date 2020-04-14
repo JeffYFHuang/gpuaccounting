@@ -39,7 +39,7 @@
         tpl  : Ext.create('Ext.XTemplate',
             '<tpl for=".">',
                 '<div class="phone">',
-                '<img width="20" height="20" src="./images/user.jpg" />',
+                '<img width="30" height="30" src="./images/user0.png" />',
                 '<strong>{name}</strong>',
                 '</div>',
             '</tpl>'
