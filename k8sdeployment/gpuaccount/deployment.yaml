@@ -1,0 +1,63 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-springboot-gpuaccount
+  labels:
+    app: k8s-springboot-gpuaccount
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: k8s-springboot-gpuaccount
+  template:
+    metadata:
+      labels:
+        app: k8s-springboot-gpuaccount
+    spec:
+      containers:
+        - name: k8s-springboot-gpuaccount
+          image: gpuaccount:1.0
+          ports:
+            - containerPort: 9090
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 9090
+            initialDelaySeconds: 30
+            timeoutSeconds: 30
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: MYSQL_DB_HOST
+              value: mysql-service
+            - name: MYSQL_DB_PORT
+              value: "3306"
+            - name: MYSQL_DB_USER
+              value: root
+            - name: MYSQL_DB_PASSWORD
+              value: my-super-secret-password
+              #  valueFrom:
+              #  secretKeyRef:
+              #    name: mysql-secrets
+              #    key: root-password
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8s-springboot-gpuaccount
+  namespace: default
+  labels:
+    app: k8s-springboot-gpuaccount
+spec:
+  ports:
+    - port: 9090
+      targetPort: 9090
+  selector:
+    app: k8s-springboot-gpuaccount
+  type: NodePort
