@@ -35,8 +35,8 @@ public class Container {
     private String limitsMemory;
     @Column(name = "limits_nvidia_com_gpu", columnDefinition = "int(4)")
     private Integer limitsNvidiaComGpu;
-    @Column(name = "requests_cpu", columnDefinition = "int(4)")
-    private Integer requestsCpu;
+    @Column(name = "requests_cpu", columnDefinition = "char(16)")
+    private String requestsCpu;
     @Column(name = "requests_memory", columnDefinition = "char(32)")
     private String requestsMemory;
     @Column(name = "requests_nvidia_com_gpu", columnDefinition = "int(4)")
@@ -117,11 +117,11 @@ public class Container {
         this.limitsNvidiaComGpu = limitsNvidiaComGpu;
     }
 
-    public Integer getRequestsCpu() {
+    public String getRequestsCpu() {
         return requestsCpu;
     }
 
-    public void setRequestsCpu(Integer requests_cpu) {
+    public void setRequestsCpu(String requests_cpu) {
         this.requestsCpu = requestsCpu;
     }
 
