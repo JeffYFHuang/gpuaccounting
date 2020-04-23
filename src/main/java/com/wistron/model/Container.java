@@ -121,7 +121,7 @@ public class Container {
         return requestsCpu;
     }
 
-    public void setRequestsCpu(String requests_cpu) {
+    public void setRequestsCpu(String requestsCpu) {
         this.requestsCpu = requestsCpu;
     }
 
