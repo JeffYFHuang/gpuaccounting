@@ -15,8 +15,8 @@ RUN apt-get install default-libmysqlclient-dev
 RUN pip3 install kafka-python
 RUN pip3 install mysqlclient
 RUN cd /opt/gpustat-console && python3 setup.py install
-COPY kafka_consumer/gpu_info_insert.py /opt
-COPY kafka_consumer/metrics_consumer.py /opt
+#COPY kafka_consumer/gpu_info_insert.py /opt
+#COPY kafka_consumer/metrics_consumer.py /opt
 WORKDIR /opt
 #RUN pip install -r requirements.txt
 
