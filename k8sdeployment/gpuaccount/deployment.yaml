@@ -28,7 +28,7 @@ spec:
               port: 9090
             initialDelaySeconds: 30
             timeoutSeconds: 30
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           env:
             - name: MYSQL_DB_HOST
               value: mysql-service

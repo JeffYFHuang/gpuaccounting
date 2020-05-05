@@ -19,7 +19,7 @@ spec:
       containers:
         - name: k8s-metric-consumer
           image: registry.local:5000/metric-consumer:1.0
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           env:
             - name: MYSQL_DB_HOST
               value: mysql-service
