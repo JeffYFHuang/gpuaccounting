@@ -1,0 +1,4 @@
+2019-10-22 00:00:00
+Listing pods with their IPs:
+{'namespace': 'dannylin', 'podname': 'ml-0', 'start_time':'2020-02-12 09:02:27+00:00', 'lastupdate_time': 2020-02-19 02:49:54.600217+00:00, 'phase': 'Running', 'cpu': '500m', 'memory': '1Gi', 'nvidia.com/gpu': 2,'uuid': ['GPU-f8ba439f-97b5-936e-4f27-d7e37e5afd02', 'GPU-6a5ea4ab-0f49-b07b-b653-892c8d4d88e3']}
+{'namespace': 'jeffyfhuang', 'podname': 'tf-test-0', 'start_time':'2020-02-17 06:19:03+00:00', 'lastupdate_time': 2020-02-19 02:49:55.896626+00:00, 'phase': 'Running', 'cpu': '2', 'memory': '8Gi', 'nvidia.com/gpu': 2,'uuid': ['GPU-ec824811-3381-8c0e-a44b-db87bf4064aa', 'GPU-ddde5b9a-6308-d1e1-7c7d-b7cc929e7c0c']}

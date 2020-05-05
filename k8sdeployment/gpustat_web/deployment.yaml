@@ -1,0 +1,61 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-gpustat-web
+  labels:
+    app: k8s-gpustat-web
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: k8s-gpustat-web
+  template:
+    metadata:
+      labels:
+        app: k8s-gpustat-web
+    spec:
+      containers:
+        - name: k8s-gpustat-web
+          image: registry.local:5000/gpustat_web:1.0
+          ports:
+            - containerPort: 5555
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 5555
+            initialDelaySeconds: 30
+            timeoutSeconds: 30
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: MYSQL_DB_HOST
+              value: mysql-service
+            - name: MYSQL_DB_PORT
+              value: "3306"
+            - name: MYSQL_DB_USER
+              value: root
+            - name: MYSQL_DB_PASSWORD
+              value: '12345'
+            - name: KAFKA_BROKER
+              value: 'kafka.default.svc.cluster.local'
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8s-gpustat-web
+  namespace: default
+  labels:
+    app: k8s-gpustat-web
+spec:
+  ports:
+    - port: 5555
+      targetPort: 5555
+  selector:
+    app: k8s-gpustat-web
+  type: NodePort

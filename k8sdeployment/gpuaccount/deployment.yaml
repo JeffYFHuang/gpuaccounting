@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: k8s-springboot-gpuaccount
-          image: gpuaccount:1.0
+          image: registry.local:5000/gpuaccount:1.0
           ports:
             - containerPort: 9090
               protocol: TCP
@@ -37,7 +37,7 @@ spec:
             - name: MYSQL_DB_USER
               value: root
             - name: MYSQL_DB_PASSWORD
-              value: my-super-secret-password
+              value: '12345'
               #  valueFrom:
               #  secretKeyRef:
               #    name: mysql-secrets

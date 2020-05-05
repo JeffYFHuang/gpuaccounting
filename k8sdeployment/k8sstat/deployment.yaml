@@ -1,0 +1,28 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-ns-metric
+  labels:
+    app: k8s-ns-metric
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: k8s-ns-metric
+  template:
+    metadata:
+      labels:
+        app: k8s-ns-metric
+    spec:
+      containers:
+        - name: k8s-ns-metric
+          image: registry.local:5000/k8s-ns-metric:1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: KAFKA_BROKER
+              value: 'kafka.default.svc.cluster.local'
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
