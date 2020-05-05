@@ -26,7 +26,8 @@ import aiohttp_jinja2 as aiojinja2
 
 import os
 __PATH__ = os.path.abspath(os.path.dirname(__file__))
-
+kafka_broker = os.environ['KAFKA_BROKER']
+print(kafka_broker)
 
 ###############################################################################
 # Background workers to collect information from nodes
@@ -44,7 +45,7 @@ class Context(object):
 
 context = Context()
 
-producer = KafkaProducer(bootstrap_servers='10.35.65.28:9092')
+producer = KafkaProducer(bootstrap_servers = kafka_broker + ':9092')
 # async handlers to collect gpu stats
 async def run_client(host, exec_cmd, poll_delay=None, timeout=30.0,
                      name_length=None, verbose=False):
