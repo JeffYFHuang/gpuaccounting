@@ -227,6 +227,12 @@ def insertNamespaceInfo(db, data):
         return(result.lastrowid)
 
     result = result.fetchone()
+    data['id'] = result[0]
+    query = (
+        "UPDATE `namespaces` SET `limits_cpu` = %(limits.cpu)s, `limits_memory` = %(limits.memory)s, `limits_nvidia_com_gpu` = %(limits.nvidia.com/gpu)s, `requests_cpu` = %(requests.cpu)s, `requests_memory` = %(requests.memory)s, `requests_nvidia_com_gpu` = %(requests.nvidia.com/gpu)s WHERE `id` = %(id)s"
+    )
+    mysql_query(db, query, data)
+
     return(result[0])
 
 def insertNamespaceUsedResourceQuotas(db, data):
