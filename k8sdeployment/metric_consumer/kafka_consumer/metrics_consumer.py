@@ -50,7 +50,7 @@ def get_gpu_id(db, data):
 
 def get_container_id(db, data):
     select_cgid = (
-    "SELECT * FROM `containergpus` WHERE `gpu_id` = %(gpu_id)s and `nspid` = %(nspid)s;"
+    "SELECT * FROM `containergpus` WHERE `gpu_id` = %(gpu_id)s and `nspid` = %(nspid)s ORDER BY `id` DESC;"
     #"SELECT * FROM `containergpus` WHERE `nspid` = %(nspid)s;"
     )
     result = mysql_query(db, select_cgid, data)
@@ -138,7 +138,7 @@ def insertGpuMetric(db, data):
  
 def insertProcessInfo(db, data):
     select_pid = (
-        "SELECT * FROM `processes` WHERE `pid` = %(pid)s and `nspid` = %(nspid)s and `start_time` = %(start_time)s;"
+        "SELECT * FROM `processes` WHERE `pid` = %(pid)s and `nspid` = %(nspid)s and `container_id` = %(container_id)s and `start_time` = %(start_time)s;"
     )
     result = mysql_query(db, select_pid, data)
     if result.rowcount == 0:
@@ -421,7 +421,8 @@ class Consumer(multiprocessing.Process):
                #    return
 
                for gpu in jsonmsg['gpus']:
-                   gpu_id = insertGpuInfo(self.connection, {
+                   try:
+                        gpu_id = insertGpuInfo(self.connection, {
                                               'uuid': gpu['uuid'], \
                                               'name': gpu['name'], \
                                               'enforced.power.limit': gpu['enforced.power.limit'], \
@@ -429,7 +430,7 @@ class Consumer(multiprocessing.Process):
                                               'hostname': jsonmsg['hostname'] \
                                                })
                    #print(gpu_id)
-                   gpumetric_id = insertGpuMetric(self.connection, {
+                        gpumetric_id = insertGpuMetric(self.connection, {
                                                'gpu_id': gpu_id, \
                                                'temperature.gpu': gpu['temperature.gpu'], \
                                                'utilization.gpu': gpu['utilization.gpu'], \
@@ -437,6 +438,9 @@ class Consumer(multiprocessing.Process):
                                                'memory.used': gpu['memory.used'], \
                                                'query_time': jsonmsg['query_time']
                                                })
+                   except MySQLdb.Error:
+                           print(MySQLdb.Error)
+
                    #print(gpumetric_id)
                    for process in gpu['processes']:
                        #process = json.loads(process)
@@ -446,7 +450,8 @@ class Consumer(multiprocessing.Process):
                                                'nspid': process['nspid']
                                                })
                        #print(container_id)
-                       process_id = insertProcessInfo(self.connection, {
+                       try:
+                            process_id = insertProcessInfo(self.connection, {
                                                'pid': process['pid'], \
                                                'nspid': process['nspid'], \
                                                'container_id': container_id, \
@@ -456,7 +461,7 @@ class Consumer(multiprocessing.Process):
                                                'query_time': jsonmsg['query_time']
                                                })
                        #print(process_id)
-                       process_id = insertProcessMetric(self.connection, {
+                            process_id = insertProcessMetric(self.connection, {
                                                'process_id': process_id, \
                                                'gpumetric_id': gpumetric_id, \
                                                'gpu_memory_usage': process['gpu_memory_usage'], \
@@ -464,7 +469,8 @@ class Consumer(multiprocessing.Process):
                                                'cpu_memory_usage': str(process['cpu_memory_usage']), \
                                                'query_time': jsonmsg['query_time']
                                                })
-
+                       except MySQLdb.Error:
+                           print(MySQLdb.Error)
         if self.topic == 'namespace_metrics':
             jsonmsg = json.loads(message.value)
 #{'query_time':'03/03/202009:59:15CST','owner':'admin@kubeflow.org','namespace':'admin','compute-quota':{'hard':{'limits.cpu':'8','limits.memory':'16Gi','limits.nvidia.com/gpu':'2','requests.cpu':'8','requests.memory':'16Gi','requests.nvidia.com/gpu':'2'},'used':{'limits.cpu':'2','limits.memory':'256Mi','requests.cpu':'510m','requests.memory':'1064Mi','requests.nvidia.com/gpu':'2'}},'pods':[{'name':'tf-test-0','start_time':'02/24/202002:32:18UTC','phase':'Running','hostname':'gpu01','containers':[{'name':'tf-test','resources':{'limits':{'nvidia.com/gpu':'2'},'requests':{'cpu':'500m','memory':'1Gi','nvidia.com/gpu':'2'}},'gpu_uuid':['GPU-ab4510fc-c378-5bf5-615e-3bd8a3e141a2','GPU-ee309bde-fc38-b3ea-b5dc-afc17d0d44e1'],'nspid':4026535186},{'name':'istio-proxy','resources':{'limits':{'cpu':'2','memory':'256Mi'},'requests':{'cpu':'10m','memory':'40Mi'}},'nspid':4026535189}]}]}
