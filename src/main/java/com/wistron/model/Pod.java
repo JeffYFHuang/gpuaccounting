@@ -49,13 +49,13 @@ public class Pod {
     	this.containers = containers;
     }
 
-    @OneToMany
+ /*   @OneToMany
         @JoinTable(
             name="containergpus",
             joinColumns = @JoinColumn(name="pod_id"),
             inverseJoinColumns = @JoinColumn( name="gpu_id")
         )
-    
+
     private List<GPU> gpus = new ArrayList<>();
 
     public List<GPU> getGpus() {
@@ -65,7 +65,7 @@ public class Pod {
     public void setGpus(List<GPU> gpus) {
     	this.gpus = gpus;
     }
-
+*/
     public Pod() {
     }
 

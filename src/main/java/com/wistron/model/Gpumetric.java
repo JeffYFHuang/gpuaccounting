@@ -32,7 +32,7 @@ public class Gpumetric {
     @Column(name = "query_time", columnDefinition = "char(32) NOT NULL")
     private String queryTime;
 
-    @ManyToOne()
+ /*   @ManyToOne()
     @JoinColumn(name="gpu_id", referencedColumnName = "id", insertable = false, updatable = false)    
     private GPU gpu;
 
@@ -43,7 +43,7 @@ public class Gpumetric {
     public void setGpu(GPU gpu) {
         this.gpu = gpu;
     }
-
+*/
     public Gpumetric() {
     }
 

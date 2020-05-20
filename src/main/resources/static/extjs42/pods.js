@@ -8,7 +8,7 @@
 		    {name: 'phase', mapping:'phase'},
 		    {name: 'startTime', mapping:'startTime'},
 		    {name: 'queryTime', mapping:'queryTime'},
-		    {name: 'gpus', mapping:'gpus'}
+		    {name: 'containers', mapping:'containers'}
 		    ]
 	});
 

@@ -8,11 +8,14 @@
 		    {name: 'enforced.power.limit', type: 'int', mapping:'enforcedpowerlimit'},
 		    {name: 'memory.total', type: 'int', mapping:'memorytotal'},
 		    {name: 'uuid', mapping:'uuid'},
-		    {name: 'name', mapping:'name'}
+		    {name: 'name', mapping:'name'},
+		    {name: 'used', mapping:'used'},
+		    {name: 'user', mapping:'user'}
 		    ]
 	});
 
 	var gpu_ds = new Ext.data.Store({
+          pageSize: 128,
 		  autoLoad: true,
 		  model:'Gpu',
 		  proxy: {
@@ -70,25 +73,42 @@
             // Pass in a column model definition
             // Note that the DetailPageURL was defined in the record definition but is not used
             // here. That is okay.
+        	function renderUsed(value) {
+        		if (value == 1) {
+        		return "<span style='color:red;font-weight:bold;'>Y</span>";
+        		} else {
+        		return "<span style='color:green;font-weight:bold;'>N</span>";
+        		}
+        	}
+
+        	function renderUser(value) {
+        		if (value != null) {
+        			var user = namespace_ds.findRecord('id', value);
+        			return "<span style='color:green;font-weight:bold;'>" + user.get('name') + "</span>";
+        		}
+        		return ''
+        	}
+
             this.columns = [
-            	{id:'gpu.id',text: "id", sortable: true, width: 30, dataIndex: 'id'},
-                {id:'gpu.hostname',text: "hostname", sortable: true, flex: 0.5, dataIndex: 'hostname'},
+            	{id:'gpu.id',text: "id", sortable: true, width: 40, dataIndex: 'id'},
+            	{id:'gpu.used',text: "running", sortable: true, flex: 0.25, dataIndex: 'used', renderer:renderUsed},
+            	{id:'gpu.user',text: "occupied user", sortable: true, flex: 0.25, dataIndex: 'user', renderer:renderUser},
+                {id:'gpu.hostname',text: "hostname", sortable: true, flex: 0.25, dataIndex: 'hostname'},
                 {id:'gpu.memory.total',text: "memory.total", sortable: true, width: 100, dataIndex: 'memory.total'},
                 {id:'gpu.enforced.power.limit',text: "enforced.power.limit", sortable: true, width: 100, dataIndex: 'enforced.power.limit'},
-                {id:'gpu.uuid',text: "uuid", sortable: true, flex: 0.5, dataIndex: 'uuid'},
+                {id:'gpu.uuid',text: "uuid", sortable: true, flex: 0.25, dataIndex: 'uuid'},
                 {id:'gpu.name',text: "name", sortable: true, width: 150, dataIndex: 'name'}
             ];
             // Note the use of a storeId, this will register thisStore
             // with the StoreManager and allow us to retrieve it very easily.
             this.store = gpu_ds;
             // finally call the superclasses implementation
-            /*this.bbar = new Ext.PagingToolbar({
-                pageSize: 20,
+            this.bbar = new Ext.PagingToolbar({
                 store: gpu_ds,
                 displayInfo: true
 
                 //plugins: new Ext.ux.ProgressBarPager()
-            });*/
+            });
 
             this.callParent(arguments);
         }

@@ -35,7 +35,7 @@ Ext.onReady(function() {
             select: function(RowModel, record, index, eOpts){
    	           var id = record.get('id');
  	           container_ds.removeAll();
- 	           container_ds.load({params:{start:0, limit:20, podId:id}});
+ 	           container_ds.loadData(record.get('containers'));//{params:{start:0, limit:20, podId:id}});
  	           gpu_ds.loadData(record.get('gpus'));
             }
         }

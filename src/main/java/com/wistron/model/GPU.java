@@ -29,6 +29,10 @@ public class GPU {
     private Integer memorytotal;
     @Column(name = "hostname", columnDefinition = "char(32) NOT NULL")
     private String hostname;
+    @Column(name = "used", columnDefinition = "int(1)")
+    private Integer used;
+    @Column(name = "user", columnDefinition = "int(11)")
+    private Integer user; //may be namespace_id TBD.
 
     public GPU() {
 
@@ -92,5 +96,21 @@ public class GPU {
 
     public void setHostname(String hostname) {
         this.hostname = hostname;
+    }
+    
+    public Integer getUsed() {
+        return used;
+    }
+
+    public void setUsed(Integer used) {
+        this.used = used;
+    }
+    
+    public Integer getUser() {
+        return user;
+    }
+
+    public void setHostname(Integer user) {
+        this.user = user;
     }
 }
