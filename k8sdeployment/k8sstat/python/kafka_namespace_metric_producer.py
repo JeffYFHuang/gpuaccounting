@@ -99,6 +99,7 @@ while 1:
              if ns.metadata.annotations.get('owner') != None:
                  nss[ns.metadata.name] = ns.metadata.annotations.get('owner')
 
+     ns_all = []
      for ns in nss:
         #print(ns, nss.get(ns))
         #ret = core_v1.list_pod_for_all_namespaces(watch=False)
@@ -144,10 +145,13 @@ while 1:
                     podinfo['containers'].append(containerinfo)
 
            p['pods'].append(podinfo)
-        print(p)
-        p = str(p).replace("\"", "").replace(" ", "").replace("\n", "").replace("'","\"")
         #print(p)
-        producer = send_message(producer, 'namespace_metrics', json.loads(p))
+        #p = str(p).replace("\"", "").replace(" ", "").replace("\n", "").replace("'","\"")
+        #print(p)
+        ns_all.append(p)
+     ns_all = str(ns_all).replace("\"", "").replace(" ", "").replace("\n", "").replace("'","\"")
+     print(ns_all)
+     producer = send_message(producer, 'namespace_metrics', json.loads(ns_all))
      query_duration = time.time() - query_start
      sleep_duration = interval - query_duration
      if sleep_duration > 0:
