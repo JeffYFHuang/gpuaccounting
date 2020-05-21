@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import threading, logging, time
-import multiprocessing
+import multiprocessing as mp
 
 from kafka import KafkaConsumer, TopicPartition
 import json
@@ -25,6 +25,7 @@ print(mysql_db_password)
 #  passwd = "12345",
 #  db ='computemetrics'
 #)
+#gpu_info = mp.Manager().dict();
 
 def mysql_query(db, query, params):
     cur = db.cursor()
@@ -60,6 +61,18 @@ def get_container_id(db, data):
     else:
        return(result)
 
+def get_namespace_id(db, data):
+    select_cgid = (
+    "SELECT * FROM `containergpus` WHERE `gpu_id` = %(gpu_id)s and `nspid` = %(nspid)s ORDER BY `id` DESC;"
+    #"SELECT * FROM `containergpus` WHERE `nspid` = %(nspid)s;"
+    )
+    result = mysql_query(db, select_cgid, data)
+    result = result.fetchone()
+    if result != None:
+       return(result[5])
+    else:
+       return(result)
+
 #mysql> SHOW COLUMNS FROM gpus;
 #+----------------------+-------------+------+-----+---------+----------------+
 #| Field                | Type        | Null | Key | Default | Extra          |
@@ -71,21 +84,53 @@ def get_container_id(db, data):
 #| memory.total         | int(4)      | YES  |     | NULL    |                |
 #| hostname             | varchar(32) | NO   |     | NULL    |                |
 #+----------------------+-------------+------+-----+---------+----------------+
-def insertGpuInfo(db, data):
-    select_gpuuuid = (
-    "SELECT * FROM `gpus` WHERE `uuid` = %(uuid)s;"
-    )
-    result = mysql_query(db, select_gpuuuid, data)
-    if result.rowcount == 0:
-        query = (
+def insertGpuInfo(db, data, update = False):
+    query = ''
+    if not update:
+        select_gpuuuid = (
+            "SELECT * FROM `gpus` WHERE `uuid` = %(uuid)s;"
+        )
+        result = mysql_query(db, select_gpuuuid, data)
+
+        if result.rowcount == 0:
+            query = (
                 "INSERT INTO `gpus` (`uuid`, `name`, `enforced_power_limit`, `memory_total`, `hostname`) "
                 "VALUES (%(uuid)s, %(name)s, %(enforced.power.limit)s, %(memory.total)s, %(hostname)s);"
                 )
-        result = mysql_query(db, query, data)
-        return(result.lastrowid)
+            result = mysql_query(db, query, data)
+            return(result.lastrowid)
 
-    result = result.fetchone()
-    return(result[0])
+        return(result.fetchone()[0])
+    else:
+        #sqlcmd = ''
+        #if data.get('user') != None:
+        sqlcmd = "UPDATE `gpus` set `user` = %(user)s  where `id` = %(id)s"
+        if data.get('used') != None:
+            if data.get('used') == 0:
+                data['used'] = None
+            sqlcmd = "UPDATE `gpus` set `used` = %(used)s  where `id` = %(id)s"
+        query = (
+                sqlcmd
+        )
+
+        mysql_query(db, query, data)
+        return(data['id'])
+
+def get_gpu_info_db(db, data, type = 0):
+    query = ''
+    if type == 0: #fetch user
+        query = (
+            "SELECT `id`, `user` FROM `gpus` where `user` is not null;"
+        )
+    if type == 1: #fetch used
+        query = (
+            "SELECT `id`, `used` FROM `gpus` where `used` is not null and `hostname` = %(hostname)s;"
+        )
+
+    result = mysql_query(db, query, data)
+    t = result.fetchall()
+    #print("tttttt", t)
+    return dict((x, y) for x, y in t)
 
 def insertGpuMetric(db, data):
     select_gpu_metric = (
@@ -370,18 +415,18 @@ def insertContainerGpus(db, data):
 
     if result.rowcount == 0:
         query = (
-                "INSERT INTO `containergpus` (`pod_id`, `container_id`, `nspid`, `gpu_id`) "
-                "VALUES (%(pod_id)s, %(container_id)s, %(nspid)s, %(gpu_id)s);"
+                "INSERT INTO `containergpus` (`pod_id`, `container_id`, `nspid`, `gpu_id`, `namespace_id`) "
+                "VALUES (%(pod_id)s, %(container_id)s, %(nspid)s, %(gpu_id)s, %(namespace_id)s);"
                 )
-        print(data)
+        #print(data)
         result =  mysql_query(db, query, data)
         return(result.lastrowid)
 
     result = result.fetchone()
     query = (
-            "UPDATE `containergpus` SET `gpu_id` = %(gpu_id)s WHERE `id` = %(id)s"
+            "UPDATE `containergpus` SET `gpu_id` = %(gpu_id)s, `namespace_id` = %(namespace_id)s WHERE `id` = %(id)s"
             )
-    mysql_query(db, query, {'id': result[0], 'gpu_id': data['gpu_id']})
+    mysql_query(db, query, {'id': result[0], 'gpu_id': data['gpu_id'], 'namespace_id': data['namespace_id']})
     return(result[0])
 
 def checkifexist(db, table, data):
@@ -392,10 +437,11 @@ def checkifexist(db, table, data):
     result = mysql_query(db, select_querytime, data)
     return(result.rowcount != 0)
 
-class Consumer(multiprocessing.Process):
+class Consumer(mp.Process):
+
     def __init__(self, topic):
-        multiprocessing.Process.__init__(self)
-        self.stop_event = multiprocessing.Event()
+        mp.Process.__init__(self)
+        self.stop_event = mp.Event()
         self.topic = topic
         self.mypartition = TopicPartition(self.topic, 0)
         self.connection = MySQLdb.connect(
@@ -404,6 +450,8 @@ class Consumer(multiprocessing.Process):
             passwd = mysql_db_password,
             db ='computemetrics'
         )
+        self.gpu_info_cur = {}
+        self.gpu_info_pre = {}
         
     def stop(self):
         self.stop_event.set()
@@ -411,7 +459,7 @@ class Consumer(multiprocessing.Process):
     def processMessage(self, message):
         #print(type(message.value))
         if self.topic == 'gpu_metrics':
-           if type(message.value) == bytes:
+            if type(message.value) == bytes:
                jsonmsg = json.loads(message.value)
                print(jsonmsg)
                #print(type(jsonmsg))
@@ -422,14 +470,9 @@ class Consumer(multiprocessing.Process):
 
                for gpu in jsonmsg['gpus']:
                    try:
-                        gpu_id = insertGpuInfo(self.connection, {
-                                              'uuid': gpu['uuid'], \
-                                              'name': gpu['name'], \
-                                              'enforced.power.limit': gpu['enforced.power.limit'], \
-                                              'memory.total': gpu['memory.total'], \
-                                              'hostname': jsonmsg['hostname'] \
-                                               })
-                   #print(gpu_id)
+                        gpu_id = get_gpu_id(self.connection, {'uuid': gpu['uuid']})
+
+                        #print(gpu_id)
                         gpumetric_id = insertGpuMetric(self.connection, {
                                                'gpu_id': gpu_id, \
                                                'temperature.gpu': gpu['temperature.gpu'], \
@@ -441,14 +484,23 @@ class Consumer(multiprocessing.Process):
                    except MySQLdb.Error:
                            print(MySQLdb.Error)
 
+                   if self.gpu_info_cur.get(jsonmsg["hostname"]) == None:
+                           self.gpu_info_cur[jsonmsg["hostname"]] = {}
+                   if self.gpu_info_pre.get(jsonmsg["hostname"]) == None:
+                           self.gpu_info_pre[jsonmsg["hostname"]] = get_gpu_info_db(self.connection, {"hostname": jsonmsg["hostname"]}, 1)
+                           #self.gpu_info_pre[jsonmsg["hostname"]] = {}
+
                    #print(gpumetric_id)
                    for process in gpu['processes']:
                        #process = json.loads(process)
                        # gpu processes are all started after container created. so it should belong to a container.
                        container_id = get_container_id(self.connection, {
-                                               'gpu_id': gpu_id, \
-                                               'nspid': process['nspid']
-                                               })
+                           'gpu_id': gpu_id, \
+                           'nspid': process['nspid']
+                       })
+
+                       self.gpu_info_cur[jsonmsg["hostname"]].update({gpu_id: 1})
+
                        #print(container_id)
                        try:
                             process_id = insertProcessInfo(self.connection, {
@@ -471,12 +523,19 @@ class Consumer(multiprocessing.Process):
                                                })
                        except MySQLdb.Error:
                            print(MySQLdb.Error)
+            return jsonmsg["hostname"]
+
         if self.topic == 'namespace_metrics':
-            jsonmsg = json.loads(message.value)
+           if len(self.gpu_info_pre) == 0:
+               self.gpu_info_pre = get_gpu_info_db(self.connection, None, 0)
+
+           jsonmsg_all = json.loads(message.value)
+           print(jsonmsg_all)
 #{'query_time':'03/03/202009:59:15CST','owner':'admin@kubeflow.org','namespace':'admin','compute-quota':{'hard':{'limits.cpu':'8','limits.memory':'16Gi','limits.nvidia.com/gpu':'2','requests.cpu':'8','requests.memory':'16Gi','requests.nvidia.com/gpu':'2'},'used':{'limits.cpu':'2','limits.memory':'256Mi','requests.cpu':'510m','requests.memory':'1064Mi','requests.nvidia.com/gpu':'2'}},'pods':[{'name':'tf-test-0','start_time':'02/24/202002:32:18UTC','phase':'Running','hostname':'gpu01','containers':[{'name':'tf-test','resources':{'limits':{'nvidia.com/gpu':'2'},'requests':{'cpu':'500m','memory':'1Gi','nvidia.com/gpu':'2'}},'gpu_uuid':['GPU-ab4510fc-c378-5bf5-615e-3bd8a3e141a2','GPU-ee309bde-fc38-b3ea-b5dc-afc17d0d44e1'],'nspid':4026535186},{'name':'istio-proxy','resources':{'limits':{'cpu':'2','memory':'256Mi'},'requests':{'cpu':'10m','memory':'40Mi'}},'nspid':4026535189}]}]}
             #if checkifexist(self.connection, 'namespaceusedresourcequotas', {'query_time': jsonmsg['query_time']}):
             #       return
             #print(jsonmsg)
+           for jsonmsg in jsonmsg_all:
 
             if jsonmsg.get('compute-quota') != None:
                 if jsonmsg['compute-quota']['hard'].get('limits.cpu') == None:
@@ -612,21 +671,76 @@ class Consumer(multiprocessing.Process):
                                                 'pod_id': pod_id, \
                                                 'container_id': container_id, \
                                                 'gpu_id': gpu_id, \
-                                                'nspid': container['nspid'] \
+                                                'nspid': container['nspid'], \
+                                                'namespace_id': namespace_id
                                                })
+
+                                if self.gpu_info_cur.get(gpu_id) == None:
+                                    self.gpu_info_cur[gpu_id] = namespace_id
+        return self.topic
+
+    def processGpuStatus(self, hostname):
+        print(self.topic)
+        set_add = set()
+        set_del = set()
+        if self.topic == 'namespace_metrics':
+            #print(self.gpu_info_cur)
+            set_cur = set(self.gpu_info_cur.items())
+            print("set_cur", set_cur)
+
+            set_pre = set(self.gpu_info_pre.items())
+            print("set_pre", set_pre)
+
+            set_add = set_cur - set_pre
+            set_del = set_pre - set_cur
+            print("add ", set_add)
+            print("del ", set_del)
+
+            self.gpu_info_pre = self.gpu_info_cur
+            #print("pre", self.gpu_info_pre)
+            self.gpu_info_cur = {}
+
+            for v in set_add:
+                insertGpuInfo(self.connection, {'id': v[0], 'user': v[1]}, True)
+            for v in set_del:
+                insertGpuInfo(self.connection, {'id': v[0], 'user': None}, True)
+
+        if self.topic == 'gpu_metrics':
+            #print(self.gpu_info_cur.get(hostname))
+            set_cur = set(self.gpu_info_cur[hostname].items())
+            print("set_cur", set_cur)
+
+            set_pre = set(self.gpu_info_pre[hostname].items())
+            print("set_pre", set_pre)
+
+            set_add = set_cur - set_pre
+            set_del = set_pre - set_cur
+            print("add ", set_add)
+            print("del ", set_del)
+
+            self.gpu_info_pre[hostname] = self.gpu_info_cur[hostname]
+            #print("pre", self.gpu_info_pre[hostname])
+            self.gpu_info_cur[hostname] = {}
+
+            for v in set_add:
+                insertGpuInfo(self.connection, {'id': v[0], 'used': 1}, True)
+            for v in set_del:
+                insertGpuInfo(self.connection, {'id': v[0], 'used': 0}, True)
 
     def run(self):
         consumer = KafkaConsumer(bootstrap_servers=kafka_broker+':9092',
                                  #auto_offset_reset='earliest',
                                  group_id=self.topic+"k8s",
                                  enable_auto_commit=False,
-                                 consumer_timeout_ms=1000)
+                                 consumer_timeout_ms=100)
         consumer.subscribe([self.topic])
 
         try:
             while not self.stop_event.is_set():
                 for message in consumer:
-                    self.processMessage(message)
+                    topic = self.processMessage(message)
+                    #if self.topic == 'namespace_metrics':
+                    self.processGpuStatus(topic)
                     #pos = consumer.position(self.mypartition)
                     #print("[most recent offset]=", pos)
                     if self.stop_event.is_set():
@@ -646,6 +760,9 @@ def main():
     for t in tasks:
         t.start()
         time.sleep(5)
+
+    for t in tasks:
+        t.join()
 
     #time.sleep(10)
     
