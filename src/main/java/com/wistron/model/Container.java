@@ -61,7 +61,7 @@ public class Container {
     	this.processes = processes;
     }
 */
-    @OneToMany
+    @ManyToMany
     @JoinTable(
         name="containergpus",
         joinColumns = @JoinColumn(name="container_id"),

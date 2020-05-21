@@ -71,6 +71,23 @@ public class Namespace {
     	this.namespaceusedresourcequotas = Namespaceusedresourcequotas;
     }
 
+    @ManyToMany
+    @JoinTable(
+        name="containergpus",
+        joinColumns = @JoinColumn(name="namespace_id"),
+        inverseJoinColumns = @JoinColumn( name="gpu_id")
+    )
+
+	private List<GPU> gpus = new ArrayList<>();
+	
+	public List<GPU> getGpus() {
+		return gpus;
+	}
+	
+	public void setGpus(List<GPU> gpus) {
+		this.gpus = gpus;
+	}
+
     public Namespace() {
     }
 
