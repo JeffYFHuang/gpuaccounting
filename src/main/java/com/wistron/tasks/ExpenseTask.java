@@ -67,7 +67,7 @@ public class ExpenseTask {
             List<Namespace> namespaces = new ArrayList<Namespace>();
             namespaceRepository.findAll().forEach(namespaces::add);
 
-            log.info("namespaces size {}", namespaces.size());
+            //log.info("namespaces size {}", namespaces.size());
             //List<Expense> expenses = new ArrayList<Expense>();
             for (int i = 0; i < namespaces.size(); i++) {
             	Long namespaceId = namespaces.get(i).getId();
@@ -88,7 +88,7 @@ public class ExpenseTask {
         			log.info(e.toString());
         		}
             }
-            
+
         } catch (Exception e) {
         	log.info("The time is now {}", dateFormat.format(new Date()) + "CST");
         }
@@ -116,7 +116,7 @@ public class ExpenseTask {
             List<Namespace> namespaces = new ArrayList<Namespace>();
             namespaceRepository.findAll().forEach(namespaces::add);
 
-            log.info("namespaces size {}", namespaces.size());
+            //log.info("namespaces size {}", namespaces.size());
             //List<Expense> expenses = new ArrayList<Expense>();
             for (int i = 0; i < namespaces.size(); i++) {
             	Long namespaceId = namespaces.get(i).getId();
@@ -157,13 +157,13 @@ public class ExpenseTask {
         	String endDateTime = dateFormat.format(nextDay) + "CST";
         	thisDay = new SimpleDateFormat("MM/dd/yyyyHH:mm:ss").parse(startDateTime);
         	nextDay = new SimpleDateFormat("MM/dd/yyyyHH:mm:ss").parse(endDateTime);
-        	log.info("The time is now {}", new Date());
-            log.info("The day start time is {}, end time is {}", startDateTime, endDateTime);
+        	//log.info("The time is now {}", new Date());
+            //log.info("The day start time is {}, end time is {}", startDateTime, endDateTime);
 
             List<Namespace> namespaces = new ArrayList<Namespace>();
             namespaceRepository.findAll().forEach(namespaces::add);
 
-            log.info("namespaces size {}", namespaces.size());
+            //log.info("namespaces size {}", namespaces.size());
             //List<Expense> expenses = new ArrayList<Expense>();
             for (int i = 0; i < namespaces.size(); i++) {
             	Long namespaceId = namespaces.get(i).getId();

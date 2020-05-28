@@ -28,6 +28,9 @@ public class DayExpense {
     private float memoryHours;
     @Column(name = "type", columnDefinition = "int(2)")
     private Integer type;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "lastupdated", nullable = false)
+    private Date lastupdated;
 
     public DayExpense() {
     }
@@ -58,6 +61,8 @@ public class DayExpense {
     	}
     	this.cpuHours = (float) (this.cpuHours / 1000.0);
     	this.memoryHours = (float) (this.memoryHours / 1024.0);
+    	this.lastupdated = new Date();
+    	//log.info(this.lastupdated.toString());
     	//log.info(this.toString());
     }
 
@@ -83,6 +88,14 @@ public class DayExpense {
 
     public void setType(Integer type) {
         this.type = type;
+    }
+
+    public Date getLastupdated() {
+        return lastupdated;
+    }
+
+    public void setLastupdated(Date lastupdated) {
+        this.lastupdated = lastupdated;
     }
 
     @Override
