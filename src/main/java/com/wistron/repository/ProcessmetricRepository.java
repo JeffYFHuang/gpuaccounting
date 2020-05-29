@@ -26,6 +26,12 @@ public interface ProcessmetricRepository extends JpaRepository<Processmetric, Lo
 			@Param("startDateTime") String startDateTime, 
 			@Param("endDateTime") String endDateTime, 
 			Pageable paging);
+	
+	@Query(value = "SELECT u FROM Processmetric u WHERE u.queryTime > :startDateTime AND u.queryTime < :endDateTime")
+	List<Processmetric> findAll(
+			@Param("startDateTime") String startDateTime, 
+			@Param("endDateTime") String endDateTime
+			);
 
 	Page<Processmetric> findProcessesmetricByProcessId(Long processId, Pageable paging);
 }

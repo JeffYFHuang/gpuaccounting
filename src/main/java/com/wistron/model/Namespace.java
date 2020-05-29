@@ -5,6 +5,12 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.wistron.tasks.ExpenseTask;
+
 /*cmd = 'CREATE TABLE IF NOT EXISTS namespaces (' \
         '`id` INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,' \
         '`name` VARCHAR(32) NOT NULL,' \
@@ -20,6 +26,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "namespaces")
 public class Namespace {
+	private static final Logger log = LoggerFactory.getLogger(ExpenseTask.class);
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", columnDefinition = "int(11) NOT NULL AUTO_INCREMENT")
@@ -70,8 +77,26 @@ public class Namespace {
     public void setNamespaceusedresourcequotas (List<Namespaceusedresourcequota> Namespaceusedresourcequotas) {
     	this.namespaceusedresourcequotas = Namespaceusedresourcequotas;
     }
+    
+ /*   @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+            )
+    @JoinTable(
+            name="gpus",
+            joinColumns = @JoinColumn(name="user")
+        )   
+    private List<GPU> cgpus = new ArrayList<>(); // current used gpus
 
-    @ManyToMany
+    public List<GPU> getCgpus() {
+    	return cgpus;
+    }
+    
+    public void setCgpus (List<GPU> cgpus) {
+    	this.cgpus = cgpus;
+    }*/
+
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name="containergpus",
         joinColumns = @JoinColumn(name="namespace_id"),
@@ -79,7 +104,8 @@ public class Namespace {
     )
 
 	private List<GPU> gpus = new ArrayList<>();
-	
+
+    @Transactional
 	public List<GPU> getGpus() {
 		return gpus;
 	}

@@ -32,7 +32,7 @@ public class GPU {
     @Column(name = "used", columnDefinition = "int(1)")
     private Integer used;
     @Column(name = "user", columnDefinition = "int(11)")
-    private Integer user; //may be namespace_id TBD.
+    private Long user; //may be namespace_id TBD.
 
     public GPU() {
 
@@ -46,7 +46,7 @@ public class GPU {
 
     @Override
     public String toString() {
-        return String.format("Gpu[id=%d, uuid=%s, name='%s', enforced.power.limit=%d, memory.limit=%d, hostname='%s']", id,
+        return String.format("Gpu[id=%d, uuid=%s, name='%s', enforced.power.limit=%d, memory.limit=%d, hostname='%s']",
                 id, uuid, name, enforcedpowerlimit, memorytotal, hostname);
     }
 
@@ -106,11 +106,11 @@ public class GPU {
         this.used = used;
     }
     
-    public Integer getUser() {
+    public Long getUser() {
         return user;
     }
 
-    public void setHostname(Integer user) {
+    public void setHostname(Long user) {
         this.user = user;
     }
 }

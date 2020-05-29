@@ -1,5 +1,8 @@
 package com.wistron.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.*;
 
 /*cmd = 'CREATE TABLE IF NOT EXISTS gpumetrics (' \
@@ -31,6 +34,21 @@ public class Gpumetric {
     private Integer memoryUsed;
     @Column(name = "query_time", columnDefinition = "char(32) NOT NULL")
     private String queryTime;
+
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+            )
+    @JoinColumn(name="gpumetric_id")//, referencedColumnName = "id", insertable = false, updatable = false)    
+    private List<Processmetric> processmetrics = new ArrayList<>();
+
+    public List<Processmetric> getProcessmetrics() {
+    	return processmetrics;
+    }
+    
+    public void setGpumetrics(List<Processmetric> processmetrics) {
+        this.processmetrics = processmetrics;
+    }
 
  /*   @ManyToOne()
     @JoinColumn(name="gpu_id", referencedColumnName = "id", insertable = false, updatable = false)    

@@ -16,23 +16,45 @@ public class WeekExpense {
     @EmbeddedId
     private WeekExpenseId weekExpenseId;
 
-    @Column(name = "gpu_hours", columnDefinition = "float(4)")
+    @Column(name = "gpu_hours", columnDefinition = "float(4) default 0")
     private float gpuHours;
-    @Column(name = "cpu_hours", columnDefinition = "float(4)")
+    @Column(name = "cpu_hours", columnDefinition = "float(4) default 0")
     private float cpuHours;
-    @Column(name = "memory_hours", columnDefinition = "float(4)")
+    @Column(name = "memory_hours", columnDefinition = "float(4) default 0")
     private float memoryHours;
-    @Column(name = "type", columnDefinition = "int(2)")
+    @Column(name = "gpu_used_hours", columnDefinition = "float(4) default 0")
+    private float gpuUsedHours;
+    @Column(name = "gpu_m_used_hours", columnDefinition = "float(4) default 0") //gpu memory used
+    private float gpuMUsedHours;
+    @Column(name = "cpu_used_hours", columnDefinition = "float(4) default 0")
+    private float cpuUsedHours;
+    @Column(name = "memory_used_hours", columnDefinition = "float(4) default 0")
+    private float memoryUsedHours;
+    @Column(name = "type", columnDefinition = "int(2) default 0")
     private Integer type;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "lastupdated", nullable = false)
     private Date lastupdated;
 
     public WeekExpense() {
+    	this.cpuHours = 0;
+    	this.cpuUsedHours = 0;
+    	this.gpuHours = 0;
+    	this.gpuMUsedHours = 0;
+    	this.cpuUsedHours = 0;
+    	this.memoryHours = 0;
+    	this.memoryUsedHours = 0;
     }
 
     public WeekExpense(WeekExpenseId weekExpenseId) {
     	this.weekExpenseId = weekExpenseId;
+    	this.cpuHours = 0;
+    	this.cpuUsedHours = 0;
+    	this.gpuHours = 0;
+    	this.gpuMUsedHours = 0;
+    	this.cpuUsedHours = 0;
+    	this.memoryHours = 0;
+    	this.memoryUsedHours = 0;
     }
 
     public void calWeekExpense(Date ds, Date de, List<Namespaceusedresourcequota> resourcequotas) throws Exception {
@@ -73,8 +95,48 @@ public class WeekExpense {
         return cpuHours;
     }
 
+    public void setCpuHours(float cpuHours) {
+        this.cpuHours = cpuHours;
+    }
+
+    public float getMemoryHours() {
+        return cpuHours;
+    }
+
     public void setMemoryHours(float memoryHours) {
         this.memoryHours = memoryHours;
+    }
+
+    public float getGpuUsedHours() {
+        return gpuUsedHours;
+    }
+
+    public void setUsedGpuHours(float gpuUsedHours) {
+        this.gpuUsedHours = gpuUsedHours;
+    }
+
+    public void setGpuMUsedHours(float memoryUsedHours) {
+        this.memoryUsedHours = memoryUsedHours;
+    }
+
+    public void setGpuMHours(float memoryHours) {
+        this.memoryHours = memoryHours;
+    }
+
+    public float getCpuUsedHours() {
+        return cpuUsedHours;
+    }
+
+    public void setCpuUsedHours(float cpuUsedHours) {
+        this.cpuUsedHours = cpuUsedHours;
+    }
+
+    public float getMemoryUsedHours() {
+        return memoryUsedHours;
+    }
+
+    public void setMemoryUsedHours(float memoryUsedHours) {
+        this.memoryUsedHours = memoryUsedHours;
     }
 
     public Integer getType() {
