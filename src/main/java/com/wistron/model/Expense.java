@@ -115,7 +115,7 @@ public class Expense {
         return gpuUsedHours;
     }
 
-    public void setUsedGpuHours(float gpuUsedHours) {
+    public void setGpuUsedHours(float gpuUsedHours) {
         this.gpuUsedHours = gpuUsedHours;
     }
 
@@ -123,7 +123,7 @@ public class Expense {
         return gpuMUsedHours;
     }
 
-    public void setUsedGpuMHours(float gpuMUsedHours) {
+    public void setGpuMUsedHours(float gpuMUsedHours) {
         this.gpuMUsedHours = gpuMUsedHours;
     }
 

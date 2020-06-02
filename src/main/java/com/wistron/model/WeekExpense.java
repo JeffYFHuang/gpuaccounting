@@ -111,16 +111,16 @@ public class WeekExpense {
         return gpuUsedHours;
     }
 
-    public void setUsedGpuHours(float gpuUsedHours) {
+    public void setGpuUsedHours(float gpuUsedHours) {
         this.gpuUsedHours = gpuUsedHours;
     }
 
-    public void setGpuMUsedHours(float memoryUsedHours) {
-        this.memoryUsedHours = memoryUsedHours;
+    public float getGpuMUsedHours() {
+        return gpuMUsedHours;
     }
 
-    public void setGpuMHours(float memoryHours) {
-        this.memoryHours = memoryHours;
+    public void setGpuMUsedHours(float gpuMUsedHours) {
+        this.gpuMUsedHours = gpuMUsedHours;
     }
 
     public float getCpuUsedHours() {

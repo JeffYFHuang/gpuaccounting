@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import org.springframework.transaction.annotation.Transactional;
+
 /*cmd = 'CREATE TABLE IF NOT EXISTS pods (' \
                                               '`id` INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,' \
                                               '`name` VARCHAR(32) NOT NULL,' \
@@ -36,11 +38,13 @@ public class Pod {
 
     @OneToMany(
             cascade = CascadeType.ALL,
-            orphanRemoval = true
+            orphanRemoval = true,
+            fetch = FetchType.EAGER
             )
     @JoinColumn(name="pod_id")//, referencedColumnName = "id", insertable = false, updatable = false)    
     private List<Container> containers = new ArrayList<>();
 
+    @Transactional
     public List<Container> getContainers() {
     	return containers;
     }

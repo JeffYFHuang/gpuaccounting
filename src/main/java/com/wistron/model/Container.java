@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import org.springframework.transaction.annotation.Transactional;
+
 /*cmd = 'CREATE TABLE IF NOT EXISTS containers (' \
         '`id` INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,' \
         '`pod_id` INT(10) NOT NULL,' \
@@ -45,14 +47,16 @@ public class Container {
     private Long nspid;
     @Column(name = "query_time", columnDefinition = "char(32)")
     private String queryTime;
-/*
+
     @OneToMany(
             cascade = CascadeType.ALL,
-            orphanRemoval = true
+            orphanRemoval = true,
+            fetch = FetchType.EAGER
             )
     @JoinColumn(name="container_id")//, referencedColumnName = "id", insertable = false, updatable = false)    
     private List<Process> processes = new ArrayList<>();
 
+    @Transactional
     public List<Process> getProcesses() {
     	return processes;
     }
@@ -60,7 +64,7 @@ public class Container {
     public void setProcesses (List<Process> processes) {
     	this.processes = processes;
     }
-*/
+
     @ManyToMany
     @JoinTable(
         name="containergpus",

@@ -2,6 +2,8 @@ package com.wistron.model;
 
 import javax.persistence.*;
 
+import org.springframework.transaction.annotation.Transactional;
+
 /*cmd = 'CREATE TABLE IF NOT EXISTS processmetrics (' \
         '`id` INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,' \
         '`process_id` INT(10) NOT NULL,' \
@@ -14,7 +16,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "processmetrics")
-public class Processmetric {
+public class Processmetric implements Comparable< Processmetric >{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", columnDefinition = "int(11) NOT NULL AUTO_INCREMENT")
@@ -32,10 +34,11 @@ public class Processmetric {
     @Column(name = "query_time", columnDefinition = "char(32) NOT NULL")
     private String queryTime;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="gpumetric_id", referencedColumnName = "id", insertable = false, updatable = false)    
     private Gpumetric gpumetric;
 
+    @Transactional
     public Gpumetric getGpumetric() {
         return gpumetric;
     }
@@ -103,4 +106,9 @@ public class Processmetric {
     public void setQueryTime(String queryTime) {
         this.queryTime = queryTime;
     }
+
+	@Override
+	public int compareTo(Processmetric o) {
+		return this.getId().compareTo(o.getId());
+	}
 }

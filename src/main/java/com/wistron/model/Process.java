@@ -5,6 +5,10 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import org.springframework.transaction.annotation.Transactional;
+
+import com.wistron.model.Process;
+
 /*cmd = 'CREATE TABLE IF NOT EXISTS processes (' \
         '`id` INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,' \
         '`pid` INT(10) NOT NULL,' \
@@ -37,7 +41,24 @@ public class Process {
     @Column(name = "query_time", columnDefinition = "char(32)")
     private String queryTime;
 
-    @ManyToOne()
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER
+            )
+    @JoinColumn(name="process_id")//, referencedColumnName = "id", insertable = false, updatable = false)    
+    private List<Processmetric> processmetrics = new ArrayList<>();
+
+    @Transactional
+    public List<Processmetric> getProcessmetrics() {
+    	return processmetrics;
+    }
+    
+    public void setProcessmetrics (List<Processmetric> processmetrics) {
+    	this.processmetrics = processmetrics;
+    }
+
+ /*   @ManyToOne()
     @JoinColumn(name="container_id", referencedColumnName = "id", insertable = false, updatable = false)    
     private Container container;
 
@@ -48,7 +69,7 @@ public class Process {
     public void setContainer(Container container) {
         this.container = container;
     }
-
+*/
     public Process() {
     }
 

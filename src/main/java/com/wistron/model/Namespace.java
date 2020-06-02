@@ -50,11 +50,13 @@ public class Namespace {
 
     @OneToMany(
             cascade = CascadeType.ALL,
-            orphanRemoval = true
+            orphanRemoval = true,
+            fetch = FetchType.EAGER
             )
     @JoinColumn(name="namespace_id")//, referencedColumnName = "id", insertable = false, updatable = false)    
     private List<Pod> pods = new ArrayList<>();
 
+    @Transactional
     public List<Pod> getPods() {
     	return pods;
     }
@@ -96,7 +98,7 @@ public class Namespace {
     	this.cgpus = cgpus;
     }*/
 
-    @ManyToMany(fetch = FetchType.EAGER)
+/*    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name="containergpus",
         joinColumns = @JoinColumn(name="namespace_id"),
@@ -113,7 +115,7 @@ public class Namespace {
 	public void setGpus(List<GPU> gpus) {
 		this.gpus = gpus;
 	}
-
+*/
     public Namespace() {
     }
 

@@ -35,7 +35,7 @@ public class Gpumetric {
     @Column(name = "query_time", columnDefinition = "char(32) NOT NULL")
     private String queryTime;
 
-    @OneToMany(
+/*    @OneToMany(
             cascade = CascadeType.ALL,
             orphanRemoval = true
             )
@@ -49,7 +49,7 @@ public class Gpumetric {
     public void setGpumetrics(List<Processmetric> processmetrics) {
         this.processmetrics = processmetrics;
     }
-
+*/
  /*   @ManyToOne()
     @JoinColumn(name="gpu_id", referencedColumnName = "id", insertable = false, updatable = false)    
     private GPU gpu;
