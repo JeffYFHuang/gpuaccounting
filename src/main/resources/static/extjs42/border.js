@@ -63,7 +63,7 @@ Ext.onReady(function() {
             	metric_ds.proxy.extraParams.processId = record.get('id');
 				//metric_ds.removeAll();
 				metric_ds.reload({page: 1});
-				gpu_ds.loadData(record.get('gpus'));
+				//gpu_ds.loadData(record.get('gpus'));
             }
         }
     });
