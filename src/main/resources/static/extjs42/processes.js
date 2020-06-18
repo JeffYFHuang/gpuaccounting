@@ -44,13 +44,13 @@ Ext.define('Process', {
             // Note that the DetailPageURL was defined in the record definition but is not used
             // here. That is okay.
             this.columns = [
-            	{id:'process.id',text: "id", sortable: true, width: 30, dataIndex: 'id'},
+            	{text: "id", sortable: true, width: 30, dataIndex: 'id'},
             	//{id:'process.container.id',text: "container.id", sortable: true, dataIndex: 'containerId'},
-                {id:'process.pid',text: "pid", sortable: true, dataIndex: 'pid'},
-                {id:'process.startTime',text: "startTime", sortable: true, dataIndex: 'startTime'},
-                {id:'process.queryTime',text: "queryTime", sortable: true, dataIndex: 'queryTime'},
-                {id:'process.fullCommand',text: "fullCommand", sortable: true, dataIndex: 'fullCommand'},
-                {id:'process.nspid',text: "nspid", sortable: true, dataIndex: 'nspid'}
+                {text: "pid", sortable: true, dataIndex: 'pid'},
+                {text: "startTime", sortable: true, dataIndex: 'startTime'},
+                {text: "queryTime", sortable: true, dataIndex: 'queryTime'},
+                {text: "fullCommand", sortable: true, dataIndex: 'fullCommand'},
+                {text: "nspid", sortable: true, dataIndex: 'nspid'}
                 ];
             // Note the use of a storeId, this will register thisStore
             // with the StoreManager and allow us to retrieve it very easily.

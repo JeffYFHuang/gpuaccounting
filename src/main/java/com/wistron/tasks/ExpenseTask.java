@@ -80,17 +80,17 @@ public class ExpenseTask {
         		return;
         	}
         	//log.info("The time is now {}", new Date());
-            log.info("The month start time is {}, end time is {}", startDateTime, endDateTime);
+            //log.info("The month start time is {}, end time is {}", startDateTime, endDateTime);
 
             List<Namespace> namespaces = new ArrayList<Namespace>();
             namespaceRepository.findAll().forEach(namespaces::add);
 
-            log.info("namespaces size {}", namespaces.size());
+            //log.info("namespaces size {}", namespaces.size());
             //List<Expense> expenses = new ArrayList<Expense>();
             for (int i = 0; i < namespaces.size(); i++) {
             	Namespace namespace = namespaces.get(i);
             	Long namespaceId = namespace.getId();
-            	log.info("i {} namespaceId {}", i, namespaceId);
+            	//log.info("i {} namespaceId {}", i, namespaceId);
 
         		double gpuUsedHours = 0;
         		double gpuMUsedHours = 0;
@@ -216,7 +216,7 @@ public class ExpenseTask {
         	thisWeekFirstDay = new SimpleDateFormat("MM/dd/yyyyHH:mm:ss").parse(startDateTime);
         	nextWeekFirstDay = new SimpleDateFormat("MM/dd/yyyyHH:mm:ss").parse(endDateTime);
         	//log.info("The time is now {}", new Date());
-            log.info("The week start time is {}, end time is {}", startDateTime, endDateTime);
+            //log.info("The week start time is {}, end time is {}", startDateTime, endDateTime);
 
             List<Namespace> namespaces = new ArrayList<Namespace>();
             namespaceRepository.findAll().forEach(namespaces::add);
@@ -307,7 +307,7 @@ public class ExpenseTask {
         		}
 
         		//log.info("{}, {}, {}, {}, {}", total_time, cpuUsedHours, memoryUsedHour, gpuUsedHours, gpuMUsedHours);
-        		log.info("{}, {}, {}, {}, {}", total_time/3600.0, cpuUsedHours/3600.0, memoryUsedHour/3600.0, gpuUsedHours/3600.0, gpuMUsedHours/3600.0);
+        		//log.info("{}, {}, {}, {}, {}", total_time/3600.0, cpuUsedHours/3600.0, memoryUsedHour/3600.0, gpuUsedHours/3600.0, gpuMUsedHours/3600.0);
             	//log.info("i {} namespaceId {}", i, namespaceId, gpus.size());
             	WeekExpenseId expenseId = new WeekExpenseId(namespaceId, year, month, week);
             	WeekExpense expense = new WeekExpense(expenseId);
@@ -326,12 +326,12 @@ public class ExpenseTask {
         			expense.calWeekExpense(thisWeekFirstDay, nextWeekFirstDay, namespaceusedresourcequotas);
         			weekExpenseRepository.save(expense);
         		} catch (Exception e) {
-        			log.info(e.toString());
+        			//log.info(e.toString());
         		}
             }
             
         } catch (Exception e) {
-        	log.info("The time is now {}", dateFormat.format(new Date()) + "CST");
+        	//log.info("The time is now {}", dateFormat.format(new Date()) + "CST");
         }
       }
 
@@ -440,7 +440,7 @@ public class ExpenseTask {
         		}
 
         		//log.info("{}, {}, {}, {}, {}", total_time, cpuUsedHours, memoryUsedHour, gpuUsedHours, gpuMUsedHours);
-        		log.info("{}, {}, {}, {}, {}", total_time/3600.0, cpuUsedHours/3600.0, memoryUsedHour/3600.0, gpuUsedHours/3600.0, gpuMUsedHours/3600.0);
+        		//log.info("{}, {}, {}, {}, {}", total_time/3600.0, cpuUsedHours/3600.0, memoryUsedHour/3600.0, gpuUsedHours/3600.0, gpuMUsedHours/3600.0);
             	//log.info("i {} namespaceId {}", i, namespaceId, gpus.size());
             	DayExpenseId expenseId = new DayExpenseId(namespaceId, year, month, day);
             	DayExpense expense = new DayExpense(expenseId);

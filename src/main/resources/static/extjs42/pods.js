@@ -41,13 +41,13 @@
             // Note that the DetailPageURL was defined in the record definition but is not used
             // here. That is okay.
             this.columns = [
-            	{id:'pod.id',text: "id", sortable: true, width: 30, dataIndex: 'id'},
-            	{id:'pod.namespace.id',text: "namespace.id", sortable: true, dataIndex: 'namespaceId'},
-                {id:'pod.name',text: "name", sortable: true, dataIndex: 'name'},
+            	{text: "id", sortable: true, width: 30, dataIndex: 'id'},
+            	{text: "namespace.id", sortable: true, dataIndex: 'namespaceId'},
+                {text: "name", sortable: true, dataIndex: 'name'},
                 //{id:'phase',text: "phase", sortable: true, dataIndex: 'phase'},
-                {id:'pod.startTime',text: "startTime", sortable: true, dataIndex: 'startTime'},
-                {id:'pod.queryTime',text: "queryTime", sortable: true, dataIndex: 'queryTime'},
-                {id:'pod.hostname',text: "hostname", sortable: true, dataIndex: 'hostname'}
+                {text: "startTime", sortable: true, dataIndex: 'startTime'},
+                {text: "queryTime", sortable: true, dataIndex: 'queryTime'},
+                {text: "hostname", sortable: true, dataIndex: 'hostname'}
                 ];
             // Note the use of a storeId, this will register thisStore
             // with the StoreManager and allow us to retrieve it very easily.

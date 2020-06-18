@@ -64,7 +64,7 @@ public class Namespace {
     public void getPods(List<Pod> pods) {
     	this.pods = pods;
     }
-
+    /*
     @OneToMany(
             cascade = CascadeType.ALL,
             orphanRemoval = true
@@ -80,7 +80,7 @@ public class Namespace {
     	this.namespaceusedresourcequotas = Namespaceusedresourcequotas;
     }
     
- /*   @OneToMany(
+   @OneToMany(
             cascade = CascadeType.ALL,
             orphanRemoval = true
             )

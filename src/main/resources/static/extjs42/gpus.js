@@ -90,14 +90,14 @@
         	}
 
             this.columns = [
-            	{id:'gpu.id',text: "id", sortable: true, width: 40, dataIndex: 'id'},
-            	{id:'gpu.used',text: "running", sortable: true, flex: 0.25, dataIndex: 'used', renderer:renderUsed},
-            	{id:'gpu.user',text: "occupied user", sortable: true, flex: 0.25, dataIndex: 'user', renderer:renderUser},
-                {id:'gpu.hostname',text: "hostname", sortable: true, flex: 0.25, dataIndex: 'hostname'},
-                {id:'gpu.memory.total',text: "memory.total", sortable: true, width: 100, dataIndex: 'memory.total'},
-                {id:'gpu.enforced.power.limit',text: "enforced.power.limit", sortable: true, width: 100, dataIndex: 'enforced.power.limit'},
-                {id:'gpu.uuid',text: "uuid", sortable: true, flex: 0.25, dataIndex: 'uuid'},
-                {id:'gpu.name',text: "name", sortable: true, width: 150, dataIndex: 'name'}
+            	{text: "id", sortable: true, width: 40, dataIndex: 'id'},
+            	{text: "running", sortable: true, flex: 0.25, dataIndex: 'used', renderer:renderUsed},
+            	{text: "occupied user", sortable: true, flex: 0.25, dataIndex: 'user', renderer:renderUser},
+                {text: "hostname", sortable: true, flex: 0.25, dataIndex: 'hostname'},
+                {text: "memory.total", sortable: true, width: 100, dataIndex: 'memory.total'},
+                {text: "enforced.power.limit", sortable: true, width: 100, dataIndex: 'enforced.power.limit'},
+                {text: "uuid", sortable: true, flex: 0.25, dataIndex: 'uuid'},
+                {text: "name", sortable: true, width: 150, dataIndex: 'name'}
             ];
             // Note the use of a storeId, this will register thisStore
             // with the StoreManager and allow us to retrieve it very easily.

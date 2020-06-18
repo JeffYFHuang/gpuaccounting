@@ -230,15 +230,15 @@
             // here. That is okay.
             this.columns = [
             	//{id:'namespacequota.id',text: "id", sortable: true, width: 70, dataIndex: 'id'},
-            	{id:'namespacequota.namespaceId',text: "namespaceId", sortable: true, width: 70, dataIndex: 'namespaceId'},
-                {id:'namespacequota.limitsCpu',text: "limits.cpu", sortable: true, dataIndex: 'limitsCpu'},
-                {id:'namespacequota.limitsMemory',text: "limits.memory", sortable: true, dataIndex: 'limitsMemory'},
-                {id:'namespacequota.limitsNvidiaComGpu',text: "limits.nvidia.com/gpu", sortable: true, dataIndex: 'limitsNvidiaComGpu'},
-                {id:'namespacequota.requestsCpu',text: "requests.cpu", sortable: true, dataIndex: 'requestsCpu'},
-                {id:'namespacequota.requestsMemory',text: "requests.memory", sortable: true, dataIndex: 'requestsMemory'},
-                {id:'namespacequota.requestsNvidiaComGpu',text: "requests.nvidia.com/gpu", sortable: true, dataIndex: 'requestsNvidiaComGpu'},
-                {id:'namespacequota.startTime',text: "startTime", sortable: true, flex: 0.5, dataIndex: 'startTime'},
-                {id:'namespacequota.queryTime',text: "queryTime", sortable: true, flex:0.5, dataIndex: 'queryTime'}
+            	{text: "namespaceId", sortable: true, width: 70, dataIndex: 'namespaceId'},
+                {text: "limits.cpu", sortable: true, dataIndex: 'limitsCpu'},
+                {text: "limits.memory", sortable: true, dataIndex: 'limitsMemory'},
+                {text: "limits.nvidia.com/gpu", sortable: true, dataIndex: 'limitsNvidiaComGpu'},
+                {text: "requests.cpu", sortable: true, dataIndex: 'requestsCpu'},
+                {text: "requests.memory", sortable: true, dataIndex: 'requestsMemory'},
+                {text: "requests.nvidia.com/gpu", sortable: true, dataIndex: 'requestsNvidiaComGpu'},
+                {text: "startTime", sortable: true, flex: 0.5, dataIndex: 'startTime'},
+                {text: "queryTime", sortable: true, flex:0.5, dataIndex: 'queryTime'}
             ];
             // Note the use of a storeId, this will register thisStore
             // with the StoreManager and allow us to retrieve it very easily.
