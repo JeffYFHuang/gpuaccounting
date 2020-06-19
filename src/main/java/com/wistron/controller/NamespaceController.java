@@ -65,7 +65,7 @@ public class NamespaceController {
     @PostMapping("/namespace/setUserQuota") 
     public ResponseEntity<String> setUserQuota(
     		@RequestParam(required = false) Long id,
-    		@RequestParam(value = "namespace", required = true) String namespace,
+    		@RequestParam(value = "name", required = true) String namespace,
     		@RequestParam(value = "requests.cpu", required = true) String requests_cpu,
 			@RequestParam(value = "requests.memory", required = true) String requests_memory,
 			@RequestParam(value = "requests.gpu", required = true) Integer requests_nvidia_com_gpu,
