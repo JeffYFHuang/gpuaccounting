@@ -85,7 +85,7 @@ public class NamespaceController {
         String limitsMemory = requestBody.get("limitsMemory").asText();
         Integer limitsNvidiaComGpu = requestBody.get("limitsNvidiaComGpu").asInt();
 
-    	String command = String.format("./set_resourcequota.sh %s %d %s %d %d %s %d", name, requestsCpu, requestsMemory, requestsNvidiaComGpu, limitsCpu, limitsMemory, limitsNvidiaComGpu);
+        String command = String.format("./set_resourcequota.sh %s %d %s %d %d %s %d", name, requestsCpu, requestsMemory, requestsNvidiaComGpu, limitsCpu, limitsMemory, limitsNvidiaComGpu);
     	log.info(command);
 
     	try {
@@ -94,17 +94,19 @@ public class NamespaceController {
     	    BufferedReader reader = new BufferedReader(
     	            new InputStreamReader(process.getInputStream()));
     	    String line;
+    	    String resp = "unchanged";
     	    while ((line = reader.readLine()) != null) {
     	        System.out.println(line);
-    	    	if(line.indexOf("configured") != 1) {
+    	    	if(line.indexOf("configured") != -1) {
     	            Namespace ns = new Namespace(id, name, requestsCpu, requestsMemory, requestsNvidiaComGpu, limitsCpu, limitsMemory, limitsNvidiaComGpu);
     	    		namespaceRepository.save(ns);
+    	    		resp = "changed";
     	    		break;
     	    	}
     	    }
     	 
     	    reader.close();
-    	    return new ResponseEntity<>(new String("success"), HttpStatus.OK);
+    	    return new ResponseEntity<>(new String(resp), HttpStatus.OK);
     	 
     	} catch (IOException e) {
     	    e.printStackTrace();
