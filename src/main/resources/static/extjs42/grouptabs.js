@@ -15,6 +15,26 @@ Ext.onReady(function () {
     }];
 
  // Simple ComboBox using the data store
+	function deepCloneStore (source) {
+	    source = Ext.isString(source) ? Ext.data.StoreManager.lookup(source) : source;
+
+	    var target = Ext.create(source.$className, {
+	        model: source.model,
+	    });
+
+	    target.add(Ext.Array.map(source.getRange(), function (record) {
+	        return record.copy();
+	    }));
+
+	    return target;
+	}
+
+
+	var user_ds = new Ext.data.Store({
+		  autoLoad: true,
+		  model:'Namespace'
+	}); 
+
     Ext.define('App.userComboBox', {
         extend: 'Ext.form.field.ComboBox',
         alias: 'widget.userComboBox',
@@ -22,7 +42,7 @@ Ext.onReady(function () {
         displayField: 'name',
         width: 500,
         labelWidth: 130,
-        store: namespace_ds,
+        store: user_ds,
         queryMode: 'local',
         typeAhead: true,
         listeners: {

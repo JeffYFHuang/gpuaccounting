@@ -25,6 +25,7 @@ import com.wistron.repository.ExpenseRepository;
 import com.wistron.repository.GpumetricRepository;
 import com.wistron.repository.NamespaceRepository;
 import com.wistron.repository.NamespaceusedresourcequotaRepository;
+import com.wistron.repository.PodRepository;
 import com.wistron.repository.WeekExpenseRepository;
 
 import java.text.SimpleDateFormat;
@@ -46,6 +47,9 @@ public class ExpenseTask {
 	  NamespaceRepository namespaceRepository;
 
 	  @Autowired
+	  PodRepository podRepository;
+
+	  @Autowired
 	  NamespaceusedresourcequotaRepository namespaceusedresourcequotaRepository;
 	  
 	  @Autowired
@@ -59,6 +63,11 @@ public class ExpenseTask {
 
 	  @Autowired
 	  GpumetricRepository gpumetricRepository;
+
+	  
+	 public List<Pod> getPods(Long nsid) {
+		 return podRepository.findByNamespaceIdEquals(nsid);
+	 }
 
 	  @Scheduled(fixedRate = 5000)
 	  public void calcuMonth() {
@@ -97,7 +106,7 @@ public class ExpenseTask {
         		double cpuUsedHours = 0;
         		double memoryUsedHour = 0;
         		double total_time = 0;
-        		List<Pod> pods = namespace.getPods(); 
+        		List<Pod> pods = getPods(namespace.getId()); 
 
         		//log.info("pod size: {}", pods.size());
         		for (int j = 0; j < pods.size(); j++) {
@@ -233,7 +242,7 @@ public class ExpenseTask {
         		double cpuUsedHours = 0;
         		double memoryUsedHour = 0;
         		double total_time = 0;
-        		List<Pod> pods = namespace.getPods(); 
+        		List<Pod> pods = getPods(namespace.getId()); 
 
         		//log.info("pod size: {}", pods.size());
         		for (int j = 0; j < pods.size(); j++) {
@@ -366,7 +375,7 @@ public class ExpenseTask {
         		double cpuUsedHours = 0;
         		double memoryUsedHour = 0;
         		double total_time = 0;
-        		List<Pod> pods = namespace.getPods(); 
+        		List<Pod> pods = getPods(namespace.getId());
 
         		//log.info("pod size: {}", pods.size());
         		for (int j = 0; j < pods.size(); j++) {

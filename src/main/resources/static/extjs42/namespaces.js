@@ -4,7 +4,7 @@
 	Ext.define('Namespace', {
 	    extend: 'Ext.data.Model',
 	    fields: [
-		    {name: 'namespaceId', type: 'int', mapping:'id'},
+		    {name: 'id', type: 'int', mapping:'id'},
 		    {name: 'name'},
 		    {name: 'owner'},
 		    {name: 'limitsCpu', type: 'int', mapping:'limitsCpu'},
@@ -62,7 +62,7 @@
 		        }
 		  }*/
 		  //remoteSort: true
-	}); 
+	});
 
     Ext.define('App.namespaceGrid', {
         extend: 'Ext.grid.Panel',

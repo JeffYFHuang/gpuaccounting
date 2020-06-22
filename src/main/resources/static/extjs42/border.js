@@ -1,5 +1,5 @@
 Ext.Loader.setConfig({enabled: true});
-Ext.Loader.setPath('Ext.ux.DataView', './ux/DataView/');
+Ext.Loader.setPath('Ext.ux.DataView', './ux/DataView');
 Ext.Loader.setPath("Ext.ux.DateTimePicker", "./ux/DateTimePicker.js");
 Ext.Loader.setPath("Ext.ux.DateTimeField", "./ux/DateTimeField.js");
 

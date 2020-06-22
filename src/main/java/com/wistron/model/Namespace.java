@@ -7,8 +7,11 @@ import javax.persistence.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.wistron.repository.NamespaceRepository;
+import com.wistron.repository.PodRepository;
 import com.wistron.tasks.ExpenseTask;
 
 /*cmd = 'CREATE TABLE IF NOT EXISTS namespaces (' \
@@ -48,7 +51,7 @@ public class Namespace {
     @Column(name = "requests_nvidia_com_gpu", columnDefinition = "int(4)")
     private Integer requestsNvidiaComGpu;
 
-    @OneToMany(
+/*    @OneToMany(
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.EAGER
@@ -60,10 +63,10 @@ public class Namespace {
     public List<Pod> getPods() {
     	return pods;
     }
-    
-    public void getPods(List<Pod> pods) {
+
+    public void setPods(List<Pod> pods) {
     	this.pods = pods;
-    }
+    }*/
     /*
     @OneToMany(
             cascade = CascadeType.ALL,

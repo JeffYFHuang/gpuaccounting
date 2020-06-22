@@ -166,14 +166,14 @@
 	}); 
 
 	 // Simple ComboBox using the data store
-    Ext.define('App.userComboBox', {
+/*    Ext.define('App.userComboBox', {
         extend: 'Ext.form.field.ComboBox',
         alias: 'widget.userComboBox',
         fieldLabel: 'Select a user',
         displayField: 'name',
         width: 300,
         labelWidth: 130,
-        store: namespace_ds,
+        store: user_ds,
         queryMode: 'local',
         typeAhead: true,
         listeners: {
@@ -185,7 +185,7 @@
             scope: this
         }
     });
-
+*/
     Ext.define('App.namespaceUsedQuotaGrid', {
         extend: 'Ext.grid.Panel',
         layout: 'fit',

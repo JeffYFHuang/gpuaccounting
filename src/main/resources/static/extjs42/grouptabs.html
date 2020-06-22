@@ -9,13 +9,17 @@
     <link rel="stylesheet" type="text/css" href="./portal/portal.css" />
     <link rel="stylesheet" type="text/css" href="./ux/css/GroupTabPanel.css" />
     <link rel="stylesheet" type="text/css" href="./resources/css/writer.css" />
+    <link rel="stylesheet" type="text/css" href="./resources/css/ext-all-neptune-debug.css" />
+    <link rel="stylesheet" type="text/css" href="./resources/ext-theme-neptune/ext-theme-neptune-all-debug.css" />
 
     <!-- GC -->
 
     <!-- <x-compile> -->
     <!-- <x-bootstrap> -->
-    <script type="text/javascript" src="./shared/include-ext.js"></script>
-    <script type="text/javascript" src="./shared/options-toolbar.js"></script>
+    <!-- script type="text/javascript" src="./shared/include-ext.js"></script-->
+    <!-- script type="text/javascript" src="./shared/options-toolbar.js"></script-->
+    <script type="text/javascript" src="./ext-all.js"></script>
+    <script type="text/javascript" src="./packages/ext-theme-neptune/build/ext-theme-neptune.js"></script>
     <!-- </x-bootstrap> -->
     <script type="text/javascript" src="all-classes.js"></script>
 
@@ -23,8 +27,8 @@
     <script type="text/javascript" src="./shared/examples.js"></script>
     <script type="text/javascript">
         Ext.Loader.setPath({
-            'Ext.ux': './ux/',
-            'Ext.app': './portal/classes/'
+            'Ext.ux': './ux',
+            'Ext.app': './portal/classes'
         });
 
         Ext.require([

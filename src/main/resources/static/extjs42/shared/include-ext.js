@@ -54,7 +54,7 @@
         path = path.substring(0, path.lastIndexOf('/'));
     }
     
-    path = path + '/extjs42/';
+    path = path + '/extjs42';
     if (theme && theme !== 'classic') {
         suffix.push(theme);
     }
@@ -67,7 +67,7 @@
     if (includeCSS) {
         document.write('<link rel="stylesheet" type="text/css" href="' + path + '/resources/css/ext-all' + suffix + '-debug.css"/>');
     }
-    document.write('<script type="text/javascript" src="' + path + '/ext-all' + (rtl ? '-rtl' : '') + '-debug.js"></script>');
+    document.write('<script type="text/javascript" src="' + path + '/ext-all' + (rtl ? '-rtl' : '') + '.js"></script>');
 
     if (neptune) {
         // since document.write('<script>') does not block execution in IE, we need to 
