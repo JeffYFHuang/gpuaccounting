@@ -85,8 +85,9 @@ public class NamespaceController {
         String requestsMemory = requestBody.get("requestsMemory").asText();
         Integer requestsNvidiaComGpu = requestBody.get("requestsNvidiaComGpu").asInt();        
 
-    	String command = String.format("sh ./set_resourcequota.sh {} {} {} {} {} {} {}", requestsCpu, requestsMemory, requestsNvidiaComGpu, name, limitsCpu, limitsMemory, limitsNvidiaComGpu);
-    	 
+    	String command = String.format("sh ./set_resourcequota.sh {} {} {} {} {} {} {}", name, requestsCpu, requestsMemory, requestsNvidiaComGpu, name, limitsCpu, limitsMemory, limitsNvidiaComGpu);
+    	log.info(command);
+
     	try {
     	    Process process = Runtime.getRuntime().exec(command);
     	 
