@@ -124,6 +124,7 @@ public class Namespace {
     
     public Namespace(Long id, String name, Integer requestsCpu, String requestsMemory, Integer requestsNvidiaComGpu, Integer limitsCpu, String limitsMemory, Integer limitsNvidiaComGpu) {
         this.id = id;
+        this.name = name;
         this.requestsCpu = requestsCpu;
         this.requestsMemory = requestsMemory;
         this.requestsNvidiaComGpu = requestsNvidiaComGpu;
