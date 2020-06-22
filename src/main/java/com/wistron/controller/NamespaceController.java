@@ -1,5 +1,7 @@
 package com.wistron.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.wistron.model.GPU;
 import com.wistron.model.Namespace;
 import com.wistron.repository.NamespaceRepository;
@@ -14,9 +16,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,22 +70,39 @@ public class NamespaceController {
     
     @PostMapping("/namespace/setUserQuota") 
     public ResponseEntity<String> setUserQuota(
-    		@RequestParam(required = false) Long id,
-    		@RequestParam(value = "name", required = true) String namespace,
-    		@RequestParam(value = "requests.cpu", required = true) String requests_cpu,
-			@RequestParam(value = "requests.memory", required = true) String requests_memory,
-			@RequestParam(value = "requests.gpu", required = true) Integer requests_nvidia_com_gpu,
-    		@RequestParam(value = "limits.cpu", required = true) String limits_cpu,
-			@RequestParam(value = "limits.memory", required = true) String limits_memory,
-			@RequestParam(value = "limits.gpu", required = true) Integer limits_nvidia_com_gpu) {
+    		@RequestBody(required=false) JsonNode requestBody
+    		) {
 
-    	log.info("requests.cpu: {}", requests_cpu);
-    	//if kubectl apply * is successful then update the quota of the user in the namespace table else do nothing.  
-/*	    if (NamespaceData.isPresent()) {
-	            return new ResponseEntity<>(NamespaceData.get(), HttpStatus.OK);
-	    } else {
-	            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-	    }*/
-    	return new ResponseEntity<>(new String("success"), HttpStatus.OK);
+    	log.info("requestBody: {}", requestBody);
+    	//requestBody: {"id":6,"name":"jeffyfhuang","owner":"jeff_yf_huang@wistron.com","limitsCpu":8,"limitsMemory":"32Gi","limitsNvidiaComGpu":2,"requestsCpu":12,"requestsMemory":"32Gi","requestsNvidiaComGpu":2}
+
+        Long id = requestBody.get("id").asLong();
+        String name = requestBody.get("name").asText();
+        Integer limitsCpu = requestBody.get("limitsCpu").asInt();
+        String limitsMemory = requestBody.get("limitsMemory").asText();
+        Integer limitsNvidiaComGpu = requestBody.get("limitsNvidiaComGpu").asInt();
+        Integer requestsCpu = requestBody.get("requestsCpu").asInt();
+        String requestsMemory = requestBody.get("requestsMemory").asText();
+        Integer requestsNvidiaComGpu = requestBody.get("requestsNvidiaComGpu").asInt();        
+
+    	String command = String.format("sh ./set_resourcequota.sh {} {} {} {} {} {} {}", requestsCpu, requestsMemory, requestsNvidiaComGpu, name, limitsCpu, limitsMemory, limitsNvidiaComGpu);
+    	 
+    	try {
+    	    Process process = Runtime.getRuntime().exec(command);
+    	 
+    	    BufferedReader reader = new BufferedReader(
+    	            new InputStreamReader(process.getInputStream()));
+    	    String line;
+    	    while ((line = reader.readLine()) != null) {
+    	        System.out.println(line);
+    	    }
+    	 
+    	    reader.close();
+    	    return new ResponseEntity<>(new String("success"), HttpStatus.OK);
+    	 
+    	} catch (IOException e) {
+    	    e.printStackTrace();
+    	    return new ResponseEntity<>(new String("fail"), HttpStatus.OK);
+    	}
     }
 }
