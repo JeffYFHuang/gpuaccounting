@@ -121,6 +121,16 @@ public class Namespace {
 */
     public Namespace() {
     }
+    
+    public Namespace(Long id, String name, Integer requestsCpu, String requestsMemory, Integer requestsNvidiaComGpu, Integer limitsCpu, String limitsMemory, Integer limitsNvidiaComGpu) {
+        this.id = id;
+        this.requestsCpu = requestsCpu;
+        this.requestsMemory = requestsMemory;
+        this.requestsNvidiaComGpu = requestsNvidiaComGpu;
+        this.limitsCpu = limitsCpu;
+        this.limitsMemory = limitsMemory;
+        this.limitsNvidiaComGpu = limitsNvidiaComGpu;
+    }
 
     public void setId(Long id) {
         this.id = id;

@@ -78,14 +78,14 @@ public class NamespaceController {
 
         Long id = requestBody.get("id").asLong();
         String name = requestBody.get("name").asText();
+        Integer requestsCpu = requestBody.get("requestsCpu").asInt();
+        String requestsMemory = requestBody.get("requestsMemory").asText();
+        Integer requestsNvidiaComGpu = requestBody.get("requestsNvidiaComGpu").asInt();
         Integer limitsCpu = requestBody.get("limitsCpu").asInt();
         String limitsMemory = requestBody.get("limitsMemory").asText();
         Integer limitsNvidiaComGpu = requestBody.get("limitsNvidiaComGpu").asInt();
-        Integer requestsCpu = requestBody.get("requestsCpu").asInt();
-        String requestsMemory = requestBody.get("requestsMemory").asText();
-        Integer requestsNvidiaComGpu = requestBody.get("requestsNvidiaComGpu").asInt();        
 
-    	String command = String.format("sh ./set_resourcequota.sh %s %d %s %d %d %s %d", name, requestsCpu, requestsMemory, requestsNvidiaComGpu, limitsCpu, limitsMemory, limitsNvidiaComGpu);
+    	String command = String.format("./set_resourcequota.sh %s %d %s %d %d %s %d", name, requestsCpu, requestsMemory, requestsNvidiaComGpu, limitsCpu, limitsMemory, limitsNvidiaComGpu);
     	log.info(command);
 
     	try {
@@ -96,6 +96,11 @@ public class NamespaceController {
     	    String line;
     	    while ((line = reader.readLine()) != null) {
     	        System.out.println(line);
+    	    	if(line.indexOf("configured") != 1) {
+    	            Namespace ns = new Namespace(id, name, requestsCpu, requestsMemory, requestsNvidiaComGpu, limitsCpu, limitsMemory, limitsNvidiaComGpu);
+    	    		namespaceRepository.save(ns);
+    	    		break;
+    	    	}
     	    }
     	 
     	    reader.close();
