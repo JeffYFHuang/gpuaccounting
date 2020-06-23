@@ -122,7 +122,7 @@
                 {text: "requests.memory", sortable: true, dataIndex: 'requestsMemory', 
                 	editor: {
 	                    xtype: 'textfield',
-	                    allowBlank: false
+	                    allowBlank: true
                 	}
                 },
                 {text: "requests.nvidia.com/gpu", sortable: true, dataIndex: 'requestsNvidiaComGpu', 
@@ -140,7 +140,7 @@
                 {text: "limits.memory", sortable: true, dataIndex: 'limitsMemory', 
                 	editor: {
 	                    xtype: 'textfield',
-	                    allowBlank: false
+	                    allowBlank: true
                 	}
                 },
                 {text: "limits.nvidia.com/gpu", sortable: true, dataIndex: 'limitsNvidiaComGpu', 
