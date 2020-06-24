@@ -115,39 +115,301 @@
                 //{id:'owner',header: "owner", sortable: true, dataIndex: 'owner'},
                 {text: "requests.cpu", sortable: true, dataIndex: 'requestsCpu', 
                 	editor: {
-	                    xtype: 'textfield',
-	                    allowBlank: false
-                	}
+                        xtype: 'combobox',
+                        forceSelection: true,
+                        editable: false,
+                        triggerAction: 'all',
+                        allowBlank: true,
+                        valueField: 'value',
+                        displayField: 'descr',
+                        store: Ext.create('Ext.data.Store', {
+                            fields: ['descr', 'value'],
+                            data: [{
+                                descr: 4,
+                                value: 4
+                            }, {
+                                descr: 5,
+                                value: 5
+                            }, {
+                                descr: 6,
+                                value: 6
+                            }, {
+                                descr: 7,
+                                value: 7
+                            }, {
+                                descr: 8,
+                                value: 8
+                            }, {
+                                descr: 9,
+                                value: 9
+                            }, {
+                                descr: 10,
+                                value: 10
+                            }, {
+                                descr: 11,
+                                value: 11
+                            }, {
+                                descr: 12,
+                                value: 12
+                            }, {
+                                descr: 13,
+                                value: 13
+                            }, {
+                                descr: 14,
+                                value: 14
+                            }, {
+                                descr: 15,
+                                value: 15
+                            }, {
+                                descr: 16,
+                                value: 16
+                            }]
+                        })
+                    }, renderer: function(value, metaData, record) {
+                        switch (value) {
+                        default:
+                            return value;
+                        }
+                    }
                 },
                 {text: "requests.memory", sortable: true, dataIndex: 'requestsMemory', 
                 	editor: {
-	                    xtype: 'textfield',
-	                    allowBlank: true
-                	}
+                        xtype: 'combobox',
+                        forceSelection: true,
+                        editable: true,
+                        triggerAction: 'all',
+                        allowBlank: true,
+                        valueField: 'value',
+                        displayField: 'descr',
+                        store: Ext.create('Ext.data.Store', {
+                            fields: ['descr', 'value'],
+                            data: [{
+                                descr: '8Gi',
+                                value: '8Gi'
+                            }, {
+                                descr: '16Gi',
+                                value: '16Gi'
+                            }, {
+                                descr: '32Gi',
+                                value: '32Gi'
+                            }, {
+                                descr: '64Gi',
+                                value: '64Gi'
+                            }, {
+                                descr: '128Gi',
+                                value: '128Gi'
+                            }]
+                        })
+                    },
+                    renderer: function(value, metaData, record) {
+                        switch (value) {
+                        case '8Gi':
+                            return "8Gi";
+                        case '16Gi':
+                            return "16Gi";
+                        case '32Gi':
+                            return "32Gi";
+                        case '32Gi':
+                            return "64Gi";
+                        case '32Gi':
+                            return "64Gi";
+                        default:
+                            return value;
+                        }
+                    }
                 },
                 {text: "requests.nvidia.com/gpu", sortable: true, dataIndex: 'requestsNvidiaComGpu', 
                 	editor: {
-	                    xtype: 'textfield',
-	                    allowBlank: false
-                	}
+                        xtype: 'combobox',
+                        forceSelection: true,
+                        editable: false,
+                        triggerAction: 'all',
+                        allowBlank: true,
+                        valueField: 'value',
+                        displayField: 'descr',
+                        store: Ext.create('Ext.data.Store', {
+                            fields: ['descr', 'value'],
+                            data: [{
+                                descr: 1,
+                                value: 1
+                            }, {
+                                descr: 2,
+                                value: 2
+                            }, {
+                                descr: 3,
+                                value: 3
+                            }, {
+                                descr: 4,
+                                value: 4
+                            }, {
+                                descr: 5,
+                                value: 5
+                            }, {
+                                descr: 6,
+                                value: 6
+                            }, {
+                                descr: 7,
+                                value: 7
+                            }, {
+                                descr: 8,
+                                value: 8
+                            }]
+                        })
+                    }, renderer: function(value, metaData, record) {
+                        switch (value) {
+                        default:
+                            return value;
+                        }
+                    }
                 },
                 {text: "limits.cpu", sortable: true, dataIndex: 'limitsCpu', 
                 	editor: {
-	                    xtype: 'textfield',
-	                    allowBlank: false
-                	}
+                        xtype: 'combobox',
+                        forceSelection: true,
+                        editable: false,
+                        triggerAction: 'all',
+                        allowBlank: true,
+                        valueField: 'value',
+                        displayField: 'descr',
+                        store: Ext.create('Ext.data.Store', {
+                            fields: ['descr', 'value'],
+                            data: [{
+                                descr: 4,
+                                value: 4
+                            }, {
+                                descr: 5,
+                                value: 5
+                            }, {
+                                descr: 6,
+                                value: 6
+                            }, {
+                                descr: 7,
+                                value: 7
+                            }, {
+                                descr: 8,
+                                value: 8
+                            }, {
+                                descr: 9,
+                                value: 9
+                            }, {
+                                descr: 10,
+                                value: 10
+                            }, {
+                                descr: 11,
+                                value: 11
+                            }, {
+                                descr: 12,
+                                value: 12
+                            }, {
+                                descr: 13,
+                                value: 13
+                            }, {
+                                descr: 14,
+                                value: 14
+                            }, {
+                                descr: 15,
+                                value: 15
+                            }, {
+                                descr: 16,
+                                value: 16
+                            }]
+                        })
+                    }, renderer: function(value, metaData, record) {
+                        switch (value) {
+                        default:
+                            return value;
+                        }
+                    }
                 },
                 {text: "limits.memory", sortable: true, dataIndex: 'limitsMemory', 
                 	editor: {
-	                    xtype: 'textfield',
-	                    allowBlank: true
-                	}
+                        xtype: 'combobox',
+                        forceSelection: true,
+                        editable: true,
+                        triggerAction: 'all',
+                        allowBlank: true,
+                        valueField: 'value',
+                        displayField: 'descr',
+                        store: Ext.create('Ext.data.Store', {
+                            fields: ['descr', 'value'],
+                            data: [{
+                                descr: '8Gi',
+                                value: '8Gi'
+                            }, {
+                                descr: '16Gi',
+                                value: '16Gi'
+                            }, {
+                                descr: '32Gi',
+                                value: '32Gi'
+                            }, {
+                                descr: '64Gi',
+                                value: '64Gi'
+                            }, {
+                                descr: '128Gi',
+                                value: '128Gi'
+                            }]
+                        })
+                    },
+                    renderer: function(value, metaData, record) {
+                        switch (value) {
+                        case '8Gi':
+                            return "8Gi";
+                        case '16Gi':
+                            return "16Gi";
+                        case '32Gi':
+                            return "32Gi";
+                        case '32Gi':
+                            return "64Gi";
+                        case '32Gi':
+                            return "64Gi";
+                        default:
+                            return value;
+                        }
+                    }
                 },
                 {text: "limits.nvidia.com/gpu", sortable: true, dataIndex: 'limitsNvidiaComGpu', 
                 	editor: {
-	                    xtype: 'textfield',
-	                    allowBlank: false
-                	}
+                        xtype: 'combobox',
+                        forceSelection: true,
+                        editable: false,
+                        triggerAction: 'all',
+                        allowBlank: true,
+                        valueField: 'value',
+                        displayField: 'descr',
+                        store: Ext.create('Ext.data.Store', {
+                            fields: ['descr', 'value'],
+                            data: [{
+                                descr: 1,
+                                value: 1
+                            }, {
+                                descr: 2,
+                                value: 2
+                            }, {
+                                descr: 3,
+                                value: 3
+                            }, {
+                                descr: 4,
+                                value: 4
+                            }, {
+                                descr: 5,
+                                value: 5
+                            }, {
+                                descr: 6,
+                                value: 6
+                            }, {
+                                descr: 7,
+                                value: 7
+                            }, {
+                                descr: 8,
+                                value: 8
+                            }]
+                        })
+                    }, renderer: function(value, metaData, record) {
+                        switch (value) {
+                        default:
+                            return value;
+                        }
+                    }
                 }
             ];
             // Note the use of a storeId, this will register thisStore
