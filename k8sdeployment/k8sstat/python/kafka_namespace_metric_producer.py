@@ -149,7 +149,7 @@ while 1:
         #p = str(p).replace("\"", "").replace(" ", "").replace("\n", "").replace("'","\"")
         #print(p)
         ns_all.append(p)
-     ns_all = str(ns_all).replace("\"", "").replace(" ", "").replace("\n", "").replace("'","\"").replace("None","0")
+     ns_all = str(ns_all).replace("\"", "").replace(" ", "").replace("\n", "").replace("'","\"").replace("None", "null")
      print(ns_all)
      producer = send_message(producer, 'namespace_metrics', json.loads(ns_all))
      query_duration = time.time() - query_start
