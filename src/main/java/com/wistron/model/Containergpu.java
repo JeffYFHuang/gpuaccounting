@@ -27,7 +27,23 @@ public class Containergpu {
     private Long nspid;
     @Column(name = "gpu_id", columnDefinition = "int(11) NOT NULL")
     private Long gpuId;
+    @Column(name = "query_time", columnDefinition = "char(32)")
+    private String queryTime;
+/*
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name="pod_id")
+    private Pod pod;
 
+    public Pod getPod() { return pod; }
+    public void setPod(Pod pod) { this.pod = pod; }
+    
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name="container_id")
+    private Container container;
+    
+    public Container getContainer() { return container; }
+    public void setContainer(Container container) { this.container = container; }
+*/
     public Containergpu() {
     }
 
@@ -69,6 +85,14 @@ public class Containergpu {
 
     public void setGpuId(Long gpuId) {
         this.gpuId = gpuId;
+    }
+
+    public String getQueryTime() {
+        return queryTime;
+    }
+
+    public void setQueryTime(String queryTime) {
+        this.queryTime = queryTime;
     }
 
     @Override

@@ -12,12 +12,65 @@
 		    ]
 	});
 
+    function toDate(strDate){
+    	var pattern = /(\d{2})\/(\d{2})\/(\d{4})(\d{2}):(\d{2}):(\d{2})CST/;
+    	return new Date(strDate.replace(pattern, "$3-$1-$2 $4:$5:$6"));
+    }
+
+    //03/30/202011:11:21CST
+    function toCSTString2(date0, date1) {
+    	return pad(date0.getMonth() + 1) +  
+    	'/' + pad(date0.getDate()) + 
+    	'/' + date0.getFullYear() +
+        '' + pad(date1.getHours()) +
+        ':' + pad(date1.getMinutes()) +
+        ':' + pad(date1.getSeconds()) +
+        'CST';
+    }
+
+    function getRequestedHours(startTime, queryTime) {
+    	var st = startTime;
+    	var dt = queryTime;
+		if (namespaceusedquota_ds.proxy.extraParams.startDateTime != undefined) {
+			if (startTime == null)
+				st = namespaceusedquota_ds.proxy.extraParams.startDateTime;
+			else
+				if (toDate(st) < toDate(namespaceusedquota_ds.proxy.extraParams.startDateTime))
+					st = namespaceusedquota_ds.proxy.extraParams.startDateTime;
+		}
+
+		if (namespaceusedquota_ds.proxy.extraParams.endDateTime != undefined)
+		{
+			if (toDate(namespaceusedquota_ds.proxy.extraParams.endDateTime) < toDate(queryTime))
+				dt = namespaceusedquota_ds.proxy.extraParams.endDateTime;
+		}
+		//alert(namespaceusedquota_ds.proxy.extraParams.startDateTime);
+		//startTime = toDate(namespaceusedquota_ds.proxy.extraParams.startDateTime);
+
+    	if (st != null) {
+    		//alert(toDate(dt) + "-" + toDate(st));
+    		return　Math.abs(toDate(dt) - toDate(st)) / 36e5;
+    	}
+    	
+    	return 0;
+    }
+
+    var now = new Date();
+    var last30days = new Date();
+    last30days.setDate(now.getDate() - 30);
+    var nextday = new Date();
+    nextday.setDate(now.getDate() + 1);
+ 
 	var pod_ds = new Ext.data.Store({
 		  autoLoad: true,
 		  model:'Pod',
 		  proxy: {
 		        type: 'ajax',
 		        url:'/pods',
+		        extraParams: {
+		        	startDateTime: toCSTString(last30days),
+		        	endDateTime: toCSTString(nextday)
+		        },
 		        reader: {
 		            type: 'json',
 		      	    totalProperty: 'totalElements',
