@@ -18,7 +18,7 @@ template="${template/\{requests\.gpu\}/$requests_gpu}"
 template="${template/\{limits\.cpu\}/$limits_cpu}"
 template="${template/\{limits\.memory\}/$limits_memory}"
 template="${template/\{limits\.gpu\}/$limits_gpu}"
-echo $template
+#echo $template
 
 # apply the yml with the substituted value
-#echo "$template" | kubectl apply -f -
+echo "$template" | kubectl apply -f -

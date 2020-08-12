@@ -20,6 +20,7 @@ RUN mkdir -p /root/.kube && \
 ADD .kube/config /root/.kube/
 ADD ./kubectl /usr/local/bin/kubectl
 RUN chmod +x /usr/local/bin/kubectl
+WORKDIR /opt
 
 EXPOSE 9090
 USER root
