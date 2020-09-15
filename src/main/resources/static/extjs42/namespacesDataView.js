@@ -1,13 +1,32 @@
-    //{"id":2,"name":"jeffyfhuang","owner":"jeff_yf_huang@wistron.com","limitsCpu":4,"limitsMemory":"16Gi","limitsNvidiaComGpu":2,"requestsCpu":4,"requestsMemory":"16Gi","requestsNvidiaComGpu":2}
-    // create the data store
-	Ext.define('Namespace', {
+    /*
+    @Column(name = "gpu_hours", columnDefinition = "float(4) default 0")
+    private float gpuHours;
+    @Column(name = "cpu_hours", columnDefinition = "float(4) default 0")
+    private float cpuHours;
+    @Column(name = "memory_hours", columnDefinition = "float(4) default 0")
+    private float memoryHours;
+    @Column(name = "gpu_used_hours", columnDefinition = "float(4) default 0")
+    private float gpuUsedHours;
+    @Column(name = "gpu_m_used_hours", columnDefinition = "float(4) default 0") //gpu memory used
+    private float gpuMUsedHours;
+    @Column(name = "cpu_used_hours", columnDefinition = "float(4) default 0")
+    private float cpuUsedHours;
+    @Column(name = "memory_used_hours", columnDefinition = "float(4) default 0")
+    private float memoryUsedHours;
+    @Column(name = "type", columnDefinition = "int(2) default 0")
+    private Integer type;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "lastupdated", nullable = false)
+    private Date lastupdated;
+    */
+   	Ext.define('Expense', {
 	    extend: 'Ext.data.Model',
 	    fields: [
-		    {name: 'id', type: 'int', mapping:'id'},
-		    {name: 'name'},
-		    {name: 'owner'},
-		    {name: 'limitsCpu', type: 'int', mapping:'limitsCpu'},
-		    {name: 'limitsMemory', mapping:'limitsMemory'},
+		    {name: 'namepsace_id', type: 'int', mapping:'namepsace_id'},
+		    {name: 'year'},
+		    {name: 'month'},
+		    {name: 'gpuHours', mapping:'gpuHours'},
+		    {name: 'gpuHours', mapping:'Hours'},
 		    {name: 'limitsNvidiaComGpu', type: 'int', mapping:'limitsNvidiaComGpu'},
 		    {name: 'requestsCpu', type: 'int', mapping:'requestsCpu'},
 		    {name: 'requestsMemory', mapping:'requestsMemory'},

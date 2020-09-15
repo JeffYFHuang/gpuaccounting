@@ -198,6 +198,12 @@
                             }, {
                                 descr: '128Gi',
                                 value: '128Gi'
+                            }, {
+                                descr: '256Gi',
+                                value: '256Gi'
+                            }, {
+                                descr: '512Gi',
+                                value: '512Gi'
                             }]
                         })
                     },
@@ -209,10 +215,14 @@
                             return "16Gi";
                         case '32Gi':
                             return "32Gi";
-                        case '32Gi':
+                        case '64Gi':
                             return "64Gi";
-                        case '32Gi':
-                            return "64Gi";
+                        case '128Gi':
+                            return "128Gi";
+                        case '256Gi':
+                            return "256Gi";
+                        case '512Gi':
+                            return "512Gi";
                         default:
                             return value;
                         }
@@ -347,6 +357,12 @@
                             }, {
                                 descr: '128Gi',
                                 value: '128Gi'
+                            }, {
+                                descr: '256Gi',
+                                value: '256Gi'
+                            }, {
+                                descr: '512Gi',
+                                value: '512Gi'
                             }]
                         })
                     },
@@ -358,10 +374,14 @@
                             return "16Gi";
                         case '32Gi':
                             return "32Gi";
-                        case '32Gi':
+                        case '64Gi':
                             return "64Gi";
-                        case '32Gi':
-                            return "64Gi";
+                        case '128Gi':
+                            return "128Gi";
+                        case '256Gi':
+                            return "256Gi";
+                        case '512Gi':
+                            return "512Gi";
                         default:
                             return value;
                         }

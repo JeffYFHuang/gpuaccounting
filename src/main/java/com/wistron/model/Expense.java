@@ -44,6 +44,7 @@ public class Expense {
     	this.cpuHours = 0;
     	this.cpuUsedHours = 0;
     	this.gpuHours = 0;
+    	this.gpuUsedHours = 0;
     	this.gpuMUsedHours = 0;
     	this.cpuUsedHours = 0;
     	this.memoryHours = 0;
@@ -55,6 +56,7 @@ public class Expense {
     	this.cpuHours = 0;
     	this.cpuUsedHours = 0;
     	this.gpuHours = 0;
+    	this.gpuUsedHours = 0;
     	this.gpuMUsedHours = 0;
     	this.cpuUsedHours = 0;
     	this.memoryHours = 0;
@@ -85,6 +87,14 @@ public class Expense {
     	this.memoryHours = (float) (this.memoryHours / 1024.0);
     	this.lastupdated = new Date();
     	//log.info(this.toString());
+    }
+
+    public ExpenseId getExpenseId() {
+    	return expenseId;
+    }
+
+    public void setExpenseId(ExpenseId expenseId) {
+    	this.expenseId = expenseId;
     }
 
     public float getGpuHours() {

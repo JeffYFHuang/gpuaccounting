@@ -121,6 +121,14 @@ Ext.onReady(function () {
                             }
                         }]
                     }]
+                }, {
+                    title: 'Expense',
+                    iconCls: 'x-icon-tickets',
+                    tabTip: 'Tickets tabtip',
+                    //border: false,
+                    xtype: 'expense',
+                    margin: '10',
+                    height: null
                 }]
             }/*, {
                 expanded: true,

@@ -14774,6 +14774,7 @@ a.x-datepicker-date:hover {
   border-style: solid;
   border-color: #e1e1e1;
   background-color: white;
+  padding-bottom: 35px;
 }
 
 /* line 211, ../../../ext-theme-neutral/sass/src/picker/Date.scss */
