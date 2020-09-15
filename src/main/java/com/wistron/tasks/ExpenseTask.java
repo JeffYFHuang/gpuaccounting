@@ -180,7 +180,7 @@ public class ExpenseTask {
         		}
 
         		//log.info("{}, {}, {}, {}, {}", total_time, cpuUsedHours, memoryUsedHour, gpuUsedHours, gpuMUsedHours);
-        		log.info("{}, {}, {}, {}, {}", total_time/3600.0, cpuUsedHours/3600.0, memoryUsedHour/3600.0, gpuUsedHours/3600.0, gpuMUsedHours/3600.0);
+        		//log.info("{}, {}, {}, {}, {}", total_time/3600.0, cpuUsedHours/3600.0, memoryUsedHour/3600.0, gpuUsedHours/3600.0, gpuMUsedHours/3600.0);
             	//log.info("i {} namespaceId {}", i, namespaceId, gpus.size());
             	ExpenseId expenseId = new ExpenseId(namespaceId, year, month);
             	Expense expense = new Expense(expenseId);
@@ -192,7 +192,7 @@ public class ExpenseTask {
                 List<Namespaceusedresourcequota> namespaceusedresourcequotas = new ArrayList<Namespaceusedresourcequota>();
             	namespaceusedresourcequotaRepository.findNamespaceusedresourcequotasByNamespaceId(namespaceId, startDateTime, endDateTime)
             	                                    .forEach(namespaceusedresourcequotas::add);
-            	//log.info("namespaceId {}, size: {}", namespaceId, namespaceusedresourcequotas.size());
+            	log.info("namespaceId {}, size: {}", namespaceId, namespaceusedresourcequotas.size());
             	if (namespaceusedresourcequotas.size() == 0) continue;
 
         		try {

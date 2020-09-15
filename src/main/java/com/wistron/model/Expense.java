@@ -67,9 +67,10 @@ public class Expense {
     	Namespaceusedresourcequota rq;
     	Date startTime;
     	Date endTime;
-
+    	//log.debug(resourcequotas.toString());
     	for (int i = 0; i < resourcequotas.size(); i++) {
     		rq = resourcequotas.get(i);
+
     		startTime = new SimpleDateFormat("MM/dd/yyyyHH:mm:ss").parse(rq.getStartTime());
     		endTime = new SimpleDateFormat("MM/dd/yyyyHH:mm:ss").parse(rq.getQueryTime());
     		//log.info("The resource start time is {}, end time is {}", startTime, endTime);
@@ -79,9 +80,12 @@ public class Expense {
     	    long diffInMillies = Math.abs(endTime.getTime() - startTime.getTime());
     	    float hours = (float) ((float)diffInMillies/3600000.0);
     	    //log.info("The resource located duration is {} hours by namespace id {}.", hours, rq.getNamespaceId());
-    	    this.gpuHours += hours * rq.getRequestsNvidiaComGpu();
-    	    this.cpuHours += hours * Float.parseFloat(rq.getRequestsCpu().replaceAll("[^\\.0123456789]",""));
-    	    this.memoryHours += hours * Float.parseFloat(rq.getRequestsMemory().replaceAll("[^\\.0123456789]",""));
+    	    if (rq.getRequestsNvidiaComGpu() != null)
+    	    	this.gpuHours += hours * rq.getRequestsNvidiaComGpu();
+    	    if (rq.getRequestsCpu() != null)
+    	    	this.cpuHours += hours * Float.parseFloat(rq.getRequestsCpu().replaceAll("[^\\.0123456789]",""));
+    	    if (rq.getRequestsMemory() != null)
+    	    	this.memoryHours += hours * Float.parseFloat(rq.getRequestsMemory().replaceAll("[^\\.0123456789]",""));
     	}
     	this.cpuHours = (float) (this.cpuHours / 1000.0);
     	this.memoryHours = (float) (this.memoryHours / 1024.0);
