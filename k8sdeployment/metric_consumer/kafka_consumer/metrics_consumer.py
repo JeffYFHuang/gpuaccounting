@@ -568,9 +568,9 @@ class Consumer(mp.Process):
 
                         insertGpuInfo(self.connection, {'id': gpu_id, 'used': used}, True)
                         print("gpu {} status is {}".format(gpu_id, used))
-                    else:
-                        t = threading.Thread(target=processGpuMetrics, args=(gpu, self.connection, ))
-                        t.start()
+                    #else:
+                    #    t = threading.Thread(target=processGpuMetrics, args=(gpu, self.connection, ))
+                    #    t.start()
 
             return ''
 
@@ -683,9 +683,11 @@ class Consumer(mp.Process):
                             if container['resources']['limits'].get('nvidia.com/gpu') == None:
                                 container['resources']['limits']['nvidia.com/gpu'] = None
                         else:
-                            container['resources']['limits']['cpu'] = None
-                            container['resources']['limits']['memory'] = None
-                            container['resources']['limits']['nvidia.com/gpu'] = None
+                            container['resources']['limits'] = {'cpu': None, 'memory': None, 'nvidia.com/gpu': None}
+                            #continue
+                            #container['resources']['limits']['cpu'] = None
+                            #container['resources']['limits']['memory'] = None
+                            #container['resources']['limits']['nvidia.com/gpu'] = None
 
                         if container['resources'].get('requests') != None:
                             if container['resources']['requests'].get('cpu') == None:
@@ -695,9 +697,11 @@ class Consumer(mp.Process):
                             if container['resources']['requests'].get('nvidia.com/gpu') == None:
                                 container['resources']['requests']['nvidia.com/gpu'] = None
                         else:
-                            container['resources']['requests']['cpu'] = None
-                            container['resources']['requests']['memory'] = None
-                            container['resources']['requests']['nvidia.com/gpu'] = None
+                            container['resources']['requests'] = {'cpu': None, 'memory': None, 'nvidia.com/gpu': None}
+                            #continue
+                            #container['resources']['requests']['cpu'] = None
+                            #container['resources']['requests']['memory'] = None
+                            #container['resources']['requests']['nvidia.com/gpu'] = None
 
                         container_id = insertContainerInfo(self.connection, {
                                                 'pod_id': pod_id, \
