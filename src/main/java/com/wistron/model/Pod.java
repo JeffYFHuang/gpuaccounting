@@ -23,7 +23,7 @@ public class Pod {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", columnDefinition = "int(11) NOT NULL AUTO_INCREMENT")
     private Long id;
-    @Column(name = "name", columnDefinition = "char(32) NOT NULL")
+    @Column(name = "name", columnDefinition = "char(128) NOT NULL")
     private String name;
     @Column(name = "namespace_id", columnDefinition = "int(11) NOT NULL")
     private Long namespaceId;

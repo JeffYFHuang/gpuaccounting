@@ -31,8 +31,8 @@ public class Container {
     private Long podId;
     @Column(name = "name", columnDefinition = "char(32) NOT NULL")
     private String name;
-    @Column(name = "limits_cpu", columnDefinition = "int(4)")
-    private Integer limitsCpu;
+    @Column(name = "limits_cpu", columnDefinition = "char(16)")
+    private String limitsCpu;
     @Column(name = "limits_memory", columnDefinition = "char(32)")
     private String limitsMemory;
     @Column(name = "limits_nvidia_com_gpu", columnDefinition = "int(4)")
@@ -97,11 +97,11 @@ public class Container {
         this.name = name;
     }
 
-    public Integer getLimitsCpu() {
+    public String getLimitsCpu() {
         return limitsCpu;
     }
 
-    public void setLimitsCpu(Integer limits_cpu) {
+    public void setLimitsCpu(String limits_cpu) {
         this.limitsCpu = limitsCpu;
     }
 
