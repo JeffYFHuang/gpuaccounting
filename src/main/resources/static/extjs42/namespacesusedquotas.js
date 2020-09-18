@@ -6,10 +6,10 @@
 	    fields: [
 	    	{name: 'id', type: 'int', mapping:'id'},
 		    {name: 'namespaceId', type: 'int', mapping:'namespaceId'},
-		    {name: 'limitsCpu', type: 'int', mapping:'limitsCpu'},
+		    {name: 'limitsCpu', mapping:'limitsCpu'},
 		    {name: 'limitsMemory', mapping:'limitsMemory'},
 		    {name: 'limitsNvidiaComGpu', type: 'int', mapping:'limitsNvidiaComGpu'},
-		    {name: 'requestsCpu', type: 'int', mapping:'requestsCpu'},
+		    {name: 'requestsCpu', mapping:'requestsCpu'},
 		    {name: 'requestsMemory', mapping:'requestsMemory'},
 		    {name: 'requestsNvidiaComGpu', type: 'int', mapping:'requestsNvidiaComGpu'},
 		    {name: 'startTime', mapping:'startTime'},
@@ -92,6 +92,8 @@
 		            	namespaceusedquota_ds.totalRequestedHours = 0;
 
 		            	store.each(function(r) {
+		            		var limitsCpu = r.data.limitsCpu == undefined ? null : parseInt(r.data.limitsCpu);
+			            	var requestsCpu = r.data.requestsCpu == undefined ? null : parseInt(r.data.requestsCpu);
 			            	var limitsMemory = r.data.limitsMemory == undefined ? null : parseInt(r.data.limitsMemory);
 			            	var requestsMemory = r.data.requestsMemory == undefined ? null : parseInt(r.data.requestsMemory);
 			            	var startTime = r.data.startTime == undefined ? null : r.data.startTime;
@@ -114,7 +116,7 @@
 			        		hours = getRequestedHours(startTime, queryTime);
 			        		namespaceusedquota_ds.totalRequestedHours = namespaceusedquota_ds.totalRequestedHours + hours;
 			            	gpuhours = gpuhours + r.data.requestsNvidiaComGpu * hours;
-			            	cpuhours = cpuhours + r.data.requestsCpu * hours;
+			            	cpuhours = cpuhours + requestsCpu * hours;
 			            	memoryhours = memoryhours + requestsMemory * hours;
 
 			            	startTime = new Date(toDate(startTime));
@@ -123,10 +125,10 @@
 		                    data.push({
 		                    	rowId: rowIndex,
 		            		    namespaceId: r.data.namespaceId,
-		            		    limitsCpu: r.data.limitsCpu,
+		            		    limitsCpu: limitsCpu,
 		            		    limitsMemory: limitsMemory,
 		            		    limitsNvidiaComGpu: r.data.limitsNvidiaComGpu,
-		            		    requestsCpu: r.data.requestsCpu,
+		            		    requestsCpu: requestsCpu,
 		            		    requestsMemory: requestsMemory,
 		            		    requestsNvidiaComGpu: r.data.requestsNvidiaComGpu,
 		            		    time: startTime.getTime()/1000});
@@ -134,10 +136,10 @@
 		                    data.push({
 		                    	rowId: rowIndex,
 		            		    namespaceId: r.data.namespaceId,
-		            		    limitsCpu: r.data.limitsCpu,
+		            		    limitsCpu: limitsCpu,
 		            		    limitsMemory: limitsMemory,
 		            		    limitsNvidiaComGpu: r.data.limitsNvidiaComGpu,
-		            		    requestsCpu: r.data.requestsCpu,
+		            		    requestsCpu: requestsCpu,
 		            		    requestsMemory: requestsMemory,
 		            		    requestsNvidiaComGpu: r.data.requestsNvidiaComGpu,
 		            		    time: queryTime.getTime()/1000});
