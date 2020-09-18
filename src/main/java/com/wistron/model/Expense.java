@@ -67,7 +67,7 @@ public class Expense {
     	Namespaceusedresourcequota rq;
     	Date startTime;
     	Date endTime;
-    	//log.debug(resourcequotas.toString());
+    	log.debug(resourcequotas.toString());
     	for (int i = 0; i < resourcequotas.size(); i++) {
     		rq = resourcequotas.get(i);
 
@@ -122,7 +122,7 @@ public class Expense {
     }
 
     public float getMemoryHours() {
-        return cpuHours;
+        return memoryHours;
     }
 
     public float getGpuUsedHours() {

@@ -108,7 +108,7 @@ public class ExpenseTask {
         		double total_time = 0;
         		List<Pod> pods = getPods(namespace.getId()); 
 
-        		//log.info("pod size: {}", pods.size());
+        		log.info("namespaceId {} pod size: {}", namespaceId, pods.size());
         		for (int j = 0; j < pods.size(); j++) {
         			Pod pod = pods.get(j);
         			try {
@@ -116,8 +116,10 @@ public class ExpenseTask {
         				Date queryTime = new SimpleDateFormat("MM/dd/yyyyHH:mm:ss").parse(pod.getQueryTime());
             			if (queryTime.after(thisMonthFirstDay) && queryTime.before(nextMonthFirstDay)) {
             				List<Container> containers = pod.getContainers();
+            				log.info("container size: {}", containers.size());
             				for (int k = 0; k < containers.size(); k++) {
             					Container container = containers.get(k);
+            					log.info("k {} : {}", k, container.toString());
             					List<Process> processes = container.getProcesses();
             					//log.info("process size: {}",  processes.size());
             					for (int m = 0; m < processes.size(); m++) {
@@ -192,7 +194,7 @@ public class ExpenseTask {
                 List<Namespaceusedresourcequota> namespaceusedresourcequotas = new ArrayList<Namespaceusedresourcequota>();
             	namespaceusedresourcequotaRepository.findNamespaceusedresourcequotasByNamespaceId(namespaceId, startDateTime, endDateTime)
             	                                    .forEach(namespaceusedresourcequotas::add);
-            	log.info("namespaceId {}, size: {}", namespaceId, namespaceusedresourcequotas.size());
+            	//log.info("namespaceId {}, size: {}", namespaceId, namespaceusedresourcequotas.size());
             	if (namespaceusedresourcequotas.size() == 0) continue;
 
         		try {

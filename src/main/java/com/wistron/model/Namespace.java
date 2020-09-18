@@ -38,13 +38,13 @@ public class Namespace {
     private String name;
     @Column(name = "owner", columnDefinition = "char(64)")
     private String owner;
-    @Column(name = "limits_cpu", columnDefinition = "int(4)")
+    @Column(name = "limits_cpu", columnDefinition = "char(16)")
     private Integer limitsCpu;
     @Column(name = "limits_memory", columnDefinition = "char(32)")
     private String limitsMemory;
     @Column(name = "limits_nvidia_com_gpu", columnDefinition = "int(4)")
     private Integer limitsNvidiaComGpu;
-    @Column(name = "requests_cpu", columnDefinition = "int(4)")
+    @Column(name = "requests_cpu", columnDefinition = "char(16)")
     private Integer requestsCpu;
     @Column(name = "requests_memory", columnDefinition = "char(32)")
     private String requestsMemory;
