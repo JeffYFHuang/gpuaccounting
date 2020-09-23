@@ -44,7 +44,7 @@ def conv2G(string):
         if string.find('Mi') != -1:
             return (value/1024.0)
         if string.find('m') != -1:
-            return (value/1024.0)
+            return (value/1000.0)
         return(value)
     return(float(string))
 

@@ -119,7 +119,10 @@ while 1:
         #print("%s\t%s\t%s\t%s" % (i.status.phase, i.status.start_time, i.metadata.namespace, i.metadata.name))
            podinfo ={}
            podinfo['name'] = i.metadata.name
-           podinfo['start_time'] = i.status.start_time.strftime('%m/%d/%Y %H:%M:%S %Z')
+           if i.status.start_time != None:
+              podinfo['start_time'] = i.status.start_time.strftime('%m/%d/%Y %H:%M:%S %Z')
+           else:
+              continue
            podinfo['phase'] = i.status.phase
            podinfo['hostname'] = i.spec.node_name
            podinfo['containers'] = []
