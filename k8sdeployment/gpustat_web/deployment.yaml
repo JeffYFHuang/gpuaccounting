@@ -1,33 +1,37 @@
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
-  name: k8s-gpustat-web
+  name: k8s-gpustat-prod
   labels:
-    app: k8s-gpustat-web
+    app: k8s-gpustat-prod
 spec:
-  replicas: 1
+        #replicas: 1
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: k8s-gpustat-web
+      app: k8s-gpustat-prod
   template:
     metadata:
       labels:
-        app: k8s-gpustat-web
+        app: k8s-gpustat-prod
     spec:
+      nodeSelector:
+        gpushare: "false"
+      hostPID: true
+      priorityClassName: "system-node-critical"
       containers:
-        - name: k8s-gpustat-web
-          image: registry.local:5000/gpustat_web:1.0
+        - name: k8s-gpustat-prod
+          image: registry.local:5000/gpustat_web_nv:1.0
           ports:
             - containerPort: 5555
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 5555
-            initialDelaySeconds: 30
-            timeoutSeconds: 30
+#          livenessProbe:
+#            httpGet:
+#              path: /
+#              port: 5555
+#            initialDelaySeconds: 30
+#            timeoutSeconds: 30
           imagePullPolicy: Always
           env:
             - name: MYSQL_DB_HOST
@@ -39,7 +43,7 @@ spec:
             - name: MYSQL_DB_PASSWORD
               value: '12345'
             - name: KAFKA_BROKER
-              value: 'kafka.default.svc.cluster.local'
+              value: kafka.default.svc.cluster.local
       tolerations:
         - key: node-role.kubernetes.io/master
           effect: NoSchedule
@@ -48,14 +52,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: k8s-gpustat-web
+  name: k8s-gpustat-prod
   namespace: default
   labels:
-    app: k8s-gpustat-web
+    app: k8s-gpustat-prod
 spec:
   ports:
     - port: 5555
       targetPort: 5555
   selector:
-    app: k8s-gpustat-web
-  type: NodePort
+    app: k8s-gpustat-prod
+  type: ClusterIP

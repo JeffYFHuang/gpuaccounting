@@ -24,6 +24,7 @@ from termcolor import cprint, colored
 from aiohttp import web
 import aiohttp_jinja2 as aiojinja2
 
+import subprocess
 import os
 __PATH__ = os.path.abspath(os.path.dirname(__file__))
 kafka_broker = os.environ['KAFKA_BROKER']
@@ -54,14 +55,19 @@ async def run_client(host, exec_cmd, poll_delay=None, timeout=30.0,
         poll_delay = context.interval
 
     def send_message(topic, msg):
-        print(msg)
+        #print(msg)
         producer.send(topic, msg)
         return producer
 
+    async def _exec_cmd(cmd):
+        output = subprocess.check_output(cmd, shell=True)
+        print(output)
+        return output
+
     async def _loop_body():
         # establish a SSH connection.
-        async with asyncssh.connect(host) as conn:
-            cprint(f"[{host:<{L}}] SSH connection established!", attrs=['bold'])
+#        async with asyncssh.connect(host) as conn:
+#            cprint(f"[{host:<{L}}] SSH connection established!", attrs=['bold'])
 
             while True:
                 # jeffyfhuang 20200224 >>
@@ -70,20 +76,22 @@ async def run_client(host, exec_cmd, poll_delay=None, timeout=30.0,
                 if False: #verbose: XXX DEBUG
                     print(f"[{host:<{L}}] querying... ")
 
-                result = await asyncio.wait_for(conn.run(exec_cmd), timeout=timeout)
-
+#                result = await asyncio.wait_for(conn.run(exec_cmd), timeout=timeout)
+                result = await asyncio.wait_for(_exec_cmd(exec_cmd), timeout=timeout)
+                #print(result)
                 now = datetime.now().strftime('%Y/%m/%d-%H:%M:%S.%f')
                 print(now)
-                if result.exit_status != 0:
-                    cprint(f"[{now} [{host:<{L}}] error, exitcode={result.exit_status}", color='red')
-                    context.host_set_message(host, colored(f'error, exitcode={result.exit_status}', 'red'))
-                else:
-                    if verbose:
-                        cprint(f"[{now} [{host:<{L}}] OK from gpustat ({len(result.stdout)} bytes)", color='cyan')
+                #if result.exit_status != 0:
+                #    cprint(f"[{now} [{host:<{L}}] error, exitcode={result.exit_status}", color='red')
+                #    context.host_set_message(host, colored(f'error, exitcode={result.exit_status}', 'red'))
+                #else:
+                #    if verbose:
+                #        cprint(f"[{now} [{host:<{L}}] OK from gpustat ({len(result.stdout)} bytes)", color='cyan')
                     # update data
-                    context.host_status[host] = result.stdout
+                #    context.host_status[host] = result.stdout
                     #print(type(result.stdout))
-                    producer = send_message('gpu_metrics', bytes(result.stdout, encoding = "utf8"))
+                    #producer = send_message('gpu_metrics', bytes(result, encoding = "utf8"))
+                producer = send_message('gpu_metrics', result)
 
                 # wait for a while...
                 # jeffyfhuang 20200224 >>
@@ -105,14 +113,14 @@ async def run_client(host, exec_cmd, poll_delay=None, timeout=30.0,
         except asyncio.CancelledError:
             cprint(f"[{host:<{L}}] Closed as being cancelled.", attrs=['bold'])
             break
-        except (asyncio.TimeoutError) as ex:
+##        except (asyncio.TimeoutError) as ex:
             # timeout (retry)
-            cprint(f"Timeout after {timeout} sec: {host}", color='red')
-            context.host_set_message(host, colored(f"Timeout after {timeout} sec", 'red'))
-        except (asyncssh.misc.DisconnectError, asyncssh.misc.ChannelOpenError, OSError) as ex:
+##            cprint(f"Timeout after {timeout} sec: {host}", color='red')
+##            context.host_set_message(host, colored(f"Timeout after {timeout} sec", 'red'))
+##        except (asyncssh.misc.DisconnectError, asyncssh.misc.ChannelOpenError, OSError) as ex:
             # error or disconnected (retry)
-            cprint(f"Disconnected : {host}, {str(ex)}", color='red')
-            context.host_set_message(host, colored(str(ex), 'red'))
+##            cprint(f"Disconnected : {host}, {str(ex)}", color='red')
+##            context.host_set_message(host, colored(str(ex), 'red'))
         except Exception as e:
             # A general exception unhandled, throw
             cprint(f"[{host:<{L}}] {e}", color='red')
