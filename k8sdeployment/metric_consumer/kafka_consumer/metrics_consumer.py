@@ -160,10 +160,10 @@ def insertCurrentGpuMetric(db, data):
     )
     result = mysql_query(db, select_gpu_metric, data)
 
-    print(result.rowcount)
     found = False
     if result != None and result.rowcount != 0:
         found = True
+        result = result.fetchone()
 
     if found == False:
         #print(data)
@@ -176,9 +176,10 @@ def insertCurrentGpuMetric(db, data):
         return(result.lastrowid)
     else:
         query = (
-            "UPDATE `gpumetrics` SET `query_time` = %(query_time)s, `temperature_gpu` = %(temperature.gpu)s, `utilization_gpu` = %('utilization.gpu')s, `power_draw` = %(power.draw)s, `memory_used` = %(memory.used)s, WHERE `id` = %(id)s"
+            "UPDATE `currentgpumetrics` SET `query_time` = %(query_time)s, `temperature_gpu` = %(temperature.gpu)s, `utilization_gpu` = %(utilization.gpu)s, `power_draw` = %(power.draw)s, `memory_used` = %(memory.used)s WHERE `id` = %(id)s"
         )
-        mysql_query(db, query, {'id': result[0], 'query_time': data['query_time']})
+        data['id'] = result[0]
+        mysql_query(db, query, data)
 
     #result = result.fetchone()
     return(result[0])
