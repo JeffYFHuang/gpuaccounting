@@ -112,7 +112,7 @@ public class ExpenseTask {
         		for (int j = 0; j < pods.size(); j++) {
         			Pod pod = pods.get(j);
         			try {
-        				//log.info("pod queryTime: {}", pod.getQueryTime());
+        				log.info("pod queryTime: {}", pod.getQueryTime());
         				Date queryTime = new SimpleDateFormat("MM/dd/yyyyHH:mm:ss").parse(pod.getQueryTime());
             			if (queryTime.after(thisMonthFirstDay) && queryTime.before(nextMonthFirstDay)) {
             				List<Container> containers = pod.getContainers();

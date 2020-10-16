@@ -167,9 +167,17 @@
             // Pass in a column model definition
             // Note that the DetailPageURL was defined in the record definition but is not used
             // here. That is okay.
+            function renderUser(value) {
+        		if (value != null) {
+        			var user = namespace_ds.findRecord('id', value);
+        			return "<span style='color:green;font-weight:bold;'>" + user.get('name') + "</span>";
+        		}
+        		return ''
+        	};
+
             this.columns = [
             	//{id:'namespacequota.id',text: "id", sortable: true, width: 70, dataIndex: 'id'},
-            	{text: "namespaceId", sortable: true, flex: 0.1, dataIndex: 'namespaceId'},
+            	{text: "user", sortable: true, flex: 0.1, dataIndex: 'namespaceId', renderer: renderUser},
                 {text: "year", sortable: true, flex: 0.1, dataIndex: 'year'},
                 {text: "month", sortable: true, flex: 0.1, dataIndex: 'month'},
                 {text: "cpuHours", sortable: true, flex: 0.1, dataIndex: 'cpuHours'},

@@ -10,7 +10,9 @@
 		    {name: 'uuid', mapping:'uuid'},
 		    {name: 'name', mapping:'name'},
 		    {name: 'used', mapping:'used'},
-		    {name: 'user', mapping:'user'}
+		    {name: 'user', mapping:'user'},
+		    {name: 'utilizationGpu', mapping:'currentgpumetric.utilizationGpu'},
+		    {name: 'memoryUsed', mapping:'currentgpumetric.memoryUsed'}
 		    ]
 	});
 
@@ -41,6 +43,9 @@
         height: this.height,
         stripeRows: true,
         columnLines: true,
+        viewConfig: {
+        	loadMask: false
+    	},
         // override
 
         /**
@@ -81,6 +86,82 @@
         		}
         	}
 
+            function rendererBar (value, meta, record) {
+            	if (value != 1 ) return "";
+	            var id = Ext.id();
+	            //alert(record.get('memoryUsed')/record.get('memory.total'));
+	            Ext.defer(function (id) {
+	                var chart = Ext.create('Ext.chart.Chart', {
+	                    animate: true,
+                        style: 'background:#fff',
+                        shadow: true,
+	                    store: {
+					       fields: ['id', 'value'],
+					       data: [{
+					           id: 'gpu',
+					           value: record.get('utilizationGpu')
+					       },{
+					           id: 'mem',
+					           value: record.get('memoryUsed')/record.get('memory.total') * 100
+					       }]
+					    },
+	                    width: 150,
+	                    height: 100,
+					    axes: [{
+			                type: 'Numeric',
+			                position: 'left',
+			                fields: ['value'],
+			                dashSize: 0,
+			                hidden: true,
+			                label: {
+			                   renderer: Ext.util.Format.numberRenderer('0,0')
+			                },
+			                title: '',
+			                minimum: 0,
+							maximum: 100
+			            }, {
+			                type: 'Category',
+			                position: 'bottom',
+			                fields: ['id'],
+			                title: '',
+			                dashSize: 0
+			                //hidden: true
+			            }],
+			            series: [{
+			                type: 'column',
+			                axis: 'left',
+			                label: {
+			                    display: 'insideEnd',
+			                    field: 'value',
+			                    renderer: Ext.util.Format.numberRenderer('0'),
+			                    orientation: 'horizontal',
+			                    color: '#333',
+			                    'text-anchor': 'right',
+			                    contrast: true
+			                },
+			                xField: 'id',
+			                yField: ['value'],
+			                //color renderer
+			                renderer: function(sprite, record, attr, index, store) {
+			                    var fieldValue = Math.random() * 20 + 10;
+			                    //alert(attr);
+			                    var value = (record.get('value') >> 0) % 5;
+			                    var color = ['rgb(213, 70, 121)', 
+			                                 'rgb(44, 153, 201)', 
+			                                 'rgb(146, 6, 157)', 
+			                                 'rgb(49, 149, 0)', 
+			                                 'rgb(249, 153, 0)'][value];
+			                    return Ext.apply(attr, {
+			                        fill: color
+			                    });
+			                }
+			            }],
+	                    renderTo: id
+	                });
+	            }, 50, undefined, [id]);
+	            return "<div id='" + id + "'></div>";//<div>" + record.get('utilizationGpu') + "%</div><div>" + record.get('utilizationGpu') + "%</div>";
+            }
+
         	function renderUser(value) {
         		if (value != null) {
         			var user = namespace_ds.findRecord('id', value);
@@ -91,7 +172,7 @@
 
             this.columns = [
             	{text: "id", sortable: true, width: 40, dataIndex: 'id'},
-            	{text: "running", sortable: true, flex: 0.25, dataIndex: 'used', renderer:renderUsed},
+            	{text: "utilization(%)", sortable: true, flex: 0.25, dataIndex: 'used', renderer:rendererBar},
             	{text: "occupied user", sortable: true, flex: 0.25, dataIndex: 'user', renderer:renderUser},
                 {text: "hostname", sortable: true, flex: 0.25, dataIndex: 'hostname'},
                 {text: "memory.total", sortable: true, width: 100, dataIndex: 'memory.total'},

@@ -29,12 +29,18 @@ Ext.onReady(function () {
 	    return target;
 	}
 
-
 	var user_ds = new Ext.data.Store({
 		  autoLoad: true,
 		  model:'Namespace'
 	}); 
-
+          
+/*	Ext.TaskManager.start({
+	  run: function(){
+		gpu_ds.reload();
+	  },
+	  interval: 5000
+	});
+*/
     Ext.define('App.userComboBox', {
         extend: 'Ext.form.field.ComboBox',
         alias: 'widget.userComboBox',
@@ -92,6 +98,14 @@ Ext.onReady(function () {
                     tabTip: 'Tickets tabtip',
                     //border: false,
                     xtype: 'gpugrid',
+                    margin: '10',
+                    height: null
+                }, {
+                    title: 'Pods',
+                    iconCls: 'x-icon-tickets',
+                    tabTip: 'Tickets tabtip',
+                    //border: false,
+                    xtype: 'podgrid',
                     margin: '10',
                     height: null
                 }, {

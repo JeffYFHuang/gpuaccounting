@@ -1,6 +1,12 @@
 package com.wistron.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.wistron.model.Process;
 
 /*cmd = 'CREATE TABLE IF NOT EXISTS gpus (' \
         '`id` INT(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,' \
@@ -33,6 +39,19 @@ public class GPU {
     private Integer used;
     @Column(name = "user", columnDefinition = "int(11)")
     private Long user; //may be namespace_id TBD.
+/*
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER
+            )
+    @JoinColumn(name="gpu_id", referencedColumnName = "id", insertable = false, updatable = false)    
+    private List<CurrentGpumetric> currentgpumetrics = new ArrayList<>();
+*/
+    @OneToOne(mappedBy = "gpu", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+
+    @JsonManagedReference
+    private CurrentGpumetric currentgpumetric;
 
     public GPU() {
 
