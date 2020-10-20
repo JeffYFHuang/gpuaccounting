@@ -131,7 +131,7 @@
 			                type: 'column',
 			                axis: 'left',
 			                label: {
-			                    display: 'insideEnd',
+			                    display: 'outside',
 			                    field: 'value',
 			                    renderer: Ext.util.Format.numberRenderer('0'),
 			                    orientation: 'horizontal',

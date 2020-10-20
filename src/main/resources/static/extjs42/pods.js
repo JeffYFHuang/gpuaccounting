@@ -124,7 +124,7 @@
             {
                 ftype: 'grouping',
                 groupHeaderTpl: 'Namespace: {[renderUser(values.rows[0].data.namespaceId)]} ({rows.length})',
-                startCollapsed: false
+                startCollapsed: true
             }
         ],
         // override
@@ -346,7 +346,7 @@
              cellclick: function (grd, rowIndex, colIndex, e) {
                            var record = grd.getStore().getAt(rowIndex);
                            var record = grd.getStore().getAt(rowIndex);
-                           alert('click');
+                           //alert('click');
                         }
         }
     });
