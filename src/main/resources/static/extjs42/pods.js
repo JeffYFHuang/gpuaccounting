@@ -346,7 +346,18 @@
              cellclick: function (grd, rowIndex, colIndex, e) {
                            var record = grd.getStore().getAt(rowIndex);
                            var record = grd.getStore().getAt(rowIndex);
-                           //alert('click');
+                           					console.log ("clicked on contact flag button");
+					//Showing SendCallInfo form and showing the component according to the permission to JSON
+					var myWin = new Ext.Window({
+						id     : 'myWin',
+						height : 370,
+						width  : 300,
+						title: 'Contact Flags',
+						items  : [
+								]
+					});
+				
+					myWin.show();
                         }
         }
     });

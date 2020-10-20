@@ -48,12 +48,13 @@ public class Container {
     @Column(name = "query_time", columnDefinition = "char(32)")
     private String queryTime;
 
-    @OneToMany(
+ /*   @OneToMany(
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.EAGER
             )
     @JoinColumn(name="container_id")//, referencedColumnName = "id", insertable = false, updatable = false)    
+  
     private List<Process> processes = new ArrayList<>();
 
     @Transactional
@@ -64,7 +65,7 @@ public class Container {
     public void setProcesses (List<Process> processes) {
     	this.processes = processes;
     }
-
+ */
     @ManyToMany
     @JoinTable(
         name="containergpus",

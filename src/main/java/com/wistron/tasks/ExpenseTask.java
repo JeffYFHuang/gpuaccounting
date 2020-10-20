@@ -120,9 +120,10 @@ public class ExpenseTask {
             				for (int k = 0; k < containers.size(); k++) {
             					Container container = containers.get(k);
             					log.info("k {} : {}", k, container.toString());
-            					List<Process> processes = container.getProcesses();
+            					List<Process> processes = null;//container.getProcesses();
+            					int size = processes == null ? 0 : processes.size();
             					//log.info("process size: {}",  processes.size());
-            					for (int m = 0; m < processes.size(); m++) {
+            					for (int m = 0; m < size; m++) {
             						Process process = processes.get(m);
             						List<Processmetric> processmetrics = process.getProcessmetrics();
             						Map<Long, List<Processmetric>> computemetrics = new HashMap<Long, List<Processmetric>>();
@@ -256,9 +257,10 @@ public class ExpenseTask {
             				List<Container> containers = pod.getContainers();
             				for (int k = 0; k < containers.size(); k++) {
             					Container container = containers.get(k);
-            					List<Process> processes = container.getProcesses();
+            					List<Process> processes = null;//container.getProcesses();
+            					int size = processes == null ? 0 : processes.size();
             					//log.info("process size: {}",  processes.size());
-            					for (int m = 0; m < processes.size(); m++) {
+            					for (int m = 0; m < size; m++) {
             						Process process = processes.get(m);
             						List<Processmetric> processmetrics = process.getProcessmetrics();
             						Map<Long, List<Processmetric>> computemetrics = new HashMap<Long, List<Processmetric>>();
@@ -389,9 +391,10 @@ public class ExpenseTask {
             				List<Container> containers = pod.getContainers();
             				for (int k = 0; k < containers.size(); k++) {
             					Container container = containers.get(k);
-            					List<Process> processes = container.getProcesses();
+            					List<Process> processes = null;//container.getProcesses();
+            					int size = processes == null ? 0 : processes.size();
             					//log.info("process size: {}",  processes.size());
-            					for (int m = 0; m < processes.size(); m++) {
+            					for (int m = 0; m < size; m++) {
             						Process process = processes.get(m);
             						List<Processmetric> processmetrics = process.getProcessmetrics();
             						Map<Long, List<Processmetric>> computemetrics = new HashMap<Long, List<Processmetric>>();
