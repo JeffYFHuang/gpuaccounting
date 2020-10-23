@@ -33,14 +33,7 @@ Ext.onReady(function () {
 		  autoLoad: true,
 		  model:'Namespace'
 	}); 
-          
-/*	Ext.TaskManager.start({
-	  run: function(){
-		gpu_ds.reload();
-	  },
-	  interval: 5000
-	});
-*/
+
     Ext.define('App.userComboBox', {
         extend: 'Ext.form.field.ComboBox',
         alias: 'widget.userComboBox',
