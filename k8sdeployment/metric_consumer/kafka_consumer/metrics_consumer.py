@@ -191,11 +191,11 @@ def insertGpuMetric(db, data):
     result = mysql_query(db, select_gpu_metric, data)
 
     #print(data)
-    found = True
-    if result.rowcount == 0:
-        found = False
-    else:
-        result = result.fetchone()
+#    found = True
+#    if result.rowcount == 0:
+#        found = False
+#    else:
+#        result = result.fetchone()
         #print(result)
 #+----+--------+-------------+------------+----------------------------+-----------------+-----------------+
 #| id | gpu_id | memory_used | power_draw | query_time                 | temperature_gpu | utilization_gpu |
@@ -204,34 +204,34 @@ def insertGpuMetric(db, data):
 
         #(33, 26, 0, 48, '2020-03-04T13:36:41.074563', 29, 0)
         #print(float(result[1]) == float(data['cpu_memory_usage']))
-        if float(result[2]) != float(data['memory.used']):
-            found = False
-        if float(result[3]) != float(data['power.draw']):
-            found = False
-        if float(result[5]) != float(data['temperature.gpu']):
-            found = False
-        if float(result[6]) != float(data['utilization.gpu']):
-            found = False
+#        if float(result[2]) != float(data['memory.used']):
+#            found = False
+#        if float(result[3]) != float(data['power.draw']):
+#            found = False
+#        if float(result[5]) != float(data['temperature.gpu']):
+#            found = False
+#        if float(result[6]) != float(data['utilization.gpu']):
+#            found = False
         #if found == False:
         #    print(result)
 
-    if found == False:
+#    if found == False:
         #print(data)
-        query = (
+    query = (
                 "INSERT INTO `gpumetrics` (`gpu_id`, `temperature_gpu`, `utilization_gpu`, `power_draw`, `memory_used`, `query_time`) "
                 "VALUES (%(gpu_id)s, %(temperature.gpu)s, %(utilization.gpu)s, %(power.draw)s, %(memory.used)s, %(query_time)s);"
              )
-        result = mysql_query(db, query, data)
+    result = mysql_query(db, query, data)
         #print("gpu metric insert : " + str(data))
-        return(result.lastrowid)
-    else:
-        query = (
-            "UPDATE `gpumetrics` SET `query_time` = %(query_time)s WHERE `id` = %(id)s"
-        )
-        mysql_query(db, query, {'id': result[0], 'query_time': data['query_time']})
+    return(result.lastrowid)
+#    else:
+#        query = (
+#            "UPDATE `gpumetrics` SET `query_time` = %(query_time)s WHERE `id` = %(id)s"
+#        )
+#        mysql_query(db, query, {'id': result[0], 'query_time': data['query_time']})
 
     #result = result.fetchone()
-    return(result[0])
+#    return(result[0])
  
 def insertProcessInfo(db, data):
     select_pid = (
@@ -491,8 +491,9 @@ def checkifexist(db, table, data):
     result = mysql_query(db, select_querytime, data)
     return(result.rowcount != 0)
 
-def processGpuMetrics(*args):
-    gpu = args[0]
+def processGpuMetrics(gpu):
+    #gpu = args[0]
+    #connection = args[1]
     connection =  MySQLdb.connect(
             host = mysql_db_host,
             user = mysql_db_user,
@@ -515,14 +516,14 @@ def processGpuMetrics(*args):
                     'query_time': gpu['query_time']
                     })
 
-        curr_gpumetric_id = insertCurrentGpuMetric(connection, {
-                    'gpu_id': gpu_id, \
-                    'temperature.gpu': gpu['temperature.gpu'], \
-                    'utilization.gpu': gpu['utilization.gpu'], \
-                    'power.draw': gpu['power.draw'], \
-                    'memory.used': gpu['memory.used'], \
-                    'query_time': gpu['query_time']
-                    })
+#        curr_gpumetric_id = insertCurrentGpuMetric(connection, {
+#                    'gpu_id': gpu_id, \
+#                    'temperature.gpu': gpu['temperature.gpu'], \
+#                    'utilization.gpu': gpu['utilization.gpu'], \
+#                    'power.draw': gpu['power.draw'], \
+#                    'memory.used': gpu['memory.used'], \
+#                    'query_time': gpu['query_time']
+#                    })
 
     except MySQLdb.Error:
         print(MySQLdb.Error)
@@ -633,9 +634,10 @@ class Consumer(mp.Process):
                                 'query_time': gpu['query_time']
                         })
                         print("gpu {} status is {}".format(gpu_id, used))
-                    #else:
-                    #    t = threading.Thread(target=processGpuMetrics, args=(gpu, self.connection, ))
-                    #    t.start()
+                    else:
+                        processGpuMetrics(gpu)
+                        #t = threading.Thread(target=processGpuMetrics, args=(gpu, self.connection, ))
+                        #t.start()
 
             return ''
 
@@ -840,7 +842,7 @@ class Consumer(mp.Process):
         consumer = KafkaConsumer(bootstrap_servers=kafka_broker+':9092',
                                  #auto_offset_reset='earliest',
                                  group_id = self.group_id,
-                                 enable_auto_commit = False,
+                                 enable_auto_commit = True,
                                  consumer_timeout_ms = 100)
         consumer.subscribe([self.topic])
 
@@ -863,7 +865,7 @@ class Consumer(mp.Process):
 def main():
     tasks = [
         Consumer(topic = "namespace_metrics", group_id = "namespace_metrics"),
-        #Consumer(topic = "gpu_metrics", group_id = "gpu_metrics"),
+        Consumer(topic = "gpu_metrics", group_id = "gpu_metrics"),
         Consumer(topic = "gpu_metrics", group_id = "gpu_used_status")
     ]
 
