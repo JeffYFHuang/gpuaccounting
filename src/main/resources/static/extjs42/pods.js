@@ -82,12 +82,14 @@
     	return 0;
     }
 
-    var now = new Date();
+    /*var now = new Date();
     var last30days = new Date();
     last30days.setDate(now.getDate() - 30);
     var nextday = new Date();
-    nextday.setDate(now.getDate() + 1);
- 
+    nextday.setDate(now.getDate() + 1);*/
+
+    var chart_util_gpu = null;
+    var chart_mem_gpu = null;
     var chart_win = null;
     var tStore = null;
 
@@ -95,7 +97,7 @@
 	    run: function () {
 	        metric_reload();
 	    },
-	    interval: 5000
+	    interval: 10000
 	};
 
 	var metric_ds = new Ext.data.Store({
@@ -300,15 +302,6 @@
 	  //remoteSort: true
 	});
 
-    function metric_reload() {
-				//"2020-10-19T09:58:25.534842"
-				var now = new Date();
-				var endDate = new Date(now.getTime() - 8 * 60 * 60000);
-				var startDate = new Date(now.getTime() -  8* 60 * 60000 - 1 * 60000);
-
-				metric_ds.load({params: {startDateTime: toTString(startDate), endDateTime: toTString(endDate)}});
-	};
-
 	var pod_ds = new Ext.data.Store({
 	      pageSize: 128,
 		  autoLoad: true,
@@ -317,33 +310,39 @@
 		  proxy: {
 		        type: 'ajax',
 		        url:'/pods',
-		        extraParams: {
-		        	startDateTime: toCSTString(last30days),
-		        	endDateTime: toCSTString(nextday)
-		        },
 		        reader: {
 		            type: 'json',
 		      	    totalProperty: 'totalElements',
 		    	    successProperty: 'success',
 		            root: 'data'
 		        }
-		  }/*, listeners: {
-		        load: {
+		  }, listeners: {
+		        beforeload: {
 		            fn: function(store, records, options){
-		            	store.each(function(r) {
-		            		//r.data.requestsCpu == parseInt(r.data.containers[0]['requestsCpu']);
-
-							alert(r.data.containers[0].requestsCpu);
-		            	}, this);
-
+		            	now = new Date();
+						startTime = new Date(now.getTime() - 20000);
+						endTime = new Date(now.getTime() + 20000);
+						store.proxy.extraParams = {
+						        	startDateTime: toCSTString(startTime),
+						        	endDateTime: toCSTString(endTime)
+					        	};
 		            }
 		        },
 		        exception: function(misc) {
 		            alert("Holy cow, we're getting an exception!");
 		        }
-		  }*/
+		  }
 		  //remoteSort: true
 	}); 
+
+    function metric_reload() {
+				//"2020-10-19T09:58:25.534842"
+				var now = new Date();
+				var endDate = new Date(now.getTime() - 8 * 60 * 60000);
+				var startDate = new Date(now.getTime() -  8* 60 * 60000 - 5 * 60000);
+
+				metric_ds.load({params: {startDateTime: toTString(startDate), endDateTime: toTString(endDate)}});
+	};
 
     function renderUser(value) {
 		if (value != null) {
@@ -668,7 +667,7 @@
 			    }
 
 				//if (chart_util_gpu == null)
-                var chart_util_gpu = Ext.create('Ext.chart.Chart', {
+                chart_util_gpu = Ext.create('Ext.chart.Chart', {
 			    	flex:1,
 			        style: 'background:#000',
 			        animate: false,
@@ -692,7 +691,7 @@
 			        series: g_series
 			    });
 			    
-			    var chart_mem_gpu = Ext.create('Ext.chart.Chart', {
+			    chart_mem_gpu = Ext.create('Ext.chart.Chart', {
 			    	flex:1,
 			        style: 'background:#000',
 			        animate: false,
