@@ -351,17 +351,18 @@ def insertNamespaceUsedResourceQuotas(db, data):
         #print(result[6] != data['requests.cpu'])
         print(result)
         print(data)
-        if conv2G(result[1]) != conv2G(data['limits.cpu']):
+        cut_value = 0.00001
+        if (conv2G(result[1]) - conv2G(data['limits.cpu'])) > cut_value:
             found = False
-        if conv2G(result[2]) != conv2G(data['limits.memory']):
+        if (conv2G(result[2]) - conv2G(data['limits.memory'])) > cut_value:
             found = False
-        if conv2G(result[3]) != conv2G(data['limits.nvidia.com/gpu']):
+        if (conv2G(result[3]) - conv2G(data['limits.nvidia.com/gpu'])) > cut_value:
             found = False
-        if conv2G(result[6]) != conv2G(data['requests.cpu']):
+        if (conv2G(result[6]) - conv2G(data['requests.cpu'])) > cut_value:
             found = False
-        if conv2G(result[7]) != conv2G(data['requests.memory']):
+        if (conv2G(result[7]) - conv2G(data['requests.memory'])) > cut_value:
             found = False
-        if conv2G(result[8]) != conv2G(data['requests.nvidia.com/gpu']):
+        if (conv2G(result[8]) - conv2G(data['requests.nvidia.com/gpu'])) - cut_value:
                 found = False
     #print(data)
     if found == False:
