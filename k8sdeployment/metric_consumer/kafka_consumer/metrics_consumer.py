@@ -352,19 +352,19 @@ def insertNamespaceUsedResourceQuotas(db, data):
         print(result)
         print(data)
         cut_value = 0.00001
-        if (conv2G(result[1]) - conv2G(data['limits.cpu'])) > cut_value:
+        if found and (conv2G(result[1]) - conv2G(data['limits.cpu'])) > cut_value:
             found = False
-        if (conv2G(result[2]) - conv2G(data['limits.memory'])) > cut_value:
+        if found and (conv2G(result[2]) - conv2G(data['limits.memory'])) > cut_value:
             found = False
-        if (conv2G(result[3]) - conv2G(data['limits.nvidia.com/gpu'])) > cut_value:
+        if found and (conv2G(result[3]) - conv2G(data['limits.nvidia.com/gpu'])) > cut_value:
             found = False
-        if (conv2G(result[6]) - conv2G(data['requests.cpu'])) > cut_value:
+        if found and (conv2G(result[6]) - conv2G(data['requests.cpu'])) > cut_value:
             found = False
-        if (conv2G(result[7]) - conv2G(data['requests.memory'])) > cut_value:
+        if found and (conv2G(result[7]) - conv2G(data['requests.memory'])) > cut_value:
             found = False
-        if (conv2G(result[8]) - conv2G(data['requests.nvidia.com/gpu'])) - cut_value:
+        if found and (conv2G(result[8]) - conv2G(data['requests.nvidia.com/gpu'])) > cut_value:
                 found = False
-    #print(data)
+    print('found', found)
     if found == False:
         #print(data)
         query = (
@@ -492,15 +492,15 @@ def checkifexist(db, table, data):
     result = mysql_query(db, select_querytime, data)
     return(result.rowcount != 0)
 
-def processGpuMetrics(gpu):
+def processGpuMetrics(gpu, connection):
     #gpu = args[0]
     #connection = args[1]
-    connection =  MySQLdb.connect(
-            host = mysql_db_host,
-            user = mysql_db_user,
-            passwd = mysql_db_password,
-            db ='computemetrics'
-        )
+#    connection =  MySQLdb.connect(
+#            host = mysql_db_host,
+#            user = mysql_db_user,
+#            passwd = mysql_db_password,
+#            db ='computemetrics'
+#        )
 
     #print('gpu uuid:', gpu['uuid'])
     gpu_id = 0
@@ -541,6 +541,7 @@ def processGpuMetrics(gpu):
 #        print("gpu {} status is {}".format(gpu_id, used))
 #        return
 	#print(gpumetric_id)
+''' 
     for process in gpu['processes']:
         #process = json.loads(process)
         # gpu processes are all started after container created. so it should belong to a container.
@@ -577,7 +578,7 @@ def processGpuMetrics(gpu):
 
     connection.cursor().close()
     connection.close()
-
+'''
 class Consumer(mp.Process):
     pending_threads = []
     start_threads = []
@@ -636,7 +637,7 @@ class Consumer(mp.Process):
                         })
                         print("gpu {} status is {}".format(gpu_id, used))
                     else:
-                        processGpuMetrics(gpu)
+                        processGpuMetrics(gpu, self.connection)
                         #t = threading.Thread(target=processGpuMetrics, args=(gpu, self.connection, ))
                         #t.start()
 
@@ -688,6 +689,7 @@ class Consumer(mp.Process):
                                                 'requests.nvidia.com/gpu': jsonmsg['compute-quota']['hard']['requests.nvidia.com/gpu'] \
                                                })
 
+'''
             needGetFromContainer = False
             if jsonmsg.get('compute-quota') != None:
                 if jsonmsg['compute-quota'].get('used') != None:
@@ -722,7 +724,7 @@ class Consumer(mp.Process):
                     jsonmsg['compute-quota']['used']['requests.cpu'] = 0
                     jsonmsg['compute-quota']['used']['requests.memory'] = 0
                     jsonmsg['compute-quota']['used']['requests.nvidia.com/gpu'] = 0
-
+'''
             if jsonmsg.get('pods') != None:
                 for pod in jsonmsg['pods']:
                     pod_id = insertPodInfo(self.connection, {
@@ -762,7 +764,7 @@ class Consumer(mp.Process):
                             #container['resources']['requests']['cpu'] = None
                             #container['resources']['requests']['memory'] = None
                             #container['resources']['requests']['nvidia.com/gpu'] = None
-                        
+'''                        
                         if needGetFromContainer:
                             print(container)
                             jsonmsg['compute-quota']['used']['limits.cpu'] += conv2G(container['resources']['limits']['cpu'])
@@ -771,7 +773,7 @@ class Consumer(mp.Process):
                             jsonmsg['compute-quota']['used']['requests.cpu'] += conv2G(container['resources']['requests']['cpu'])
                             jsonmsg['compute-quota']['used']['requests.memory'] +=  conv2G(container['resources']['requests']['memory'])
                             jsonmsg['compute-quota']['used']['requests.nvidia.com/gpu'] += conv2G(container['resources']['requests']['nvidia.com/gpu'])
-
+'''
                         container_id = insertContainerInfo(self.connection, {
                                                 'pod_id': pod_id, \
                                                 'name': container['name'], \
@@ -799,7 +801,7 @@ class Consumer(mp.Process):
 
                                 if self.gpu_info_cur.get(gpu_id) == None:
                                     self.gpu_info_cur[gpu_id] = namespace_id
-
+'''
             if needGetFromContainer:
                 namespaceusedrq_id = insertNamespaceUsedResourceQuotas(self.connection, {
                                                 'namespace_id': namespace_id, \
@@ -811,6 +813,7 @@ class Consumer(mp.Process):
                                                 'requests.nvidia.com/gpu': jsonmsg['compute-quota']['used']['requests.nvidia.com/gpu'], \
                                                 'query_time': jsonmsg['query_time']
                                                 })
+'''
         return self.topic
 
     def processGpuStatus(self, hostname):
