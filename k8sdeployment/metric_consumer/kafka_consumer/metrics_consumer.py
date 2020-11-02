@@ -689,9 +689,9 @@ class Consumer(mp.Process):
                                                 'requests.nvidia.com/gpu': jsonmsg['compute-quota']['hard']['requests.nvidia.com/gpu'] \
                                                })
 
-'''
+
             needGetFromContainer = False
-            if jsonmsg.get('compute-quota') != None:
+            if jsonmsg.get('compute-quota') != None and False:
                 if jsonmsg['compute-quota'].get('used') != None:
                     if jsonmsg['compute-quota']['used'].get('limits.cpu') == None:
                         jsonmsg['compute-quota']['used']['limits.cpu'] = None
@@ -724,7 +724,7 @@ class Consumer(mp.Process):
                     jsonmsg['compute-quota']['used']['requests.cpu'] = 0
                     jsonmsg['compute-quota']['used']['requests.memory'] = 0
                     jsonmsg['compute-quota']['used']['requests.nvidia.com/gpu'] = 0
-'''
+
             if jsonmsg.get('pods') != None:
                 for pod in jsonmsg['pods']:
                     pod_id = insertPodInfo(self.connection, {
@@ -764,8 +764,8 @@ class Consumer(mp.Process):
                             #container['resources']['requests']['cpu'] = None
                             #container['resources']['requests']['memory'] = None
                             #container['resources']['requests']['nvidia.com/gpu'] = None
-'''                        
-                        if needGetFromContainer:
+                        
+                        if needGetFromContainer and False:
                             print(container)
                             jsonmsg['compute-quota']['used']['limits.cpu'] += conv2G(container['resources']['limits']['cpu'])
                             jsonmsg['compute-quota']['used']['limits.memory'] += conv2G(container['resources']['limits']['memory'])
@@ -773,7 +773,7 @@ class Consumer(mp.Process):
                             jsonmsg['compute-quota']['used']['requests.cpu'] += conv2G(container['resources']['requests']['cpu'])
                             jsonmsg['compute-quota']['used']['requests.memory'] +=  conv2G(container['resources']['requests']['memory'])
                             jsonmsg['compute-quota']['used']['requests.nvidia.com/gpu'] += conv2G(container['resources']['requests']['nvidia.com/gpu'])
-'''
+
                         container_id = insertContainerInfo(self.connection, {
                                                 'pod_id': pod_id, \
                                                 'name': container['name'], \
@@ -801,8 +801,8 @@ class Consumer(mp.Process):
 
                                 if self.gpu_info_cur.get(gpu_id) == None:
                                     self.gpu_info_cur[gpu_id] = namespace_id
-'''
-            if needGetFromContainer:
+
+            if needGetFromContainer and False:
                 namespaceusedrq_id = insertNamespaceUsedResourceQuotas(self.connection, {
                                                 'namespace_id': namespace_id, \
                                                 'limits.cpu': jsonmsg['compute-quota']['used']['limits.cpu'], \
@@ -813,7 +813,7 @@ class Consumer(mp.Process):
                                                 'requests.nvidia.com/gpu': jsonmsg['compute-quota']['used']['requests.nvidia.com/gpu'], \
                                                 'query_time': jsonmsg['query_time']
                                                 })
-'''
+
         return self.topic
 
     def processGpuStatus(self, hostname):

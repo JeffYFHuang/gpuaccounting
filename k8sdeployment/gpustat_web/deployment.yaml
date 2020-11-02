@@ -6,7 +6,7 @@ metadata:
   labels:
     app: k8s-gpustat-prod
 spec:
-        #replicas: 1
+        #replicas: 2
   revisionHistoryLimit: 10
   selector:
     matchLabels:
@@ -19,7 +19,7 @@ spec:
       nodeSelector:
         gpushare: "false"
       hostPID: true
-      priorityClassName: "system-node-critical"
+      #      priorityClassName: "system-node-critical"
       containers:
         - name: k8s-gpustat-prod
           image: registry.local:5000/gpustat_web_nv:1.0
