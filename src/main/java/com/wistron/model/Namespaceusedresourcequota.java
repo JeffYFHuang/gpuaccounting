@@ -80,7 +80,7 @@ public class Namespaceusedresourcequota {
         }
 
         Namespaceusedresourcequota other = (Namespaceusedresourcequota)obj;
-
+/*
        log.info("{} {} {}", other.getNamespaceId(), namespaceId, other.getNamespaceId() == namespaceId);
  	   log.info("{} {} {}", other.getLimitsCpu(), getLimitsCpu(), parseCpuHz(other.getLimitsCpu()) == parseCpuHz( getLimitsCpu()));
  	   log.info("{} {} {}", other.getLimitsMemory(), getLimitsMemory(), parseMem(other.getLimitsMemory()) == parseMem(getLimitsMemory()));
@@ -88,7 +88,7 @@ public class Namespaceusedresourcequota {
  	   log.info("{} {} {}", other.getRequestsCpu(), getRequestsCpu(), parseCpuHz(other.getRequestsCpu()) == parseCpuHz(getRequestsCpu()));
  	   log.info("{} {} {}", other.getRequestsMemory(), getRequestsMemory(), parseMem(other.getRequestsMemory()) == parseMem(getRequestsMemory()));
  	   log.info("{} {} {}", other.getRequestsNvidiaComGpu(), getRequestsNvidiaComGpu(), other.getRequestsNvidiaComGpu() == getRequestsNvidiaComGpu());
-        //Log.info("this {}", this.toString());
+*/        //Log.info("this {}", this.toString());
         return  other.getNamespaceId() == namespaceId &&
         	    parseCpuHz(other.getLimitsCpu()) == parseCpuHz( getLimitsCpu()) &&
   	   			parseMem(other.getLimitsMemory()) == parseMem(getLimitsMemory()) &&

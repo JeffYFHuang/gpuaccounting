@@ -88,19 +88,25 @@ public class Expense {
     	
 		for (int j = 0; j < pods.size(); j++) {
 			Pod pod = pods.get(j);
+			float gpuHours = 0;
+			float cpuHours = 0;
+			float memoryHours = 0;
 			try {
-				//log.info("pod queryTime: {}", pod.getQueryTime());
+				log.info("pod queryTime: {} {}", pod.getStartTime(), pod.getQueryTime());
 				Date queryTime = new SimpleDateFormat("MM/dd/yyyyHH:mm:ss").parse(pod.getQueryTime());
-    			if (queryTime.after(ds) && queryTime.before(de)) {
-    	    		startTime = new SimpleDateFormat("MM/dd/yyyyHH:mm:ss").parse(pod.getStartTime());
-    	    		endTime = new SimpleDateFormat("MM/dd/yyyyHH:mm:ss").parse(pod.getQueryTime());
-    				///log.info("container size: {}", containers.size());
-    	    		startTime = startTime.before(ds) ? ds : startTime;
-    	    		endTime = endTime.after(de) ? de : endTime;
+	    		startTime = new SimpleDateFormat("MM/dd/yyyyHH:mm:ss").parse(pod.getStartTime());
+	    		startTime = new Date(startTime.getTime() + 8 * 3600 * 1000);
+	    		endTime = new SimpleDateFormat("MM/dd/yyyyHH:mm:ss").parse(pod.getQueryTime());
 
-    	    	    long diffInMillies = Math.abs(endTime.getTime() - startTime.getTime());
-    	    	    float hours = (float) ((float)diffInMillies/3600000.0);
-    	    	    
+	    		startTime = startTime.before(ds) ? ds : startTime;
+	    		endTime = endTime.after(de) ? de : endTime;
+
+	    	    long diffInMillies = Math.abs(endTime.getTime() - startTime.getTime());
+	    	    float hours = (float) ((float)diffInMillies/3600000.0);
+
+    			if (queryTime.after(ds) && queryTime.before(de)) {
+    				///log.info("container size: {}", containers.size());
+
     				List<Container> containers = pod.getContainers();
     				for (int k = 0; k < containers.size(); k++) {
     					Container container = containers.get(k);
@@ -108,16 +114,21 @@ public class Expense {
 
     		    	    if (container.getRequestsNvidiaComGpu() != null)
     		    	    {
-    		    	    	this.gpuHours += hours * container.getRequestsNvidiaComGpu();
+    		    	    	gpuHours += container.getRequestsNvidiaComGpu();
     		    	    }
     		    	    if (container.getRequestsCpu() != null) {
-    		    	    	this.cpuHours += hours * parseCpuHz(container.getRequestsCpu());
+    		    	    	cpuHours += parseCpuHz(container.getRequestsCpu());
     		    	    }
     		    	    if (container.getRequestsMemory() != null) {
-    		    	    	this.memoryHours += hours * parseMem(container.getRequestsMemory());
+    		    	    	memoryHours += parseMem(container.getRequestsMemory());
     		    	    }
     		    	    //log.info("{} {} {} {}", k, this.gpuHours, this.cpuHours, this.memoryHours);
     				}
+    				
+    				this.gpuHours += hours * gpuHours;
+    				this.cpuHours += hours * cpuHours;
+    				this.memoryHours += hours * memoryHours;
+    	    	    log.info("{} {} {}", startTime, endTime, hours);
     			}
 			} catch (Exception e){
 				log.info(e.toString());

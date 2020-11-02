@@ -97,7 +97,7 @@
 	    run: function () {
 	        metric_reload();
 	    },
-	    interval: 10000
+	    interval: 5000
 	};
 
 	var metric_ds = new Ext.data.Store({
@@ -729,7 +729,7 @@
 				        type: 'vbox',
 				        align: 'stretch'
 				    },
-				    tbar: [{
+				    tbar: [/*{
 				        text: 'Save Chart',
 				        handler: function() {
 				            Ext.MessageBox.confirm('Confirm Download', 'Would you like to download the chart as an image?', function(choice){
@@ -740,7 +740,7 @@
 				                }
 				            });
 				        }
-				    }, /*{
+				    }, {
 				    text: 'Reload Data',
 				    handler: function() {
 				        // Add a short delay to prevent fast sequential clicks

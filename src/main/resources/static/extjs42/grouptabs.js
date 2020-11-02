@@ -101,7 +101,7 @@ Ext.onReady(function () {
                     xtype: 'podgrid',
                     margin: '10',
                     height: null
-                }, {
+                }/*, {
                     xtype: 'portalpanel',
                     iconCls: 'x-icon-subscriptions',
                     title: 'Used Quota',
@@ -128,7 +128,7 @@ Ext.onReady(function () {
                             }
                         }]
                     }]
-                }, {
+                }*/, {
                     title: 'Expense',
                     iconCls: 'x-icon-tickets',
                     tabTip: 'Tickets tabtip',

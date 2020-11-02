@@ -114,8 +114,8 @@
 			        		}
 
 			        		hours = getRequestedHours(startTime, queryTime);
-			        		/*console.log(hours);
-			        		console.log(requestsCpu);
+			        		console.log(hours, requestsCpu, requestsMemory);
+			        		/*console.log(requestsCpu);
 			        		console.log(requestsMemory);*/
 			        		namespaceusedquota_ds.totalRequestedHours = namespaceusedquota_ds.totalRequestedHours + hours;
 			            	gpuhours = gpuhours + r.data.requestsNvidiaComGpu * hours;
