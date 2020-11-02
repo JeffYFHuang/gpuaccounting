@@ -42,6 +42,7 @@ import java.util.concurrent.TimeUnit;
 public class ExpenseTask {
 	  private static final Logger log = LoggerFactory.getLogger(ExpenseTask.class);
 	  private static final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy00:00:00"); // "05/27/202010:51:38CST"
+	  private static final SimpleDateFormat dateFormat2 = new SimpleDateFormat("MM/dd/yyyyhh:mm:ss"); 
 
 	  @Autowired
 	  NamespaceRepository namespaceRepository;
@@ -89,7 +90,7 @@ public class ExpenseTask {
         		return;
         	}
         	//log.info("The time is now {}", new Date());
-            //log.info("The month start time is {}, end time is {}", startDateTime, endDateTime);
+            log.info("The month start time is {}, end time is {}", startDateTime, endDateTime);
 
             List<Namespace> namespaces = new ArrayList<Namespace>();
             namespaceRepository.findAll().forEach(namespaces::add);
@@ -101,105 +102,15 @@ public class ExpenseTask {
             	Long namespaceId = namespace.getId();
             	//log.info("i {} namespaceId {}", i, namespaceId);
 
-        		double gpuUsedHours = 0;
-        		double gpuMUsedHours = 0;
-        		double cpuUsedHours = 0;
-        		double memoryUsedHour = 0;
-        		double total_time = 0;
         		List<Pod> pods = getPods(namespace.getId()); 
 
         		log.info("namespaceId {} pod size: {}", namespaceId, pods.size());
-        		for (int j = 0; j < pods.size(); j++) {
-        			Pod pod = pods.get(j);
-        			try {
-        				log.info("pod queryTime: {}", pod.getQueryTime());
-        				Date queryTime = new SimpleDateFormat("MM/dd/yyyyHH:mm:ss").parse(pod.getQueryTime());
-            			if (queryTime.after(thisMonthFirstDay) && queryTime.before(nextMonthFirstDay)) {
-            				List<Container> containers = pod.getContainers();
-            				log.info("container size: {}", containers.size());
-            				for (int k = 0; k < containers.size(); k++) {
-            					Container container = containers.get(k);
-            					log.info("k {} : {}", k, container.toString());
-            					List<Process> processes = null;//container.getProcesses();
-            					int size = processes == null ? 0 : processes.size();
-            					//log.info("process size: {}",  processes.size());
-            					for (int m = 0; m < size; m++) {
-            						Process process = processes.get(m);
-            						List<Processmetric> processmetrics = process.getProcessmetrics();
-            						Map<Long, List<Processmetric>> computemetrics = new HashMap<Long, List<Processmetric>>();
-            						//log.info("processmetrics size: {}",  processmetrics.size());
-            						for (int n = 0; n < processmetrics.size(); n++) {
-            							Processmetric gp = processmetrics.get(n);
-            							Long gpu_id = gp.getGpumetric().getGpuId();
-            							Date qt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").parse(gp.getQueryTime());
-            							if (qt.before(thisMonthFirstDay) || qt.after(nextMonthFirstDay))
-            								continue;
-            					        if (computemetrics.containsKey(gpu_id)) {
-            					        	computemetrics.get(gpu_id).add(gp);
-            					        	//log.info("add");
-            					            
-            					        } else {
-            					        	List<Processmetric> pms = new ArrayList<Processmetric>();
-            					        	pms.add(gp);
-            					        	computemetrics.put(gpu_id, pms);
-            					        	//log.info("add");
-            					        }
-            						}
-            						
-            						//log.info("map size {}", computemetrics.size());
-            						for (Map.Entry<Long, List<Processmetric>> entry : computemetrics.entrySet()) {
-            							List<Processmetric> pms = entry.getValue();
-                						Collections.sort(pms);
-            							//log.info("gpu_id {} pms size {} ", entry.getKey(), pms.size());
-	            						for (int n = 0; n < pms.size()-1; n++) {
-	    	            					Processmetric gp = pms.get(n);
-	    	            					Processmetric gp1 = pms.get(n+1);
-	    	            					//log.info("gpu id {}: ", gp.getGpumetric().getGpuId());
-	    	            					//log.info("{} {}", gp.getQueryTime(), gp1.getQueryTime());
-	    	            					Date st = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(gp.getQueryTime());
-	    	            					Date et = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(gp1.getQueryTime());
-	    	            				    long diffInMillies = Math.abs(et.getTime() - st.getTime());
-	    	            				    //long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-	    	            					//log.info(gp.getProcessId().toString());
-	    	            					//log.info("{}, {}, {}, {}", gp.getId(), gp1.getId(), st, et);
-	    	            					//log.info("diff {}, {}, {}, {}, {}", diffInMillies, gp.getCpuPercent(), (double)gp.getCpuMemoryUsage()/(1024.0*1024.0*1024.0), gp.getGpumetric().getUtilizationGpu(), gp.getGpuMemoryUsage());
-	    	            					double dur = (double)diffInMillies/1000.0;
-	    	            					total_time += dur;
-	    	            					cpuUsedHours += (double)gp.getCpuPercent()/100.0 * dur;
-	    	            					memoryUsedHour += (double)gp.getCpuMemoryUsage()/(1024.0*1024.0*1024.0) * dur;
-	    			            			gpuMUsedHours += (double)gp.getGpuMemoryUsage()/(32.0*1024.0) * dur;
-	    			            			gpuUsedHours += (double)gp.getGpumetric().getUtilizationGpu()/100.0 * dur;
-	    	            					//log.info("used {}, {}, {}, {}", cpuUsedHours, memoryUsedHour, gpuUsedHours, gpuMUsedHours);
-	            							//log.info(processmetrics.get(n).getGpumetric().toString());
-	            						}
-            						}
-            					}
-            				}
-            			}
-        			} catch (Exception e){
-        				log.info(e.toString());
-        				break;
-        			}
-        		}
-
-        		//log.info("{}, {}, {}, {}, {}", total_time, cpuUsedHours, memoryUsedHour, gpuUsedHours, gpuMUsedHours);
-        		//log.info("{}, {}, {}, {}, {}", total_time/3600.0, cpuUsedHours/3600.0, memoryUsedHour/3600.0, gpuUsedHours/3600.0, gpuMUsedHours/3600.0);
-            	//log.info("i {} namespaceId {}", i, namespaceId, gpus.size());
             	ExpenseId expenseId = new ExpenseId(namespaceId, year, month);
             	Expense expense = new Expense(expenseId);
-            	expense.setCpuUsedHours((float)(cpuUsedHours/3600.0));
-            	expense.setMemoryUsedHours((float)(memoryUsedHour/3600.0));
-            	expense.setGpuUsedHours((float)(gpuUsedHours/3600.0));
-            	expense.setGpuMUsedHours((float)(gpuMUsedHours/3600.0));
-
-                List<Namespaceusedresourcequota> namespaceusedresourcequotas = new ArrayList<Namespaceusedresourcequota>();
-            	namespaceusedresourcequotaRepository.findNamespaceusedresourcequotasByNamespaceId(namespaceId, startDateTime, endDateTime)
-            	                                    .forEach(namespaceusedresourcequotas::add);
-            	//log.info("namespaceId {}, size: {}", namespaceId, namespaceusedresourcequotas.size());
-            	if (namespaceusedresourcequotas.size() == 0) continue;
 
         		try {
-        			expense.calExpense(thisMonthFirstDay, nextMonthFirstDay, namespaceusedresourcequotas);
+        			// to do namespaceusedresourcequotaRepository.findOne(example);
+        			expense.calExpense(thisMonthFirstDay, nextMonthFirstDay, pods);
         			expenseRepository.save(expense);
         		} catch (Exception e) {
         			log.info(e.toString());
@@ -211,6 +122,52 @@ public class ExpenseTask {
         //}
       }
 	  
+	  @Scheduled(fixedRate = 5000)
+	  public void calCurrentResourceQuota() {
+		    Date now = new Date();
+		    now.setTime(now.getTime() - 10000);
+		    //String qt = dateFormat.format(now) + "CST";
+            List<Namespace> namespaces = new ArrayList<Namespace>();
+            namespaceRepository.findAll().forEach(namespaces::add);
+
+            //log.info("namespaces size {}", namespaces.size());
+            //List<Expense> expenses = new ArrayList<Expense>();
+            for (int i = 0; i < namespaces.size(); i++) {
+            	Namespace namespace = namespaces.get(i);
+            	Long namespaceId = namespace.getId();
+            	//log.info("i {} namespaceId {}", i, namespaceId);
+
+        		List<Pod> pods = getPods(namespace.getId()); 
+
+        		try {
+        			// to do namespaceusedresourcequotaRepository.findOne(example);
+        			Namespaceusedresourcequota rq = Expense.calCurrentResourceQuota(now, pods);
+        			rq.setNamespaceId(namespace.getId());
+        			rq.setQueryTime(dateFormat2.format(now) + "CST");
+        			List<Namespaceusedresourcequota> rqList = namespaceusedresourcequotaRepository.findTopByOrderByIdDesc(namespace.getId());
+        			
+        			if(!rqList.isEmpty()) {
+        				Namespaceusedresourcequota rq0 = rqList.get(0);
+        				//log.info("rq0: {}", rq0.toString());
+        				//log.info("rq: {}", rq.toString());
+	        			if (rq0.equals(rq)) {
+	        				rq0.setQueryTime(rq.getQueryTime());
+	        				namespaceusedresourcequotaRepository.save(rq0);
+	        			} else {
+	        				rq.setStartTime(rq.getQueryTime());
+	        				namespaceusedresourcequotaRepository.save(rq);
+	        			}
+        			}
+        		} catch (Exception e) {
+        			log.info(e.toString());
+        		}
+            }
+
+       // } catch (Exception e) {
+        //	log.info("The time is now {}", dateFormat.format(new Date()) + "CST");
+        //}
+      }
+/*	  
 	  @Scheduled(fixedRate = 5000)
 	  public void calcuWeek() {
         try {
@@ -239,107 +196,18 @@ public class ExpenseTask {
             	Namespace namespace = namespaces.get(i);
             	Long namespaceId = namespace.getId();
             	//log.info("i {} namespaceId {}", i, namespaceId);
-            	
-        		double gpuUsedHours = 0;
-        		double gpuMUsedHours = 0;
-        		double cpuUsedHours = 0;
-        		double memoryUsedHour = 0;
-        		double total_time = 0;
+
         		List<Pod> pods = getPods(namespace.getId()); 
 
-        		//log.info("pod size: {}", pods.size());
-        		for (int j = 0; j < pods.size(); j++) {
-        			Pod pod = pods.get(j);
-        			try {
-        				//log.info("pod queryTime: {}", pod.getQueryTime());
-        				Date queryTime = new SimpleDateFormat("MM/dd/yyyyHH:mm:ss").parse(pod.getQueryTime());
-            			if (queryTime.after(thisWeekFirstDay) && queryTime.before(nextWeekFirstDay)) {
-            				List<Container> containers = pod.getContainers();
-            				for (int k = 0; k < containers.size(); k++) {
-            					Container container = containers.get(k);
-            					List<Process> processes = null;//container.getProcesses();
-            					int size = processes == null ? 0 : processes.size();
-            					//log.info("process size: {}",  processes.size());
-            					for (int m = 0; m < size; m++) {
-            						Process process = processes.get(m);
-            						List<Processmetric> processmetrics = process.getProcessmetrics();
-            						Map<Long, List<Processmetric>> computemetrics = new HashMap<Long, List<Processmetric>>();
-            						//log.info("processmetrics size: {}",  processmetrics.size());
-            						for (int n = 0; n < processmetrics.size(); n++) {
-            							Processmetric gp = processmetrics.get(n);
-            							Long gpu_id = gp.getGpumetric().getGpuId();
-            							Date qt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").parse(gp.getQueryTime());
-            							if (qt.before(thisWeekFirstDay) || qt.after(nextWeekFirstDay))
-            								continue;
-            					        if (computemetrics.containsKey(gpu_id)) {
-            					        	computemetrics.get(gpu_id).add(gp);
-            					        	//log.info("add");
-            					            
-            					        } else {
-            					        	List<Processmetric> pms = new ArrayList<Processmetric>();
-            					        	pms.add(gp);
-            					        	computemetrics.put(gpu_id, pms);
-            					        	//log.info("add");
-            					        }
-            						}
-            						
-            						//log.info("map size {}", computemetrics.size());
-            						for (Map.Entry<Long, List<Processmetric>> entry : computemetrics.entrySet()) {
-            							List<Processmetric> pms = entry.getValue();
-                						Collections.sort(pms);
-            							//log.info("gpu_id {} pms size {} ", entry.getKey(), pms.size());
-	            						for (int n = 0; n < pms.size()-1; n++) {
-	    	            					Processmetric gp = pms.get(n);
-	    	            					Processmetric gp1 = pms.get(n+1);
-	    	            					//log.info("gpu id {}: ", gp.getGpumetric().getGpuId());
-	    	            					//log.info("{} {}", gp.getQueryTime(), gp1.getQueryTime());
-	    	            					Date st = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(gp.getQueryTime());
-	    	            					Date et = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(gp1.getQueryTime());
-	    	            				    long diffInMillies = Math.abs(et.getTime() - st.getTime());
-	    	            				    //long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-	    	            					//log.info(gp.getProcessId().toString());
-	    	            					//log.info("{}, {}, {}, {}", gp.getId(), gp1.getId(), st, et);
-	    	            					//log.info("diff {}, {}, {}, {}, {}", diffInMillies, gp.getCpuPercent(), (double)gp.getCpuMemoryUsage()/(1024.0*1024.0*1024.0), gp.getGpumetric().getUtilizationGpu(), gp.getGpuMemoryUsage());
-	    	            					double dur = (double)diffInMillies/1000.0;
-	    	            					total_time += dur;
-	    	            					cpuUsedHours += (double)gp.getCpuPercent()/100.0 * dur;
-	    	            					memoryUsedHour += (double)gp.getCpuMemoryUsage()/(1024.0*1024.0*1024.0) * dur;
-	    			            			gpuMUsedHours += (double)gp.getGpuMemoryUsage()/(32.0*1024.0) * dur;
-	    			            			gpuUsedHours += (double)gp.getGpumetric().getUtilizationGpu()/100.0 * dur;
-	    	            					//log.info("used {}, {}, {}, {}", cpuUsedHours, memoryUsedHour, gpuUsedHours, gpuMUsedHours);
-	            							//log.info(processmetrics.get(n).getGpumetric().toString());
-	            						}
-            						}
-            					}
-            				}
-            			}
-        			} catch (Exception e){
-        				log.info(e.toString());
-        				break;
-        			}
-        		}
-
-        		//log.info("{}, {}, {}, {}, {}", total_time, cpuUsedHours, memoryUsedHour, gpuUsedHours, gpuMUsedHours);
-        		//log.info("{}, {}, {}, {}, {}", total_time/3600.0, cpuUsedHours/3600.0, memoryUsedHour/3600.0, gpuUsedHours/3600.0, gpuMUsedHours/3600.0);
-            	//log.info("i {} namespaceId {}", i, namespaceId, gpus.size());
-            	WeekExpenseId expenseId = new WeekExpenseId(namespaceId, year, month, week);
-            	WeekExpense expense = new WeekExpense(expenseId);
-            	expense.setCpuUsedHours((float)(cpuUsedHours/3600.0));
-            	expense.setMemoryUsedHours((float)(memoryUsedHour/3600.0));
-            	expense.setGpuUsedHours((float)(gpuUsedHours/3600.0));
-            	expense.setGpuMUsedHours((float)(gpuMUsedHours/3600.0));
-
-                List<Namespaceusedresourcequota> namespaceusedresourcequotas = new ArrayList<Namespaceusedresourcequota>();
-            	namespaceusedresourcequotaRepository.findNamespaceusedresourcequotasByNamespaceId(namespaceId, startDateTime, endDateTime)
-            	                                    .forEach(namespaceusedresourcequotas::add);
-            	//log.info("namespaceId {}, size: {}", namespaceId, namespaceusedresourcequotas.size());
-            	if (namespaceusedresourcequotas.size() == 0) continue;
+        		log.info("namespaceId {} pod size: {}", namespaceId, pods.size());
+            	ExpenseId expenseId = new ExpenseId(namespaceId, year, month);
+            	Expense expense = new Expense(expenseId);
 
         		try {
-        			expense.calWeekExpense(thisWeekFirstDay, nextWeekFirstDay, namespaceusedresourcequotas);
-        			weekExpenseRepository.save(expense);
+        			expense.calExpense(thisWeekFirstDay, nextWeekFirstDay, pods);
+        			expenseRepository.save(expense);
         		} catch (Exception e) {
-        			//log.info(e.toString());
+        			log.info(e.toString());
         		}
             }
             
@@ -482,4 +350,5 @@ public class ExpenseTask {
         	log.info("The time is now {}", dateFormat.format(new Date()) + "CST");
         }
       }
+      */
 }

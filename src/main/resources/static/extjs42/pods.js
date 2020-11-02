@@ -681,7 +681,7 @@
 			            position: 'left',
 			            fields: axes_fields,
 			            title: 'gpu(%)',
-			            grid: false
+						minimum: 0
 			        }, {
 			            type: 'Category',
 			            position: 'bottom',
@@ -705,7 +705,7 @@
 			            position: 'left',
 			            fields: axes_fields,
 			            title: 'mem(GB)',
-			            grid: false
+			            minimum: 0
 			        }, {
 			            type: 'Category',
 			            position: 'bottom',

@@ -21,4 +21,8 @@ public interface NamespaceusedresourcequotaRepository extends JpaRepository<Name
 			@Param("endDateTime") String endDateTime);
 
 	List<Namespaceusedresourcequota> findNamespaceusedresourcequotasByNamespaceId(Long namespaceId);
+	
+	@Query(value = "SELECT u FROM Namespaceusedresourcequota u WHERE u.namespaceId = :namespaceId order by u.id desc")
+	List<Namespaceusedresourcequota> findTopByOrderByIdDesc(
+			@Param("namespaceId") Long namespaceId);
 }
