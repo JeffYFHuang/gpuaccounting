@@ -92,10 +92,10 @@
 		            	namespaceusedquota_ds.totalRequestedHours = 0;
 
 		            	store.each(function(r) {
-		            		var limitsCpu = r.data.limitsCpu == undefined ? null : parseInt(r.data.limitsCpu);
-			            	var requestsCpu = r.data.requestsCpu == undefined ? null : parseInt(r.data.requestsCpu);
-			            	var limitsMemory = r.data.limitsMemory == undefined ? null : parseInt(r.data.limitsMemory);
-			            	var requestsMemory = r.data.requestsMemory == undefined ? null : parseInt(r.data.requestsMemory);
+		            		var limitsCpu = r.data.limitsCpu == undefined ? null : parseFloat(r.data.limitsCpu);
+			            	var requestsCpu = r.data.requestsCpu == undefined ? null : parseFloat(r.data.requestsCpu);
+			            	var limitsMemory = r.data.limitsMemory == undefined ? null : parseFloat(r.data.limitsMemory);
+			            	var requestsMemory = r.data.requestsMemory == undefined ? null : parseFloat(r.data.requestsMemory);
 			            	var startTime = r.data.startTime == undefined ? null : r.data.startTime;
 			            	var queryTime = r.data.queryTime == undefined ? null : r.data.queryTime;
 
@@ -114,6 +114,9 @@
 			        		}
 
 			        		hours = getRequestedHours(startTime, queryTime);
+			        		/*console.log(hours);
+			        		console.log(requestsCpu);
+			        		console.log(requestsMemory);*/
 			        		namespaceusedquota_ds.totalRequestedHours = namespaceusedquota_ds.totalRequestedHours + hours;
 			            	gpuhours = gpuhours + r.data.requestsNvidiaComGpu * hours;
 			            	cpuhours = cpuhours + requestsCpu * hours;
@@ -152,8 +155,8 @@
 		            	//store.totalRequestedHours = hours;
 
 		            	Ext.ComponentQuery.query('#RequestGPUHours')[0].setValue(gpuhours);
-		            	Ext.ComponentQuery.query('#RequestCPUHours')[0].setValue(cpuhours/1000);
-		            	Ext.ComponentQuery.query('#RequestMemoHours')[0].setValue(memoryhours/1000);
+		            	Ext.ComponentQuery.query('#RequestCPUHours')[0].setValue(cpuhours);
+		            	Ext.ComponentQuery.query('#RequestMemoHours')[0].setValue(memoryhours);
 		            	chartusedquota_ds.removeAll();
 		            	chartusedquota_ds.sync();
 		            	chartusedquota_ds.loadData(data);
