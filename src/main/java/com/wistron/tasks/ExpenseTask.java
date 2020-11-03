@@ -28,10 +28,12 @@ import com.wistron.repository.NamespaceusedresourcequotaRepository;
 import com.wistron.repository.PodRepository;
 import com.wistron.repository.WeekExpenseRepository;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +44,7 @@ import java.util.concurrent.TimeUnit;
 public class ExpenseTask {
 	  private static final Logger log = LoggerFactory.getLogger(ExpenseTask.class);
 	  private static final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy00:00:00"); // "05/27/202010:51:38CST"
-	  private static final SimpleDateFormat dateFormat2 = new SimpleDateFormat("MM/dd/yyyyhh:mm:ss"); 
+	  private static final SimpleDateFormat dateFormat2 = new SimpleDateFormat("MM/dd/yyyyHH:mm:ss"); 
 
 	  @Autowired
 	  NamespaceRepository namespaceRepository;
@@ -84,13 +86,13 @@ public class ExpenseTask {
         	String startDateTime = dateFormat.format(thisMonthFirstDay) + "CST";
         	String endDateTime = dateFormat.format(nextMonthFirstDay) + "CST";
         	try {
-        		thisMonthFirstDay = new SimpleDateFormat("MM/dd/yyyyHH:mm:ss").parse(startDateTime);
-        		nextMonthFirstDay = new SimpleDateFormat("MM/dd/yyyyHH:mm:ss").parse(endDateTime);
+        		thisMonthFirstDay = dateFormat2.parse(startDateTime);
+        		nextMonthFirstDay = dateFormat2.parse(endDateTime);
         	} catch (Exception e) {
         		return;
         	}
         	//log.info("The time is now {}", new Date());
-            log.info("The month start time is {}, end time is {}", startDateTime, endDateTime);
+            //log.info("The month start time is {}, end time is {}", startDateTime, endDateTime);
 
             List<Namespace> namespaces = new ArrayList<Namespace>();
             namespaceRepository.findAll().forEach(namespaces::add);
@@ -104,7 +106,7 @@ public class ExpenseTask {
 
         		List<Pod> pods = getPods(namespace.getId()); 
 
-        		log.info("namespaceId {} pod size: {}", namespaceId, pods.size());
+        		//log.info("namespaceId {} pod size: {}", namespaceId, pods.size());
             	ExpenseId expenseId = new ExpenseId(namespaceId, year, month);
             	Expense expense = new Expense(expenseId);
 
@@ -121,8 +123,27 @@ public class ExpenseTask {
         //	log.info("The time is now {}", dateFormat.format(new Date()) + "CST");
         //}
       }
-	  
-	  @Scheduled(fixedRate = 5000)
+
+	  public List<Date> getTimes(List<Pod> pods) {
+		  List<Date> times = new ArrayList<Date>();
+		  
+		  for (int i = 0; i < pods.size(); i++) {
+			  try {
+				Date time = dateFormat2.parse(pods.get(i).getStartTime());
+				time.setTime(time.getTime() + 8 * 3600000);
+				times.add(time);
+			    times.add(dateFormat2.parse(pods.get(i).getQueryTime()));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		  }
+		  
+		  Collections.sort(times, (o1, o2) -> o1.compareTo(o2));
+		  return times;
+	  }
+/*
+	  @Scheduled(fixedRate = 30000)
 	  public void calCurrentResourceQuota() {
 		    Date now = new Date();
 		    now.setTime(now.getTime() - 10000);
@@ -135,9 +156,9 @@ public class ExpenseTask {
             for (int i = 0; i < namespaces.size(); i++) {
             	Namespace namespace = namespaces.get(i);
             	Long namespaceId = namespace.getId();
-            	//log.info("i {} namespaceId {}", i, namespaceId);
+            	log.info("i {} namespaceId {}", i, namespaceId);
 
-        		List<Pod> pods = getPods(namespace.getId()); 
+            	List<Pod> pods = getPods(namespace.getId());
 
         		try {
         			// to do namespaceusedresourcequotaRepository.findOne(example);
@@ -161,13 +182,73 @@ public class ExpenseTask {
         		} catch (Exception e) {
         			log.info(e.toString());
         		}
-            }
+        	}
 
        // } catch (Exception e) {
         //	log.info("The time is now {}", dateFormat.format(new Date()) + "CST");
         //}
       }
-/*	  
+*/
+	  @Scheduled(fixedRate = 60000)
+	  public void calCurrentResourceQuota() {
+		    Date now = new Date();
+		    now.setTime(now.getTime() - 10000);
+		    //String qt = dateFormat.format(now) + "CST";
+            List<Namespace> namespaces = new ArrayList<Namespace>();
+            namespaceRepository.findAll().forEach(namespaces::add);
+
+            //log.info("namespaces size {}", namespaces.size());
+            //List<Expense> expenses = new ArrayList<Expense>();
+            for (int i = 0; i < namespaces.size(); i++) {
+            	Namespace namespace = namespaces.get(i);
+            	Long namespaceId = namespace.getId();
+            	//log.info("i {} namespaceId {}", i, namespaceId);
+
+        		List<Pod> pods = getPods(namespaceId);
+        		List<Date> times = getTimes(pods);
+
+        		//log.info("times size:", times.size());
+        		for (int m = 1; m < times.size(); m++) {
+	        		try {
+	        			//log.info("{}", times.get(m));
+	        			// to do namespaceusedresourcequotaRepository.findOne(example);
+	        			Namespaceusedresourcequota rq = Expense.calCurrentResourceQuota(times.get(m-1), times.get(m), pods);
+	        			rq.setNamespaceId(namespace.getId());
+	        			rq.setQueryTime(dateFormat2.format(times.get(m)) + "CST");
+	        			List<Namespaceusedresourcequota> rqList = namespaceusedresourcequotaRepository.findTopByOrderByIdDesc(namespace.getId());
+	        			
+	        			if(!rqList.isEmpty()) {
+	        				boolean found = false;
+	        				for(Namespaceusedresourcequota rq0 : rqList){
+	        					if (rq0.getStartTime().equalsIgnoreCase(rq.getStartTime())) {
+	        						found = true;
+	        						if (namespaceId == 17) {
+		    	        				log.info("rq0: {}", rq0.toString());
+		    	        				log.info("rq: {}", rq.toString());
+	        						}
+	        						rq0.setQueryTime(rq.getQueryTime());
+		        					namespaceusedresourcequotaRepository.save(rq0);
+		        					break;
+	        					}
+	        				}
+	        				
+		        			if (!found) {
+		        				//rq.setStartTime(rq.getQueryTime());
+		        				namespaceusedresourcequotaRepository.save(rq);
+		        			}
+	        			}
+	        		} catch (Exception e) {
+	        			log.info(e.toString());
+	        		}
+        		}
+        	}
+
+       // } catch (Exception e) {
+        //	log.info("The time is now {}", dateFormat.format(new Date()) + "CST");
+        //}
+      }
+	  
+	  /*
 	  @Scheduled(fixedRate = 5000)
 	  public void calcuWeek() {
         try {

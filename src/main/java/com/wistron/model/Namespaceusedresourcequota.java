@@ -1,5 +1,7 @@
 package com.wistron.model;
 
+import java.text.SimpleDateFormat;
+
 import javax.persistence.*;
 
 import org.slf4j.Logger;
@@ -23,6 +25,7 @@ import jdk.internal.org.jline.utils.Log;
 @Table(name = "namespaceusedresourcequotas")
 public class Namespaceusedresourcequota {
 	private static final Logger log = LoggerFactory.getLogger(Namespaceusedresourcequota.class);
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", columnDefinition = "int(11) NOT NULL AUTO_INCREMENT")
@@ -201,6 +204,7 @@ public class Namespaceusedresourcequota {
                 ", requestsCpu=" + requestsCpu +
                 ", requestsMemory='" + requestsMemory + '\'' +
                 ", requestsNvidiaComGpu=" + requestsNvidiaComGpu +
+                ", startTime=" + startTime +
                 ", queryTime=" + queryTime +
                 '}';
     }

@@ -17,6 +17,7 @@ import com.wistron.tasks.ExpenseTask;
 @Table(name = "expenses")
 public class Expense {
 	private static final Logger log = LoggerFactory.getLogger(Expense.class);
+	private static final SimpleDateFormat dateFormat2 = new SimpleDateFormat("MM/dd/yyyyHH:mm:ss");
     @EmbeddedId
     private ExpenseId expenseId;
 
@@ -78,7 +79,6 @@ public class Expense {
     		return Float.parseFloat(mem.replaceAll("[^\\.0123456789]","")) / 1024.0;
     	if (mem.contains("Gi"))
     		return Float.parseFloat(mem.replaceAll("[^\\.0123456789]",""));
-    	
     	return Float.parseFloat(mem.replaceAll("[^\\.0123456789]",""));
     }
 
@@ -92,7 +92,7 @@ public class Expense {
 			float cpuHours = 0;
 			float memoryHours = 0;
 			try {
-				log.info("pod queryTime: {} {}", pod.getStartTime(), pod.getQueryTime());
+				//log.info("pod queryTime: {} {}", pod.getStartTime(), pod.getQueryTime());
 				Date queryTime = new SimpleDateFormat("MM/dd/yyyyHH:mm:ss").parse(pod.getQueryTime());
 	    		startTime = new SimpleDateFormat("MM/dd/yyyyHH:mm:ss").parse(pod.getStartTime());
 	    		startTime = new Date(startTime.getTime() + 8 * 3600 * 1000);
@@ -128,7 +128,7 @@ public class Expense {
     				this.gpuHours += hours * gpuHours;
     				this.cpuHours += hours * cpuHours;
     				this.memoryHours += hours * memoryHours;
-    	    	    log.info("{} {} {}", startTime, endTime, hours);
+    	    	    //log.info("{} {} {}", startTime, endTime, hours);
     			}
 			} catch (Exception e){
 				log.info(e.toString());
@@ -142,7 +142,7 @@ public class Expense {
     	log.info(this.toString());
     }
 
-    public static Namespaceusedresourcequota calCurrentResourceQuota(Date now, List<Pod> pods) throws Exception {
+    public static Namespaceusedresourcequota calCurrentResourceQuota(Date beginTime, Date endTime, List<Pod> pods) throws Exception {
     	Namespaceusedresourcequota rq = new Namespaceusedresourcequota();
 		float limitsCpu = 0;
 		float limitsMemory = 0;
@@ -154,12 +154,16 @@ public class Expense {
 		for (int j = 0; j < pods.size(); j++) {
 			Pod pod = pods.get(j);
 			try {
+				Date startTime = new SimpleDateFormat("MM/dd/yyyyHH:mm:ss").parse(pod.getStartTime());
+				startTime.setTime(startTime.getTime() + 8 * 3600000);
 				Date queryTime = new SimpleDateFormat("MM/dd/yyyyHH:mm:ss").parse(pod.getQueryTime());
-    			if (queryTime.after(now)) {
+				//if (pod.getNamespaceId() == 17)
+				    //log.info("{} {} {} {}", beginTime, endTime, startTime, queryTime);
+    			if ((startTime.before(endTime) || startTime.equals(endTime)) && (queryTime.after(endTime) || queryTime.equals(endTime))) {
     				List<Container> containers = pod.getContainers();
     				for (int k = 0; k < containers.size(); k++) {
     					Container container = containers.get(k);
-    					log.info(container.toString());
+    					//log.info(container.toString());
 
     		    	    if (container.getLimitsNvidiaComGpu() != null)
     		    	    {
@@ -180,6 +184,8 @@ public class Expense {
     		    	    }
     		    	    if (container.getRequestsMemory() != null) {
     		    	    	requestsMemory += parseMem(container.getRequestsMemory());
+    		    	    	
+    		    	    	//log.info("requestsMemory {} {}", container.getRequestsMemory(), parseMem(container.getRequestsMemory()));
     		    	    }
     		    	    //log.info("{} {} {} {}", k, this.gpuHours, this.cpuHours, this.memoryHours);
     				}
@@ -190,13 +196,15 @@ public class Expense {
 			}
 		}
 
+		rq.setStartTime(dateFormat2.format(beginTime) + "CST");
 		rq.setLimitsCpu(Float.toString(limitsCpu));
 		rq.setLimitsMemory(Float.toString(limitsMemory));
 		rq.setLimitsNvidiaComGpu((int)limitsNvidiaComGpu);
 		rq.setRequestsCpu(Float.toString(requestsCpu));
 		rq.setRequestsMemory(Float.toString(requestsMemory));
 		rq.setRequestsNvidiaComGpu((int)requestsNvidiaComGpu);
-
+        //log.info(rq.toString());
+		
     	return rq;
     }
 

@@ -135,6 +135,7 @@ public class Pod {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", startTime='" + startTime + '\'' +
+                ", queryTime='" + queryTime + '\'' +
                 ", namespaceId=" + namespaceId +
                 ", hostname='" + hostname + '\'' +
                 ", phase='" + phase + '\'' +
