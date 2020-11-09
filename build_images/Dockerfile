@@ -8,6 +8,8 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV NB_USER jovyan
 ENV NB_UID 1000
 ENV HOME /home/$NB_USER
+ENV NCCL_SOCKET_IFNAME lo
+COPY test /
 # We prefer to have a global conda install
 # to minimize the amount of content in $HOME
 #ENV GRANT_SUDO yes

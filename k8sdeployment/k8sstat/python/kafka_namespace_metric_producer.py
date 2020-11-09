@@ -75,6 +75,8 @@ def get_pod_nspid(i, j):
         #if e.status != 404:
         #    print("Unknown error: %s" % e)
         resp = None
+    except ValueError as e:
+        resp = None
     return resp
 
 def get_gpu_metric(host):
