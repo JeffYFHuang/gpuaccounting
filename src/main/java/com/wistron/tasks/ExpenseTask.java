@@ -222,10 +222,6 @@ public class ExpenseTask {
 	        				for(Namespaceusedresourcequota rq0 : rqList){
 	        					if (rq0.getStartTime().equalsIgnoreCase(rq.getStartTime())) {
 	        						found = true;
-	        						if (namespaceId == 17) {
-		    	        				log.info("rq0: {}", rq0.toString());
-		    	        				log.info("rq: {}", rq.toString());
-	        						}
 	        						rq0.setQueryTime(rq.getQueryTime());
 		        					namespaceusedresourcequotaRepository.save(rq0);
 		        					break;

@@ -91,20 +91,22 @@
     var chart_util_gpu = null;
     var chart_mem_gpu = null;
     var chart_win = null;
-    var tStore = null;
+//    var tStore = null;
 
 	var task = {
 	    run: function () {
 	        metric_reload();
 	    },
-	    interval: 5000
+	    interval: 10000
 	};
 
-	var metric_ds = new Ext.data.Store({
+	Ext.define('metric.store', {
+	  extend: 'Ext.data.Store',
 	  autoLoad: false,
 	  pageSize: 0,
 	  model:'Metric',
 	  groupField: 'gpuId',
+	  tStore: null,
 	  proxy: {
 	        type: 'ajax',
 	        url:'/gpumetrics',
@@ -143,8 +145,8 @@
 				        });*/
 
 				        // now for the money-maker; loop over the current groups in our store
-				        tStore.removeAll();
-						tStore.clearData();
+				        store.tStore.removeAll();
+						store.tStore.clearData();
 				        //alert(groups.length);
 				        if(groups.length == 0) return;
 				        var g_data_length = groups[0].children.length;
@@ -159,10 +161,10 @@
 				                newModel.set("g" + curRecord.get('gpuId'), curRecord.get('utilizationGpu'));
 				                newModel.set('m' + curRecord.get('gpuId'), curRecord.get('memoryUsed')/1024);
 				            }
-				            tStore.add(newModel);
+				            store.tStore.add(newModel);
 				        }
 
-				        tStore.each(function(record) {
+				        store.tStore.each(function(record) {
     						console.log(record);
 						});
 						
@@ -320,7 +322,7 @@
 		        beforeload: {
 		            fn: function(store, records, options){
 		            	now = new Date();
-						startTime = new Date(now.getTime() - 20000);
+						startTime = new Date(now.getTime() - 60000);
 						endTime = new Date(now.getTime() + 20000);
 						store.proxy.extraParams = {
 						        	startDateTime: toCSTString(startTime),
@@ -334,6 +336,8 @@
 		  }
 		  //remoteSort: true
 	}); 
+
+    var metric_ds = new metric.store();
 
     function metric_reload() {
 				//"2020-10-19T09:58:25.534842"
@@ -385,14 +389,128 @@
 				if (gpus.length == 0) return "";
 
 				var data = [];
+				var gpuids = [];
 				for (var gpu in gpus) {
 					    data.push({
 					    	id: gpus[gpu]['id'],
 					    	utilizationGpu: gpus[gpu]['currentgpumetric']['utilizationGpu']
 					    });
+					    gpuids.push(gpus[gpu]['id']);
 			    }
 
-	            var id = Ext.id();
+		        // blank array to hold our new field definitions (based on groupers collected from store)
+		        fields = [];
+		        // first off, we want the xField to be a part of our new Model definition, so add it first
+		        fields.push( {name: 'queryTime', type: 'string'} );
+		        // now loop over the groupers (unique values from our store which match the gField)
+		        for( var i in gpuids ) {
+		            // for each value, add a field definition...this will give us the flat, in-record column for each group 
+		            fields.push( { name: 'g' + gpuids[i], type: 'int'} );
+		            fields.push( { name: 'm' + gpuids[i], type: 'int'} );
+		        }
+		        // let's create a new Model definition, based on what we determined above
+		        Ext.define('GroupedResult', {
+		            extend: 'Ext.data.Model',
+		            fields: fields
+		        });
+
+		        // now create a new store using our new model
+		        tStore = Ext.create('Ext.data.Store', {
+		            model: 'GroupedResult'
+		        });
+
+                var this_ds = new metric.store({tStore: tStore});
+
+                path = gpuids.join(',');
+                this_ds.setProxy({
+			        type: 'ajax',
+			        url: '/gpumetrics/' + path
+			    });
+
+				var task = {
+				    run: function () {
+				        var now = new Date();
+						var endDate = new Date(now.getTime() - 8 * 60 * 60000);
+						var startDate = new Date(now.getTime() -  8* 60 * 60000 - 2 * 60000);
+				        this_ds.load({params: {startDateTime: toTString(startDate), endDateTime: toTString(endDate)}});
+				    },
+				    interval: 10000
+				};
+				
+                Ext.TaskManager.start(task);
+
+				var axes_fields = [];
+				var g_series = [];
+				var m_series = [];
+				
+				for (var i in gpus) {
+				     axes_fields.push('g'+gpuids[i], 'm'+gpuids[i]);
+
+				     g_series.push({
+			            type: 'line',
+			            axis: 'left',
+			            showMarkers: true,
+			            markerConfig: {
+		                    radius: 2,
+		                    size: 2
+		                },
+			            smooth: true,
+			            //fill: true,
+			            //fillOpacity: 0.5,
+			            xField: 'queryTime',
+			            yField: 'g'+gpuids[i]
+			         });
+			         
+			         m_series.push({
+			            type: 'line',
+			            axis: 'left',
+			            showMarkers: true,
+		                markerConfig: {
+		                    radius: 2,
+		                    size: 2
+		                },
+			            smooth: true,
+			            //fill: true,
+			            //fillOpacity: 0.5,
+			            xField: 'queryTime',
+			            yField: 'm'+gpuids[i]
+			         });
+			    }
+
+				//if (chart_util_gpu == null)
+				var id = Ext.id();
+                Ext.defer(function (id) {
+	                var chart = Ext.create('Ext.chart.Chart', {
+				        style: 'background:#222',
+				        animate: false,
+				        //theme: 'Category2',
+				        store: this_ds.tStore,
+				        width: 380,
+	                    height: 220,
+				        legend: {
+				            position: 'right'
+				        },
+				        axes: [{
+				            type: 'Numeric',
+				            position: 'left',
+				            fields: axes_fields,
+				            //title: 'gpu(%)',
+				            grid: false,
+							minimum: 0
+				        }, {
+				            type: 'Category',
+				            position: 'bottom',
+				            fields: ['queryTime'],
+				            hidden: false,
+				            grid: false
+				            //title: 'Time'
+				        }],
+				        series: g_series,
+				        renderTo: id
+	                });
+	            }, 50, undefined, [id]);
+			    
+	            /*var id = Ext.id();
 	            //alert(record.get('memoryUsed')/record.get('memory.total'));
 	            Ext.defer(function (id) {
 	                var chart = Ext.create('Ext.chart.Chart', {
@@ -456,7 +574,7 @@
 			            }],
 	                    renderTo: id
 	                });
-	            }, 50, undefined, [id]);
+	            }, 50, undefined, [id]);*/
 
 	            return "<div id='" + id + "'></div>";//<div>" + record.get('utilizationGpu') + "%</div><div>" + record.get('utilizationGpu') + "%</div>";
             }
@@ -481,14 +599,14 @@
 	            Ext.defer(function (id) {
 	                var chart = Ext.create('Ext.chart.Chart', {
 	                    animate: true,
-                        style: 'background:#fff',
+                        style: 'background:#999',
                         shadow: false,
 	                    store: {
 	                       fields: ['id', 'memoryUsed'],
 					       data: data
 					    },
-	                    width: 150,
-	                    height: 100,
+	                    width: 180,
+	                    height: 220,
 					    axes: [{
 			                type: 'Numeric',
 			                position: 'bottom',
@@ -507,7 +625,7 @@
 			                fields: ['id'],
 			                title: '',
 			                dashSize: 0,
-			                hidden: true
+			                hidden: false
 			            }],
 			            series: [{
 			                type: 'bar',
@@ -517,7 +635,7 @@
 			                    field: 'memoryUsed',
 			                    renderer: Ext.util.Format.numberRenderer('0'),
 			                    orientation: 'horizontal',
-			                    color: '#333',
+			                    color: '#fff',
 			                    'text-anchor': 'right',
 			                    contrast: true
 			                },
@@ -563,15 +681,15 @@
 
             this.columns = [
             	//{text: "user", sortable: true, dataIndex: 'namespaceId', flex: 0.1, renderer: renderUser},
-                {text: "name", sortable: true, dataIndex: 'name', flex: 0.04},
+                {text: "name", sortable: true, dataIndex: 'name', flex: 0.06},
                 //{id:'phase',text: "phase", sortable: true, dataIndex: 'phase'},
                 {text: "startTime", sortable: true, dataIndex: 'startTime', flex: 0.1},
-                {text: "queryTime", sortable: true, dataIndex: 'queryTime', flex: 0.1},
+                //{text: "queryTime", sortable: true, dataIndex: 'queryTime', flex: 0.1},
                 {text: "hostname", sortable: true, dataIndex: 'hostname', flex: 0.07},
-                {text: "requestsCPU", sortable: true, dataIndex: 'requestsCpu', flex: 0.06},
-                {text: "requestsMemory", sortable: true, dataIndex: 'requestsMemory', flex: 0.06},
-                {text: "GPU(%)", sortable: true, dataIndex: 'id', flex: 0.1, renderer: rendererGpu},
-                {text: "GPUMem(%)", sortable: true, dataIndex: 'id', flex: 0.1, renderer: rendererMem}
+                {text: "rCPU", sortable: true, dataIndex: 'requestsCpu', flex: 0.04},
+                {text: "rMemory", sortable: true, dataIndex: 'requestsMemory', flex: 0.04},
+                {text: "GPU(%)", sortable: true, dataIndex: 'id', flex: 0.270, renderer: rendererGpu},
+                {text: "GPUMem(%)", sortable: true, dataIndex: 'id', flex: 0.130, renderer: rendererMem}
             ];
             // Note the use of a storeId, this will register thisStore
             // with the StoreManager and allow us to retrieve it very easily.
@@ -628,6 +746,7 @@
 		            model: 'GroupedResult'
 		        });
 
+                metric_ds.tStore = tStore;
 				var axes_fields = [];
 				var g_series = [];
 				var m_series = [];
@@ -672,7 +791,7 @@
 			        style: 'background:#000',
 			        animate: false,
 			        //theme: 'Category2',
-			        store: tStore,
+			        store: metric_ds.tStore,
 			        legend: {
 			            position: 'right'
 			        },
@@ -696,7 +815,7 @@
 			        style: 'background:#000',
 			        animate: false,
 			        //theme: 'Category2',
-			        store: tStore,
+			        store: metric_ds.tStore,
 			        legend: {
 			            position: 'right'
 			        },
@@ -748,7 +867,7 @@
 				           metric_ds.load();
 				        });
 				    }
-				},*/ {
+				}, */{
 				        enableToggle: true,
 				        pressed: true,
 				        text: 'Animate',
