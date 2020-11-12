@@ -151,6 +151,8 @@ public class Expense {
 		float requestsMemory = 0;
 		float requestsNvidiaComGpu = 0;
 
+		beginTime.setTime(beginTime.getTime() + 1*1000);
+		endTime.setTime(endTime.getTime() - 1*1000);
 		for (int j = 0; j < pods.size(); j++) {
 			Pod pod = pods.get(j);
 			try {

@@ -130,6 +130,7 @@ public class ExpenseTask {
 		  for (int i = 0; i < pods.size(); i++) {
 			  try {
 				Date time = dateFormat2.parse(pods.get(i).getStartTime());
+				log.info("{}", time);
 				time.setTime(time.getTime() + 8 * 3600000);
 				times.add(time);
 			    times.add(dateFormat2.parse(pods.get(i).getQueryTime()));
@@ -189,7 +190,7 @@ public class ExpenseTask {
         //}
       }
 */
-	  @Scheduled(fixedRate = 60000)
+	  @Scheduled(fixedRate = 5000)
 	  public void calCurrentResourceQuota() {
 		    Date now = new Date();
 		    now.setTime(now.getTime() - 10000);
@@ -205,13 +206,16 @@ public class ExpenseTask {
             	//log.info("i {} namespaceId {}", i, namespaceId);
 
         		List<Pod> pods = getPods(namespaceId);
+        		//log.info("pods size: {}", pods.size());
         		List<Date> times = getTimes(pods);
 
-        		//log.info("times size:", times.size());
+        		//log.info("times size: {}", times.size());
         		for (int m = 1; m < times.size(); m++) {
 	        		try {
 	        			//log.info("{}", times.get(m));
 	        			// to do namespaceusedresourcequotaRepository.findOne(example);
+	        			if (times.get(m).equals(times.get(m-1))) continue;
+
 	        			Namespaceusedresourcequota rq = Expense.calCurrentResourceQuota(times.get(m-1), times.get(m), pods);
 	        			rq.setNamespaceId(namespace.getId());
 	        			rq.setQueryTime(dateFormat2.format(times.get(m)) + "CST");
@@ -220,7 +224,9 @@ public class ExpenseTask {
 	        			if(!rqList.isEmpty()) {
 	        				boolean found = false;
 	        				for(Namespaceusedresourcequota rq0 : rqList){
-	        					if (rq0.getStartTime().equalsIgnoreCase(rq.getStartTime())) {
+	        					//log.info("{} {}", rq0, rq);
+	        					if (rq0.equals(rq)) {
+	        						log.info("found");
 	        						found = true;
 	        						rq0.setQueryTime(rq.getQueryTime());
 		        					namespaceusedresourcequotaRepository.save(rq0);
@@ -232,6 +238,8 @@ public class ExpenseTask {
 		        				//rq.setStartTime(rq.getQueryTime());
 		        				namespaceusedresourcequotaRepository.save(rq);
 		        			}
+	        			} else {
+	        				namespaceusedresourcequotaRepository.save(rq);
 	        			}
 	        		} catch (Exception e) {
 	        			log.info(e.toString());
