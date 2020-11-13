@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Component
 public class ExpenseTask {
@@ -128,9 +129,10 @@ public class ExpenseTask {
 		  List<Date> times = new ArrayList<Date>();
 		  
 		  for (int i = 0; i < pods.size(); i++) {
+			  log.info("{}",pods.get(i).toString());
 			  try {
 				Date time = dateFormat2.parse(pods.get(i).getStartTime());
-				log.info("{}", time);
+				//log.info("{}", time);
 				time.setTime(time.getTime() + 8 * 3600000);
 				times.add(time);
 			    times.add(dateFormat2.parse(pods.get(i).getQueryTime()));
@@ -140,6 +142,7 @@ public class ExpenseTask {
 			}
 		  }
 		  
+		  times = times.stream().distinct().collect(Collectors.toList());
 		  Collections.sort(times, (o1, o2) -> o1.compareTo(o2));
 		  return times;
 	  }
@@ -209,10 +212,10 @@ public class ExpenseTask {
         		//log.info("pods size: {}", pods.size());
         		List<Date> times = getTimes(pods);
 
-        		//log.info("times size: {}", times.size());
+        		log.info("times size: {}", times.size());
         		for (int m = 1; m < times.size(); m++) {
 	        		try {
-	        			//log.info("{}", times.get(m));
+	        			log.info("{} {} {}", m-1, times.get(m-1), times.get(m));
 	        			// to do namespaceusedresourcequotaRepository.findOne(example);
 	        			if (times.get(m).equals(times.get(m-1))) continue;
 
@@ -224,8 +227,8 @@ public class ExpenseTask {
 	        			if(!rqList.isEmpty()) {
 	        				boolean found = false;
 	        				for(Namespaceusedresourcequota rq0 : rqList){
-	        					//log.info("{} {}", rq0, rq);
-	        					if (rq0.equals(rq)) {
+	        					log.info("rq0: {} rq: {}", rq0.getStartTime(), rq.getStartTime());
+	        					if (rq0.getStartTime().toString().equalsIgnoreCase(rq.getStartTime().toString())) {
 	        						log.info("found");
 	        						found = true;
 	        						rq0.setQueryTime(rq.getQueryTime());
@@ -235,6 +238,7 @@ public class ExpenseTask {
 	        				}
 	        				
 		        			if (!found) {
+		        				log.info("not found");
 		        				//rq.setStartTime(rq.getQueryTime());
 		        				namespaceusedresourcequotaRepository.save(rq);
 		        			}

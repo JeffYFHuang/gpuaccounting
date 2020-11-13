@@ -365,6 +365,7 @@
         height: this.height,
         stripeRows: true,
         columnLines: true,
+        layout: 'fit',
         viewConfig: {
         	loadMask: false
     	},
@@ -431,7 +432,7 @@
 				    run: function () {
 				        var now = new Date();
 						var endDate = new Date(now.getTime() - 8 * 60 * 60000);
-						var startDate = new Date(now.getTime() -  8* 60 * 60000 - 2 * 60000);
+						var startDate = new Date(now.getTime() -  8* 60 * 60000 - 5 * 60000);
 				        this_ds.load({params: {startDateTime: toTString(startDate), endDateTime: toTString(endDate)}});
 				    },
 				    interval: 10000
@@ -485,7 +486,7 @@
 				        animate: false,
 				        //theme: 'Category2',
 				        store: this_ds.tStore,
-				        width: 380,
+				        width: '100%',
 	                    height: 220,
 				        legend: {
 				            position: 'right'
@@ -509,72 +510,6 @@
 				        renderTo: id
 	                });
 	            }, 50, undefined, [id]);
-			    
-	            /*var id = Ext.id();
-	            //alert(record.get('memoryUsed')/record.get('memory.total'));
-	            Ext.defer(function (id) {
-	                var chart = Ext.create('Ext.chart.Chart', {
-	                    animate: true,
-                        style: 'background:#fff',
-                        shadow: false,
-	                    store: {
-	                       fields: ['id', 'utilizationGpu'],
-					       data: data
-					    },
-	                    width: 150,
-	                    height: 100,
-					    axes: [{
-			                type: 'Numeric',
-			                position: 'bottom',
-			                fields: ['utilizationGpu'],
-			                dashSize: 0,
-			                hidden: true,
-			                label: {
-			                   renderer: Ext.util.Format.numberRenderer('0,0')
-			                },
-			                title: '',
-			                minimum: 0,
-							maximum: 100
-			            }, {
-			                type: 'Category',
-			                position: 'left',
-			                fields: ['id'],
-			                title: '',
-			                dashSize: 0,
-			                hidden: false
-			            }],
-			            series: [{
-			                type: 'bar',
-			                axis: 'left',
-			                label: {
-			                    display: 'insideEnd',
-			                    field: 'utilizationGpu',
-			                    renderer: Ext.util.Format.numberRenderer('0'),
-			                    orientation: 'horizontal',
-			                    color: '#333',
-			                    'text-anchor': 'right',
-			                    contrast: true
-			                },
-			                xField: 'id',
-			                yField: ['utilizationGpu'],
-			                //color renderer
-			                renderer: function(sprite, record, attr, index, store) {
-			                    var fieldValue = Math.random() * 20 + 10;
-			                    //alert(record.get('utilizationGpu'));
-			                    var value = (record.get('utilizationGpu') >> 0) % 5;
-			                    var color = ['rgb(213, 70, 121)', 
-			                                 'rgb(44, 153, 201)', 
-			                                 'rgb(146, 6, 157)', 
-			                                 'rgb(49, 149, 0)', 
-			                                 'rgb(249, 153, 0)'][value];
-			                    return Ext.apply(attr, {
-			                        fill: color
-			                    });
-			                }
-			            }],
-	                    renderTo: id
-	                });
-	            }, 50, undefined, [id]);*/
 
 	            return "<div id='" + id + "'></div>";//<div>" + record.get('utilizationGpu') + "%</div><div>" + record.get('utilizationGpu') + "%</div>";
             }
@@ -605,7 +540,7 @@
 	                       fields: ['id', 'memoryUsed'],
 					       data: data
 					    },
-	                    width: 180,
+	                    width: '100%',
 	                    height: 220,
 					    axes: [{
 			                type: 'Numeric',
