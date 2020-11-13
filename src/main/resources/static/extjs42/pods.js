@@ -452,8 +452,8 @@
 			            axis: 'left',
 			            showMarkers: true,
 			            markerConfig: {
-		                    radius: 2,
-		                    size: 2
+		                    radius: 0.5,
+		                    size: 0.5
 		                },
 			            smooth: true,
 			            //fill: true,
@@ -467,8 +467,8 @@
 			            axis: 'left',
 			            showMarkers: true,
 		                markerConfig: {
-		                    radius: 2,
-		                    size: 2
+		                    radius: 0.5,
+		                    size: 0.5
 		                },
 			            smooth: true,
 			            //fill: true,
@@ -481,16 +481,18 @@
 				//if (chart_util_gpu == null)
 				var id = Ext.id();
                 Ext.defer(function (id) {
-	                var chart = Ext.create('Ext.chart.Chart', {
-				        style: 'background:#222',
+	                var this_chart_gpu = Ext.create('Ext.chart.Chart', {
+	                    title: 'utilization(%)',
+	                    flex:1,
+				        style: 'background:#000',
 				        animate: false,
 				        //theme: 'Category2',
 				        store: this_ds.tStore,
-				        width: '100%',
-	                    height: 220,
-				        legend: {
-				            position: 'right'
-				        },
+				        //width: '100%',
+	                    //height: 220,
+				        //legend: {
+				        //    position: 'right'
+				        //},
 				        axes: [{
 				            type: 'Numeric',
 				            position: 'left',
@@ -503,12 +505,54 @@
 				            position: 'bottom',
 				            fields: ['queryTime'],
 				            hidden: false,
+				            //title: 'Time',
 				            grid: false
-				            //title: 'Time'
 				        }],
-				        series: g_series,
-				        renderTo: id
+				        series: g_series
 	                });
+	                
+	            var this_chart_mem = Ext.create('Ext.chart.Chart', {
+	                title: 'mem(GB)',
+			    	flex: 1.2,
+			        style: 'background:#000',
+			        animate: false,
+			        //theme: 'Category2',
+			        store: this_ds.tStore,
+			        legend: {
+			            position: 'right',
+			            fontSize: '5px'
+			        },
+			        axes: [{
+			            type: 'Numeric',
+			            position: 'left',
+			            fields: axes_fields,
+			            //title: 'mem(GB)',
+			            fontSize: '5px',
+			            minimum: 0
+			        }, {
+			            type: 'Category',
+			            position: 'bottom',
+			            fields: ['queryTime']
+			            //title: 'Time'
+			        }],
+			        series: m_series
+			    });
+
+				 var this_chart_win = Ext.create('Ext.panel.Panel', {
+				    //title: renderUser(record.get('namespaceId')) + '-' + record.get('name'),
+				    //style: 'background:#000',
+				    width: '100%',
+				    height: 220,
+				    hidden: false,
+				    maximizable: true,
+				    autoShow: true,
+				    layout: {
+				        type: 'hbox',
+				        align: 'stretch'
+				    },
+				    items: [this_chart_gpu, this_chart_mem],
+				    renderTo: id
+				  });
 	            }, 50, undefined, [id]);
 
 	            return "<div id='" + id + "'></div>";//<div>" + record.get('utilizationGpu') + "%</div><div>" + record.get('utilizationGpu') + "%</div>";
@@ -623,8 +667,8 @@
                 {text: "hostname", sortable: true, dataIndex: 'hostname', flex: 0.07},
                 {text: "rCPU", sortable: true, dataIndex: 'requestsCpu', flex: 0.04},
                 {text: "rMemory", sortable: true, dataIndex: 'requestsMemory', flex: 0.04},
-                {text: "GPU(%)", sortable: true, dataIndex: 'id', flex: 0.270, renderer: rendererGpu},
-                {text: "GPUMem(%)", sortable: true, dataIndex: 'id', flex: 0.130, renderer: rendererMem}
+                {text: "GPU(%)  MEM(GB)", sortable: true, dataIndex: 'id', flex: 0.4, renderer: rendererGpu}
+                //{text: "GPUMem(%)", sortable: true, dataIndex: 'id', flex: 0.130, renderer: rendererMem}
             ];
             // Note the use of a storeId, this will register thisStore
             // with the StoreManager and allow us to retrieve it very easily.
@@ -641,7 +685,7 @@
             this.callParent();
         }, 
         listeners: {
-             cellclick: function (grd, htmlElement, columnIndex, record) {
+             celldblclick: function (grd, htmlElement, columnIndex, record) {
              //alert(rowIndex);
                 //var pod = grd.getStore().getAt(0);
 				var gpus = record.get('containers')[0]['gpus'];
