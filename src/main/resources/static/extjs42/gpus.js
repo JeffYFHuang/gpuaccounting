@@ -33,7 +33,80 @@
 		  //remoteSort: true
 	});
 
-	
+    var tStores = new Map();
+	var gpu_realtime_ds = new Ext.data.Store({
+		  autoLoad: true,
+		  model:'Gpu',
+		  proxy: {
+		        type: 'ajax',
+		        url:'/gpus',
+		        reader: {
+		            type: 'json',
+		      	    totalProperty: 'totalElements',
+		    	    successProperty: 'success',
+		            root: 'data'
+		        }
+		  }, listeners: {
+		        load: {
+		            fn: function(store, records, options){
+		            	Ext.define('gpuModel', {
+		                    extend: 'Ext.data.Model',
+		                    fields: ['id', 'value']
+		                });
+
+				        var length = records.length;
+				        for (i = 0; i < length; i++) {
+				            var gpu = records[i];
+				            s = tStores.get(gpu.get('id'));
+				            if (typeof(s) == 'undefined') {
+					            var s = Ext.create('Ext.data.Store', {
+			                        model: 'gpuModel',
+			                        data: [{
+								           id: 'gpu',
+								           value: gpu.get('utilizationGpu')
+								       },{
+								           id: 'mem',
+								           value: gpu.get('memoryUsed')/gpu.get('memory.total') * 100
+								       }]
+						        });
+
+						        tStores.set(gpu.get('id'), s);
+					        } else {
+					            s.removeAll();
+								s.clearData();
+								var data = [];
+
+								data.push({
+								     id: 'gpu',
+								     value: gpu.get('utilizationGpu')
+								});
+								
+								data.push({
+								     id: 'mem',
+								     value: gpu.get('memoryUsed')/gpu.get('memory.total') * 100
+								});
+										    
+							    s.loadData(data);
+							    //console.log(s);
+					        }
+				        }
+		            }
+		        },
+		        exception: function(misc) {
+		            alert("Holy cow, we're getting an exception!");
+		        }
+		  }
+	});
+					    
+	var task = {
+	    run: function () {
+	        gpu_realtime_ds.load();
+	    },
+	    interval: 10000
+	};
+
+	Ext.TaskManager.start(task);
+
     Ext.define('App.gpuGrid', {
         extend: 'Ext.grid.Panel',
         // This will associate an string representation of a class
@@ -87,7 +160,8 @@
         	}
 
             function rendererBar (value, meta, record) {
-            	if (value != 1 ) return "";
+            	if (value == null ) return "";
+
 	            var id = Ext.id();
 	            //alert(record.get('memoryUsed')/record.get('memory.total'));
 	            Ext.defer(function (id) {
@@ -95,16 +169,7 @@
 	                    animate: true,
                         style: 'background:#fff',
                         shadow: true,
-	                    store: {
-					       fields: ['id', 'value'],
-					       data: [{
-					           id: 'gpu',
-					           value: record.get('utilizationGpu')
-					       },{
-					           id: 'mem',
-					           value: record.get('memoryUsed')/record.get('memory.total') * 100
-					       }]
-					    },
+	                    store: tStores.get(value),
 	                    width: 150,
 	                    height: 100,
 					    axes: [{
@@ -172,7 +237,7 @@
 
             this.columns = [
             	{text: "id", sortable: true, width: 40, dataIndex: 'id'},
-            	{text: "utilization(%)", sortable: true, flex: 0.25, dataIndex: 'used', renderer:rendererBar},
+            	{text: "utilization(%)", sortable: true, flex: 0.25, dataIndex: 'id', renderer:rendererBar},
             	{text: "occupied user", sortable: true, flex: 0.25, dataIndex: 'user', renderer:renderUser},
                 {text: "hostname", sortable: true, flex: 0.25, dataIndex: 'hostname'},
                 {text: "memory.total", sortable: true, width: 100, dataIndex: 'memory.total'},

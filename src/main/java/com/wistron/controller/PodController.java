@@ -91,13 +91,15 @@ public class PodController {
     }
 
     @GetMapping("/pod/{id}")
-    public ResponseEntity<Pod> getPodById(@PathVariable("id") long id) {
+    public ResponseEntity<ResponseEnvelope<List<Pod> >> getPodById(@PathVariable("id") long id) {
         Optional<Pod> PodData = podrepository.findById(id);
 
         if (PodData.isPresent()) {
-            return new ResponseEntity<>(PodData.get(), HttpStatus.OK);
+            List<Pod> pods = new ArrayList<Pod>();
+        	pods.add(PodData.get());
+            return new ResponseEntity<>(new ResponseEnvelope<List<Pod> >(200, "success.", pods), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
 }

@@ -164,140 +164,9 @@
 				            store.tStore.add(newModel);
 				        }
 
-				        store.tStore.each(function(record) {
+				        /*store.tStore.each(function(record) {
     						console.log(record);
-						});
-						
-						/*var axes_fields = [];
-						var g_series = [];
-						var m_series = [];
-						
-						for (var i in groupers) {
-						     axes_fields.push('g'+groupers[i], 'm'+groupers[i]);
-
-						     g_series.push({
-					            type: 'line',
-					            axis: 'left',
-					            showMarkers: true,
-					            smooth: true,
-					            //fill: true,
-					            //fillOpacity: 0.5,
-					            xField: 'queryTime',
-					            yField: 'g'+groupers[i]
-					         });
-					         
-					         m_series.push({
-					            type: 'line',
-					            axis: 'left',
-					            showMarkers: true,
-					            smooth: true,
-					            //fill: true,
-					            //fillOpacity: 0.5,
-					            xField: 'queryTime',
-					            yField: 'm'+groupers[i]
-					         });
-					    }
-
-						//if (chart_util_gpu == null)
-                        var chart_util_gpu = Ext.create('Ext.chart.Chart', {
-					    	flex:1,
-					        style: 'background:#000',
-					        animate: false,
-					        theme: 'Category2',
-					        store: tStore,
-					        legend: {
-					            position: 'right'
-					        },
-					        axes: [{
-					            type: 'Numeric',
-					            position: 'left',
-					            fields: axes_fields,
-					            title: 'gpu(%)',
-					            grid: false
-					        }, {
-					            type: 'Category',
-					            position: 'bottom',
-					            fields: ['queryTime'],
-					            title: 'Time'
-					        }],
-					        series: g_series
-					    });
-					    
-					    var chart_mem_gpu = Ext.create('Ext.chart.Chart', {
-					    	flex:1,
-					        style: 'background:#000',
-					        animate: false,
-					        theme: 'Category2',
-					        store: tStore,
-					        legend: {
-					            position: 'right'
-					        },
-					        axes: [{
-					            type: 'Numeric',
-					            position: 'left',
-					            fields: axes_fields,
-					            title: 'mem(GB)',
-					            grid: false
-					        }, {
-					            type: 'Category',
-					            position: 'bottom',
-					            fields: ['queryTime'],
-					            title: 'Time'
-					        }],
-					        series: m_series
-					    });
-
-						if (chart_win != null) {
-						  chart_win.reload();
-						} else
-						 chart_win = Ext.create('Ext.Window', {
-						    width: 600,
-						    height: 400,
-						    minHeight: 400,
-						    minWidth: 550,
-						    hidden: false,
-						    maximizable: true,
-						    autoShow: true,
-						    layout: {
-						        type: 'vbox',
-						        align: 'stretch'
-						    },
-						    tbar: [{
-						        text: 'Save Chart',
-						        handler: function() {
-						            Ext.MessageBox.confirm('Confirm Download', 'Would you like to download the chart as an image?', function(choice){
-						                if(choice == 'yes'){
-						                    chart.save({
-						                        type: 'image/png'
-						                    });
-						                }
-						            });
-						        }
-						    }, {
-						    text: 'Reload Data',
-						    handler: function() {
-						        // Add a short delay to prevent fast sequential clicks
-						        window.loadTask.delay(100, function() {
-						           metric_ds.load();
-						        });
-						    }
-						}, {
-						        enableToggle: true,
-						        pressed: true,
-						        text: 'Animate',
-						        toggleHandler: function(btn, pressed) {
-						            chart_mem_gpu.animate = pressed ? { easing: 'ease', duration: 500 } : false;
-						
-						            if (chart_mem_gpu.animate == pressed) {
-						                Ext.TaskManager.start(task);
-									} else {
-									    alert('Paused!');
-									    Ext.TaskManager.stop(task);
-									}
-						        }
-						    }],
-						    items: [chart_util_gpu, chart_mem_gpu]
-						  });*/
+						});*/
 		            }
 		        }
 	  }
@@ -490,9 +359,9 @@
 				        store: this_ds.tStore,
 				        //width: '100%',
 	                    //height: 220,
-				        //legend: {
-				        //    position: 'right'
-				        //},
+				        legend: {
+				            position: 'right'
+				        },
 				        axes: [{
 				            type: 'Numeric',
 				            position: 'left',
@@ -550,7 +419,7 @@
 				        type: 'hbox',
 				        align: 'stretch'
 				    },
-				    items: [this_chart_gpu, this_chart_mem],
+				    items: [this_chart_gpu],
 				    renderTo: id
 				  });
 	            }, 50, undefined, [id]);
@@ -563,16 +432,63 @@
 
 				var pod = pod_ds.findRecord('id', value);
 				var gpus = pod.get('containers')[0]['gpus'];
-				if (gpus.length == 0) return "";
-				var data = [];
 
-				for (var gpu in gpus) {
-					    data.push({
-					    	id: gpus[gpu]['id'],
-					    	memoryUsed: gpus[gpu]['currentgpumetric']['memoryUsed'] / gpus[gpu]['memorytotal'] * 100
-					    });
-			    }
-	
+				if (gpus.length == 0) return "";
+
+				Ext.define('gpuModel', {
+                    extend: 'Ext.data.Model',
+                    fields: ['id', 'memoryUsed']
+                });
+			    
+			    var tStore = Ext.create('Ext.data.Store', {
+                   model: 'gpuModel'
+			    });
+
+			    var this_ds = new Ext.data.Store({
+						  autoLoad: true,
+						  model:'Pod',
+						  tStore: tStore,
+						  proxy: {
+						        type: 'ajax',
+						        url:'/pod/' + value,
+						        reader: {
+						            type: 'json',
+						      	    totalProperty: 'totalElements',
+						    	    successProperty: 'success',
+						            root: 'data'
+						        }
+						  },listeners: {
+							        load: {
+							            fn: function(store, records, options){
+											var pod = store.findRecord('id', value);
+											if(pod == null) return "";
+											var gpus = pod.get('containers')[0]['gpus'];
+
+											if (gpus.length == 0) return "";
+											var data = [];
+							
+											for (var gpu in gpus) {
+													//console.log(gpus[gpu]);
+												    data.push({
+												    	id: gpus[gpu]['id'],
+												    	memoryUsed: gpus[gpu]['currentgpumetric']['memoryUsed'] / gpus[gpu]['memorytotal'] * 100
+												    });
+										    }
+										    tStore.loadData(data);
+							            }
+							        }
+						  }
+					}); 
+
+				var task = {
+				    run: function () {
+				        this_ds.load();
+				    },
+				    interval: 10000
+				};
+				
+                Ext.TaskManager.start(task);
+
 	            var id = Ext.id();
 	            //alert(record.get('memoryUsed')/record.get('memory.total'));
 	            Ext.defer(function (id) {
@@ -580,10 +496,7 @@
 	                    animate: true,
                         style: 'background:#999',
                         shadow: false,
-	                    store: {
-	                       fields: ['id', 'memoryUsed'],
-					       data: data
-					    },
+	                    store: this_ds.tStore,
 	                    width: '100%',
 	                    height: 220,
 					    axes: [{
@@ -624,12 +537,17 @@
 			                renderer: function(sprite, record, attr, index, store) {
 			                    var fieldValue = Math.random() * 20 + 10;
 			                    //alert(record.get('memoryUsed'));
-			                    var value = (record.get('memoryUsed') >> 0) % 5;
+			                    var value = (record.get('memoryUsed') >> 0) % 10;
 			                    var color = ['rgb(213, 70, 121)', 
 			                                 'rgb(44, 153, 201)', 
 			                                 'rgb(146, 6, 157)', 
 			                                 'rgb(49, 149, 0)', 
-			                                 'rgb(249, 153, 0)'][value];
+			                                 'rgb(249, 153, 0)',
+			                                 'rgb(0, 153, 249)',
+			                                 'rgb(49, 149, 49)',
+			                                 'rgb(157, 6, 146)',
+			                                 'rgb(201, 153, 44)',
+			                                 'rgb(121, 70, 213)'][value];
 			                    return Ext.apply(attr, {
 			                        fill: color
 			                    });
@@ -662,13 +580,13 @@
             	//{text: "user", sortable: true, dataIndex: 'namespaceId', flex: 0.1, renderer: renderUser},
                 {text: "name", sortable: true, dataIndex: 'name', flex: 0.06},
                 //{id:'phase',text: "phase", sortable: true, dataIndex: 'phase'},
+                {text: "GPU(%)", sortable: true, dataIndex: 'id', flex: 0.270, renderer: rendererGpu},
+                {text: "GPUMem(%)", sortable: true, dataIndex: 'id', flex: 0.130, renderer: rendererMem},
                 {text: "startTime", sortable: true, dataIndex: 'startTime', flex: 0.1},
                 //{text: "queryTime", sortable: true, dataIndex: 'queryTime', flex: 0.1},
                 {text: "hostname", sortable: true, dataIndex: 'hostname', flex: 0.07},
                 {text: "rCPU", sortable: true, dataIndex: 'requestsCpu', flex: 0.04},
-                {text: "rMemory", sortable: true, dataIndex: 'requestsMemory', flex: 0.04},
-                {text: "GPU(%)  MEM(GB)", sortable: true, dataIndex: 'id', flex: 0.4, renderer: rendererGpu}
-                //{text: "GPUMem(%)", sortable: true, dataIndex: 'id', flex: 0.130, renderer: rendererMem}
+                {text: "rMemory", sortable: true, dataIndex: 'requestsMemory', flex: 0.04}
             ];
             // Note the use of a storeId, this will register thisStore
             // with the StoreManager and allow us to retrieve it very easily.
