@@ -537,17 +537,12 @@
 			                renderer: function(sprite, record, attr, index, store) {
 			                    var fieldValue = Math.random() * 20 + 10;
 			                    //alert(record.get('memoryUsed'));
-			                    var value = (record.get('memoryUsed') >> 0) % 10;
+			                    var value = (record.get('memoryUsed') >> 0) % 5;
 			                    var color = ['rgb(213, 70, 121)', 
 			                                 'rgb(44, 153, 201)', 
 			                                 'rgb(146, 6, 157)', 
 			                                 'rgb(49, 149, 0)', 
-			                                 'rgb(249, 153, 0)',
-			                                 'rgb(0, 153, 249)',
-			                                 'rgb(49, 149, 49)',
-			                                 'rgb(157, 6, 146)',
-			                                 'rgb(201, 153, 44)',
-			                                 'rgb(121, 70, 213)'][value];
+			                                 'rgb(249, 153, 0)'][value];
 			                    return Ext.apply(attr, {
 			                        fill: color
 			                    });
