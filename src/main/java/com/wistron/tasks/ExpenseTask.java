@@ -193,7 +193,7 @@ public class ExpenseTask {
         //}
       }
 */
-	  @Scheduled(fixedRate = 5000)
+	  @Scheduled(fixedRate = 300000)
 	  public void calCurrentResourceQuota() {
 		    Date now = new Date();
 		    now.setTime(now.getTime() - 10000);
@@ -215,7 +215,7 @@ public class ExpenseTask {
         		log.info("times size: {}", times.size());
         		for (int m = 1; m < times.size(); m++) {
 	        		try {
-	        			log.info("{} {} {}", m-1, times.get(m-1), times.get(m));
+	        			//log.info("{} {} {}", m-1, times.get(m-1), times.get(m));
 	        			// to do namespaceusedresourcequotaRepository.findOne(example);
 	        			if (times.get(m).equals(times.get(m-1))) continue;
 
@@ -227,9 +227,9 @@ public class ExpenseTask {
 	        			if(!rqList.isEmpty()) {
 	        				boolean found = false;
 	        				for(Namespaceusedresourcequota rq0 : rqList){
-	        					log.info("rq0: {} rq: {}", rq0.getStartTime(), rq.getStartTime());
+	        					//log.info("rq0: {} rq: {}", rq0.getStartTime(), rq.getStartTime());
 	        					if (rq0.getStartTime().toString().equalsIgnoreCase(rq.getStartTime().toString())) {
-	        						log.info("found");
+	        						//log.info("found");
 	        						found = true;
 	        						rq0.setQueryTime(rq.getQueryTime());
 		        					namespaceusedresourcequotaRepository.save(rq0);
@@ -238,7 +238,7 @@ public class ExpenseTask {
 	        				}
 	        				
 		        			if (!found) {
-		        				log.info("not found");
+		        				//log.info("not found");
 		        				//rq.setStartTime(rq.getQueryTime());
 		        				namespaceusedresourcequotaRepository.save(rq);
 		        			}

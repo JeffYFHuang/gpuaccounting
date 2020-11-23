@@ -301,7 +301,7 @@
 				    run: function () {
 				        var now = new Date();
 						var endDate = new Date(now.getTime() - 8 * 60 * 60000);
-						var startDate = new Date(now.getTime() -  8* 60 * 60000 - 5 * 60000);
+						var startDate = new Date(now.getTime() -  8* 60 * 60000 - 30 * 60000);
 				        this_ds.load({params: {startDateTime: toTString(startDate), endDateTime: toTString(endDate)}});
 				    },
 				    interval: 10000
@@ -319,7 +319,7 @@
 				     g_series.push({
 			            type: 'line',
 			            axis: 'left',
-			            showMarkers: true,
+			            showMarkers: false,
 			            markerConfig: {
 		                    radius: 0.5,
 		                    size: 0.5
@@ -411,7 +411,7 @@
 				    //title: renderUser(record.get('namespaceId')) + '-' + record.get('name'),
 				    //style: 'background:#000',
 				    width: '100%',
-				    height: 220,
+				    height: 180,
 				    hidden: false,
 				    maximizable: true,
 				    autoShow: true,
@@ -498,7 +498,7 @@
                         shadow: false,
 	                    store: this_ds.tStore,
 	                    width: '100%',
-	                    height: 220,
+	                    height: 180,
 					    axes: [{
 			                type: 'Numeric',
 			                position: 'bottom',
